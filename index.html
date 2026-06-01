@@ -382,7 +382,7 @@ function renderResult(d) {
   const score = parseFloat(d.finalScore || 0);
   document.getElementById("scoreLabel").textContent = score.toFixed(1) + " / 100";
   document.getElementById("scoreBar").style.width = Math.min(100, score) + "%";
-  document.getElementById("scoreBar").style.background = getScoreColor(score);
+  document.getElementById("scoreBar").style.background = getScoreColor(score, rec);
   document.getElementById("rationale").textContent = d.analystRationale || "Analysis complete.";
 
   const flagsBox = document.getElementById("flagsBox");
