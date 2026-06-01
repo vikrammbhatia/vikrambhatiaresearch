@@ -304,8 +304,7 @@ function analyse() {
   fetch(SCRIPT_URL + "?action=analyse&fund=" + encodeURIComponent(fundName))
     .then(function(response) { return response.text(); })
     .then(function(text) {
-      // Apps Script may redirect — text will be the final HTML or JSON
-      // Strip any HTML wrapper if present and extract JSON
+      console.log("RAW RESPONSE:", text.substring(0, 500));
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (!jsonMatch) throw new Error("Invalid response from server");
       return JSON.parse(jsonMatch[0]);
