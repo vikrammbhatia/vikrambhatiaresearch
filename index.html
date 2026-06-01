@@ -370,7 +370,8 @@ function renderResult(d) {
   document.getElementById("mRisk").textContent = fmt(d.riskScore);
   document.getElementById("mReturn").textContent = fmt(d.expectedReturn);
   document.getElementById("mAmount").textContent = d.suggestedAmount && d.suggestedAmount !== "0" ? "₹" + Number(d.suggestedAmount).toLocaleString("en-IN") : "₹0";
-  document.getElementById("mHorizon").textContent = fmt(d.investmentHorizon);
+  const horizonVal = d.investmentHorizon && !d.investmentHorizon.toLowerCase().includes("avoid") ? d.investmentHorizon : "";
+  document.getElementById("mHorizon").textContent = horizonVal;
 
   const rec = d.recommendation || "Watchlist";
   document.getElementById("recBadge").textContent = rec;
