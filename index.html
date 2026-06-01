@@ -269,7 +269,11 @@ function getBadgeClass(rec) {
   return "badge-avoid";
 }
 
-function getScoreColor(score) {
+function getScoreColor(score, rec) {
+  if (rec && rec.toLowerCase().includes("avoid")) return "#ef4444";
+  if (rec && rec.toLowerCase().includes("watchlist")) return "#f59e0b";
+  if (rec && rec.toLowerCase().includes("consider")) return "#22c55e";
+  if (rec && rec.toLowerCase().includes("strong buy")) return "#22c55e";
   const s = parseFloat(score);
   if (s >= 65) return "#22c55e";
   if (s >= 50) return "#f59e0b";
