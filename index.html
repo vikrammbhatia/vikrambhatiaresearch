@@ -451,16 +451,32 @@ function analyse() {
       document.getElementById("loading").style.display = "none";
       document.getElementById("analyseBtn").disabled = false;
       if (!d.success) throw new Error(d.error || "Analysis failed");
+      // If score is 0, auto-retry once silently
+      if (parseFloat(d.finalScore || 0) === 0) {
+        document.getElementById("loading").style.display = "block";
+        document.getElementById("analyseBtn").disabled = true;
+        var retryTimer = setTimeout(showSkeleton, 3000);
+        fetch(SCRIPT_URL + "?action=analyse&fund=" + encodeURIComponent(document.getElementById("fundInput").value.trim()) + "&v=" + Date.now())
+          .then(function(r) { return r.text(); })
+          .then(function(t) {
+            clearTimeout(retryTimer);
+            hideSkeleton();
+            document.getElementById("loading").style.display = "none";
+            document.getElementById("analyseBtn").disabled = false;
+            const m = t.match(/\{[\s\S]*\}/);
+            if (m) renderResult(JSON.parse(m[0]));
+          })
+          .catch(function() {
+            clearTimeout(retryTimer);
+            hideSkeleton();
+            document.getElementById("loading").style.display = "none";
+            document.getElementById("analyseBtn").disabled = false;
+            renderResult(d);
+          });
+        return;
+      }
       renderResult(d);
     })
-    .catch(function(e) {
-      clearTimeout(skeletonTimer);
-      hideSkeleton();
-      document.getElementById("loading").style.display = "none";
-      document.getElementById("analyseBtn").disabled = false;
-      document.getElementById("errorMsg").textContent = "Error: " + e.message;
-      document.getElementById("errorMsg").style.display = "block";
-    });
 }
 
 function renderResult(d) {
