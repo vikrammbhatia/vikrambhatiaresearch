@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NFO Research Engine by Vikram Bhatia</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='12' fill='%23f97316'/><text x='50' y='68' font-family='Arial' font-weight='bold' font-size='42' text-anchor='middle' fill='white'>VB</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -33,7 +32,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 
 .header { margin-bottom: 2.5rem; display: flex; align-items: flex-start; justify-content: space-between; }
 .header-left h1 { font-size: 22px; font-weight: 600; color: var(--orange); letter-spacing: -0.3px; margin-bottom: 2px; }
-.header-left .byline { font-size: 12px; color: var(--orange); margin-bottom: 3px; }
+.header-left .byline { font-size: 12px; color: var(--text3); margin-bottom: 3px; }
 .header-left .subtitle { font-size: 13px; color: var(--text2); }
 
 .search-wrap { margin-bottom: 2rem; }
@@ -111,6 +110,40 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 
 .disclaimer { font-size: 11px; color: var(--text3); line-height: 1.7; margin-top: 1.5rem; padding: 12px 16px; background: var(--bg2); border-radius: 8px; border: 1px solid var(--border); }
 
+/* Hero score */
+.hero-score-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 2rem; }
+.hero-score-left { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 120px; }
+.hero-score-number { font-size: 64px; font-weight: 700; font-family: 'DM Mono', monospace; line-height: 1; letter-spacing: -2px; }
+.hero-score-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+.hero-score-divider { width: 1px; height: 80px; background: var(--border); }
+.hero-score-right { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+.hero-rec-row { display: flex; align-items: center; gap: 10px; }
+.hero-rec-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
+.hero-score-bar-track { height: 6px; background: var(--bg4); border-radius: 3px; overflow: hidden; }
+.hero-score-bar-fill { height: 100%; border-radius: 3px; transition: width 1s cubic-bezier(0.4,0,0.2,1); }
+.hero-rationale { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+/* Enhanced badges with icons */
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; letter-spacing: 0.02em; }
+.badge-icon { font-size: 14px; }
+.badge-strong-buy { background: #052e16; color: #4ade80; border: 1px solid #166534; }
+.badge-consider { background: #052e16; color: #22c55e; border: 1px solid #15803d; }
+.badge-watchlist { background: #1c1403; color: #fbbf24; border: 1px solid #92400e; }
+.badge-avoid { background: #1a0a0a; color: #f87171; border: 1px solid #991b1b; }
+
+/* Skeleton loading */
+.skeleton { display: none; }
+.skeleton-pulse { background: linear-gradient(90deg, var(--bg2) 25%, var(--bg3) 50%, var(--bg2) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.skel-header { height: 28px; width: 60%; margin-bottom: 12px; }
+.skel-meta { height: 20px; width: 80%; margin-bottom: 8px; }
+.skel-meta-sm { height: 20px; width: 40%; }
+.skel-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 1rem; }
+.skel-card { height: 72px; border-radius: 10px; }
+.skel-bar { height: 6px; width: 100%; margin-top: 8px; }
+.skel-text { height: 13px; margin-bottom: 6px; }
+.skel-text-sm { height: 13px; width: 70%; }
+
 .side-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
 .side-title { font-size: 13px; font-weight: 600; color: var(--orange); text-transform: uppercase; letter-spacing: 0.06em; }
 .refresh-btn { padding: 5px 14px; background: var(--orange); border: none; border-radius: 6px; color: #fff; font-size: 12px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: background 0.2s; }
@@ -152,6 +185,36 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
       <div class="loading-text" id="loadingMsg">AI is analysing this fund — this takes 60-90 seconds...</div>
     </div>
 
+    <!-- Skeleton screen -->
+    <div class="skeleton" id="skeleton">
+      <div class="card" style="margin-bottom:1rem">
+        <div class="skeleton-pulse skel-header"></div>
+        <div class="skeleton-pulse skel-meta"></div>
+        <div class="skeleton-pulse skel-meta-sm"></div>
+      </div>
+      <div class="skel-grid">
+        <div class="skeleton-pulse skel-card"></div>
+        <div class="skeleton-pulse skel-card"></div>
+        <div class="skeleton-pulse skel-card"></div>
+        <div class="skeleton-pulse skel-card"></div>
+        <div class="skeleton-pulse skel-card"></div>
+        <div class="skeleton-pulse skel-card"></div>
+      </div>
+      <div class="card" style="margin-bottom:1rem">
+        <div class="skeleton-pulse skel-text" style="width:30%"></div>
+        <div class="skeleton-pulse skel-bar"></div>
+        <div class="skeleton-pulse skel-text" style="margin-top:12px"></div>
+        <div class="skeleton-pulse skel-text"></div>
+        <div class="skeleton-pulse skel-text-sm"></div>
+      </div>
+      <div class="card">
+        <div class="skeleton-pulse skel-text" style="width:40%"></div>
+        <div class="skeleton-pulse skel-text"></div>
+        <div class="skeleton-pulse skel-text"></div>
+        <div class="skeleton-pulse skel-text-sm"></div>
+      </div>
+    </div>
+
     <div class="result" id="result">
 
       <div class="fund-header">
@@ -166,21 +229,30 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
         </div>
       </div>
 
+      <!-- Hero score card -->
+      <div class="hero-score-card">
+        <div class="hero-score-left">
+          <div class="hero-score-number" id="mScore">—</div>
+          <div class="hero-score-label">NFO Score / 100</div>
+        </div>
+        <div class="hero-score-divider"></div>
+        <div class="hero-score-right">
+          <div class="hero-rec-row">
+            <span class="hero-rec-label">Recommendation</span>
+            <span class="badge" id="recBadge">—</span>
+          </div>
+          <div class="hero-score-bar-track">
+            <div class="hero-score-bar-fill" id="heroScoreBar" style="width:0%"></div>
+          </div>
+          <div class="hero-rationale" id="heroRationale"></div>
+        </div>
+      </div>
+
       <div class="metrics-grid">
-        <div class="metric-card">
-          <div class="metric-label">NFO score</div>
-          <div class="metric-value" id="mScore">—</div>
-          <div class="metric-sub">out of 100</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Recommendation</div>
-          <div style="margin-top:6px"><span class="badge" id="recBadge">—</span></div>
-          <div class="metric-sub" id="mHorizon"></div>
-        </div>
         <div class="metric-card">
           <div class="metric-label">Confidence</div>
           <div class="metric-value" id="mConfidence">—</div>
-          <div class="metric-sub">model certainty</div>
+          <div class="metric-sub" id="mHorizon">model certainty</div>
         </div>
         <div class="metric-card">
           <div class="metric-label">Risk score</div>
@@ -240,7 +312,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
       </div>
 
       <div class="disclaimer">
-        <strong>Disclaimer:</strong> This analysis is generated by an AI-powered quantitative scoring model and qualitative AI assessment developed by Vikram Bhatia and is provided strictly for informational and educational purposes only. Nothing on this platform constitutes financial advice, investment advice, or a recommendation to buy, sell, or hold any security or mutual fund. All scores, analysis, projections, figures, and recommendations are generated by an AI-powered model using publicly available data and quantitative methodology. They are indicative in nature and should be used as a starting point for research, not as the sole basis for any investment decision. Past category performance is not indicative of future returns. Mutual Fund investments are subject to market risks. Read all scheme-related documents carefully before investing. Always consult a SEBI-registered investment advisor before making any investment decision. For accurate scheme details including risk factors, asset allocation, and investment strategy, refer to the Scheme Information Document (SID) available on the relevant AMC's website. The creators, operators, and contributors of this platform accept no liability whatsoever for any financial loss, damage, or adverse outcome arising directly or indirectly from use of this tool.
+        This analysis is generated by an AI powered quantitative scoring model and qualitative AI assessment. It is not financial advice. Always consult a SEBI-registered investment advisor before investing. Past category performance does not guarantee future returns.
       </div>
 
     </div>
@@ -259,7 +331,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 
 <script>
   // *** REPLACE THIS WITH YOUR APPS SCRIPT WEB APP URL ***
-  const SCRIPT_URL = "https://nfo-proxy.vikrammbhatia.workers.dev";
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzSHZIzZkUu07PL9QA9xfFBpA5OVuL7A0Q5i78zMYLe_9PJAOaIMvbmpIcwd48s6bE/exec";
 
 function getBadgeClass(rec) {
   if (!rec) return "badge-watchlist";
@@ -270,11 +342,22 @@ function getBadgeClass(rec) {
   return "badge-avoid";
 }
 
-function getScoreColor(score, rec) {
-  if (rec && rec.toLowerCase().includes("avoid")) return "#ef4444";
-  if (rec && rec.toLowerCase().includes("watchlist")) return "#f59e0b";
-  if (rec && rec.toLowerCase().includes("consider")) return "#22c55e";
-  if (rec && rec.toLowerCase().includes("strong buy")) return "#22c55e";
+function getBadgeIcon(rec) {
+  if (!rec) return "⏸";
+  const r = rec.toLowerCase();
+  if (r.includes("strong buy")) return "★";
+  if (r.includes("consider")) return "✓";
+  if (r.includes("watchlist")) return "⚠";
+  return "✕";
+}
+
+function setBadge(el, rec) {
+  if (!el) return;
+  el.className = "badge " + getBadgeClass(rec);
+  el.innerHTML = '<span class="badge-icon">' + getBadgeIcon(rec) + '</span>' + rec;
+}
+
+function getScoreColor(score) {
   const s = parseFloat(score);
   if (s >= 65) return "#22c55e";
   if (s >= 50) return "#f59e0b";
@@ -290,8 +373,14 @@ function analyse() {
   if (!fundName) return;
   document.getElementById("errorMsg").style.display = "none";
   document.getElementById("result").style.display = "none";
+  document.getElementById("skeleton").style.display = "none";
   document.getElementById("loading").style.display = "block";
   document.getElementById("analyseBtn").disabled = true;
+  // Show skeleton after 3s while still loading
+  var skeletonTimer = setTimeout(function() {
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("skeleton").style.display = "block";
+  }, 3000);
 
   const msgs = [
     "Fetching live market data...",
@@ -309,21 +398,26 @@ function analyse() {
   fetch(SCRIPT_URL + "?action=analyse&fund=" + encodeURIComponent(fundName))
     .then(function(response) { return response.text(); })
     .then(function(text) {
-      console.log("RAW RESPONSE:", text.substring(0, 500));
+      // Apps Script may redirect — text will be the final HTML or JSON
+      // Strip any HTML wrapper if present and extract JSON
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (!jsonMatch) throw new Error("Invalid response from server");
       return JSON.parse(jsonMatch[0]);
     })
     .then(function(d) {
       clearInterval(interval);
+      clearTimeout(skeletonTimer);
       document.getElementById("loading").style.display = "none";
+      document.getElementById("skeleton").style.display = "none";
       document.getElementById("analyseBtn").disabled = false;
       if (!d.success) throw new Error(d.error || "Analysis failed");
       renderResult(d);
     })
     .catch(function(e) {
       clearInterval(interval);
+      clearTimeout(skeletonTimer);
       document.getElementById("loading").style.display = "none";
+      document.getElementById("skeleton").style.display = "none";
       document.getElementById("analyseBtn").disabled = false;
       document.getElementById("errorMsg").textContent = "Error: " + e.message;
       document.getElementById("errorMsg").style.display = "block";
@@ -370,7 +464,20 @@ function renderResult(d) {
   const minVal = d.minimumInvestment ? String(d.minimumInvestment).replace(/[₹,]/g,"").trim() : "";
   document.getElementById("minInvestment").textContent = minVal ? "₹" + Number(minVal).toLocaleString("en-IN") : "—";
 
-  document.getElementById("mScore").textContent = parseFloat(d.finalScore || 0).toFixed(1);
+  const score = parseFloat(d.finalScore || 0);
+  const rec = d.recommendation || "Watchlist";
+
+  // Hero score
+  const heroScoreEl = document.getElementById("mScore");
+  heroScoreEl.textContent = score.toFixed(1);
+  heroScoreEl.style.color = getScoreColor(score, rec);
+  document.getElementById("heroScoreBar").style.width = Math.min(100, score) + "%";
+  document.getElementById("heroScoreBar").style.background = getScoreColor(score, rec);
+  document.getElementById("heroRationale").textContent = d.analystRationale || "Analysis complete.";
+
+  setBadge(document.getElementById("recBadge"), rec);
+  setBadge(document.getElementById("recBadge2"), rec);
+
   document.getElementById("mConfidence").textContent = fmt(d.confidence);
   document.getElementById("mRisk").textContent = fmt(d.riskScore);
   document.getElementById("mReturn").textContent = fmt(d.expectedReturn);
@@ -378,13 +485,6 @@ function renderResult(d) {
   const horizonVal = d.investmentHorizon && !d.investmentHorizon.toLowerCase().includes("avoid") ? d.investmentHorizon : "";
   document.getElementById("mHorizon").textContent = horizonVal;
 
-  const rec = d.recommendation || "Watchlist";
-  document.getElementById("recBadge").textContent = rec;
-  document.getElementById("recBadge").className = "badge " + getBadgeClass(rec);
-  document.getElementById("recBadge2").textContent = rec;
-  document.getElementById("recBadge2").className = "badge " + getBadgeClass(rec);
-
-  const score = parseFloat(d.finalScore || 0);
   document.getElementById("scoreLabel").textContent = score.toFixed(1) + " / 100";
   document.getElementById("scoreBar").style.width = Math.min(100, score) + "%";
   document.getElementById("scoreBar").style.background = getScoreColor(score, rec);
