@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NFO Research Engine by Vikram Bhatia</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='12' fill='%23f97316'/><text x='50' y='68' font-family='Arial' font-weight='bold' font-size='42' text-anchor='middle' fill='white'>VB</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,11 +31,13 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .side-col::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 @media (max-width: 900px) { .side-col { display: none; } .main-col { padding: 1.5rem; } }
 
+/* Header */
 .header { margin-bottom: 2.5rem; display: flex; align-items: flex-start; justify-content: space-between; }
 .header-left h1 { font-size: 22px; font-weight: 600; color: var(--orange); letter-spacing: -0.3px; margin-bottom: 2px; }
-.header-left .byline { font-size: 12px; color: var(--text3); margin-bottom: 3px; }
+.header-left .byline { font-size: 12px; color: var(--orange); margin-bottom: 3px; }
 .header-left .subtitle { font-size: 13px; color: var(--text2); }
 
+/* Search */
 .search-wrap { margin-bottom: 2rem; }
 .search-row { display: flex; gap: 10px; }
 .search-row input { flex: 1; padding: 11px 16px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; font-family: 'DM Sans', sans-serif; background: var(--bg3); color: var(--text); outline: none; transition: border-color 0.2s; }
@@ -44,15 +47,44 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .search-row button:hover { background: var(--orange-dim); }
 .search-row button:disabled { background: var(--bg4); color: var(--text3); cursor: not-allowed; }
 
+/* Error */
 .error { background: #1a0a0a; color: #f87171; border: 1px solid #3a1a1a; border-radius: 8px; padding: 12px 16px; font-size: 13px; margin-bottom: 1rem; display: none; }
 
+/* Spinner loading */
 .loading { display: none; padding: 3rem 0; text-align: center; }
 .spinner { width: 32px; height: 32px; border: 2px solid var(--border); border-top-color: var(--orange); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .loading-text { font-size: 13px; color: var(--text2); }
 
+/* Skeleton + progress panel */
+.skeleton { display: none; }
+.skeleton-pulse { background: linear-gradient(90deg, var(--bg2) 25%, var(--bg3) 50%, var(--bg2) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.skel-header { height: 28px; width: 60%; margin-bottom: 12px; }
+.skel-meta { height: 20px; width: 80%; margin-bottom: 8px; }
+.skel-meta-sm { height: 20px; width: 40%; }
+.skel-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 1rem; }
+.skel-card { height: 72px; border-radius: 10px; }
+.skel-bar { height: 6px; width: 100%; margin-top: 8px; }
+.skel-text { height: 13px; margin-bottom: 6px; }
+.skel-text-sm { height: 13px; width: 70%; }
+.skel-hero { height: 100px; border-radius: 12px; margin-bottom: 1rem; }
+
+/* Progress feed */
+.progress-panel { width: 240px; min-width: 240px; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; align-self: flex-start; position: sticky; top: 2rem; }
+.progress-title { font-size: 11px; font-weight: 600; color: var(--orange); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px; }
+.progress-step { display: flex; align-items: flex-start; gap: 10px; font-size: 12px; color: var(--text3); line-height: 1.5; padding: 4px 0; transition: color 0.4s; }
+.progress-step.active { color: var(--text); }
+.progress-step.done { color: var(--green); }
+.progress-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); margin-top: 4px; flex-shrink: 0; transition: background 0.4s, box-shadow 0.4s; }
+.progress-step.active .progress-dot { background: var(--orange); box-shadow: 0 0 8px var(--orange); animation: pulse-dot 1s infinite; }
+.progress-step.done .progress-dot { background: var(--green); box-shadow: none; }
+@keyframes pulse-dot { 0%,100% { transform: scale(1); } 50% { transform: scale(1.4); } }
+
+/* Result */
 .result { display: none; }
 
+/* Fund header */
 .fund-header { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
 .fund-name { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 10px; line-height: 1.3; }
 .fund-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
@@ -61,17 +93,33 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .dates-row { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: var(--text2); padding-top: 10px; border-top: 1px solid var(--border); }
 .dates-row span strong { color: var(--text); font-weight: 500; }
 
-.metrics-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 1rem; }
-@media (max-width: 1100px) { .metrics-grid { grid-template-columns: repeat(3, 1fr); } }
+/* Hero score card */
+.hero-score-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 2rem; }
+.hero-score-left { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 110px; }
+.hero-score-number { font-size: 60px; font-weight: 700; font-family: 'DM Mono', monospace; line-height: 1; letter-spacing: -2px; }
+.hero-score-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 6px; }
+.hero-score-divider { width: 1px; height: 80px; background: var(--border); flex-shrink: 0; }
+.hero-score-right { flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.hero-rec-row { display: flex; align-items: center; gap: 10px; }
+.hero-rec-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
+.hero-score-bar-track { height: 6px; background: var(--bg4); border-radius: 3px; overflow: hidden; }
+.hero-score-bar-fill { height: 100%; border-radius: 3px; transition: width 1s cubic-bezier(0.4,0,0.2,1); }
+.hero-rationale { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+/* Metrics */
+.metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 1rem; }
+@media (max-width: 1100px) { .metrics-grid { grid-template-columns: repeat(2, 1fr); } }
 .metric-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
 .metric-label { font-size: 11px; color: var(--text3); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
 .metric-value { font-size: 20px; font-weight: 600; color: var(--text); font-family: 'DM Mono', monospace; line-height: 1; }
 .metric-sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
 
+/* Recommendation card */
 .rec-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
 .rec-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
 .rec-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
-.badge { display: inline-block; padding: 5px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; letter-spacing: 0.02em; }
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; letter-spacing: 0.02em; }
+.badge-icon { font-size: 13px; }
 .badge-strong-buy { background: #052e16; color: #4ade80; border: 1px solid #166534; }
 .badge-consider { background: #052e16; color: #22c55e; border: 1px solid #15803d; }
 .badge-watchlist { background: #1c1403; color: #fbbf24; border: 1px solid #92400e; }
@@ -82,74 +130,48 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .score-bar-fill { height: 100%; border-radius: 3px; transition: width 0.8s ease; }
 .rationale-text { font-size: 13px; color: var(--text2); line-height: 1.7; }
 
+/* Cards */
 .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
 .card-title { font-size: 11px; font-weight: 600; color: var(--orange); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px; }
 
+/* Score breakdown */
 .sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .sub-name { font-size: 12px; color: var(--text2); margin-bottom: 5px; }
 .sub-bar-track { height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; margin-bottom: 3px; }
 .sub-bar-fill { height: 100%; border-radius: 2px; }
 .sub-val { font-size: 12px; font-family: 'DM Mono', monospace; }
 
+/* Points */
 .points-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
 .points-list li { font-size: 13px; color: var(--text2); line-height: 1.6; padding-left: 20px; position: relative; }
 .points-list li::before { position: absolute; left: 0; font-size: 13px; }
 .positives li::before { content: "✓"; color: var(--green); font-weight: 600; }
 .risks li::before { content: "!"; color: var(--red); font-weight: 600; }
 
+/* Projections */
 .proj-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .proj-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; }
 .proj-period { font-size: 11px; color: var(--text3); margin-bottom: 6px; }
 .proj-nav { font-size: 16px; font-weight: 600; color: var(--text); font-family: 'DM Mono', monospace; }
 
+/* Links */
 .links-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
 .link-btn { display: inline-block; padding: 6px 14px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; color: var(--orange); text-decoration: none; background: var(--bg3); transition: border-color 0.2s; font-family: 'DM Sans', sans-serif; }
 .link-btn:hover { border-color: var(--orange); }
 
+/* Flags */
 .flags-box { background: #1c1403; border: 1px solid #92400e; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #fbbf24; margin-bottom: 1rem; display: none; }
 
+/* Disclaimer */
 .disclaimer { font-size: 11px; color: var(--text3); line-height: 1.7; margin-top: 1.5rem; padding: 12px 16px; background: var(--bg2); border-radius: 8px; border: 1px solid var(--border); }
 
-/* Hero score */
-.hero-score-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 2rem; }
-.hero-score-left { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 120px; }
-.hero-score-number { font-size: 64px; font-weight: 700; font-family: 'DM Mono', monospace; line-height: 1; letter-spacing: -2px; }
-.hero-score-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
-.hero-score-divider { width: 1px; height: 80px; background: var(--border); }
-.hero-score-right { flex: 1; display: flex; flex-direction: column; gap: 10px; }
-.hero-rec-row { display: flex; align-items: center; gap: 10px; }
-.hero-rec-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
-.hero-score-bar-track { height: 6px; background: var(--bg4); border-radius: 3px; overflow: hidden; }
-.hero-score-bar-fill { height: 100%; border-radius: 3px; transition: width 1s cubic-bezier(0.4,0,0.2,1); }
-.hero-rationale { font-size: 13px; color: var(--text2); line-height: 1.6; }
-
-/* Enhanced badges with icons */
-.badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; letter-spacing: 0.02em; }
-.badge-icon { font-size: 14px; }
-.badge-strong-buy { background: #052e16; color: #4ade80; border: 1px solid #166534; }
-.badge-consider { background: #052e16; color: #22c55e; border: 1px solid #15803d; }
-.badge-watchlist { background: #1c1403; color: #fbbf24; border: 1px solid #92400e; }
-.badge-avoid { background: #1a0a0a; color: #f87171; border: 1px solid #991b1b; }
-
-/* Skeleton loading */
-.skeleton { display: none; }
-.skeleton-pulse { background: linear-gradient(90deg, var(--bg2) 25%, var(--bg3) 50%, var(--bg2) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
-@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-.skel-header { height: 28px; width: 60%; margin-bottom: 12px; }
-.skel-meta { height: 20px; width: 80%; margin-bottom: 8px; }
-.skel-meta-sm { height: 20px; width: 40%; }
-.skel-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 1rem; }
-.skel-card { height: 72px; border-radius: 10px; }
-.skel-bar { height: 6px; width: 100%; margin-top: 8px; }
-.skel-text { height: 13px; margin-bottom: 6px; }
-.skel-text-sm { height: 13px; width: 70%; }
-
+/* Side panel */
 .side-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
 .side-title { font-size: 13px; font-weight: 600; color: var(--orange); text-transform: uppercase; letter-spacing: 0.06em; }
 .refresh-btn { padding: 5px 14px; background: var(--orange); border: none; border-radius: 6px; color: #fff; font-size: 12px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: background 0.2s; }
 .refresh-btn:hover { background: var(--orange-dim); }
 .refresh-btn:disabled { background: var(--bg4); color: var(--text3); cursor: not-allowed; }
-.nfo-item { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; transition: border-color 0.2s; }
+.nfo-item { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; transition: border-color 0.2s; cursor: pointer; }
 .nfo-item:hover { border-color: var(--orange); }
 .nfo-item-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 6px; line-height: 1.4; }
 .nfo-item-cat { display: inline-block; background: var(--bg4); border-radius: 4px; padding: 2px 8px; font-size: 11px; color: var(--text2); margin-bottom: 6px; }
@@ -180,41 +202,45 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 
     <div class="error" id="errorMsg"></div>
 
+    <!-- Spinner (first 3s) -->
     <div class="loading" id="loading">
       <div class="spinner"></div>
-      <div class="loading-text" id="loadingMsg">AI is analysing this fund — this takes 60-90 seconds...</div>
+      <div class="loading-text" id="loadingMsg">Looking up fund details...</div>
     </div>
 
-    <!-- Skeleton screen -->
+    <!-- Skeleton + progress feed (after 3s) -->
     <div class="skeleton" id="skeleton">
-      <div class="card" style="margin-bottom:1rem">
-        <div class="skeleton-pulse skel-header"></div>
-        <div class="skeleton-pulse skel-meta"></div>
-        <div class="skeleton-pulse skel-meta-sm"></div>
-      </div>
-      <div class="skel-grid">
-        <div class="skeleton-pulse skel-card"></div>
-        <div class="skeleton-pulse skel-card"></div>
-        <div class="skeleton-pulse skel-card"></div>
-        <div class="skeleton-pulse skel-card"></div>
-        <div class="skeleton-pulse skel-card"></div>
-        <div class="skeleton-pulse skel-card"></div>
-      </div>
-      <div class="card" style="margin-bottom:1rem">
-        <div class="skeleton-pulse skel-text" style="width:30%"></div>
-        <div class="skeleton-pulse skel-bar"></div>
-        <div class="skeleton-pulse skel-text" style="margin-top:12px"></div>
-        <div class="skeleton-pulse skel-text"></div>
-        <div class="skeleton-pulse skel-text-sm"></div>
-      </div>
-      <div class="card">
-        <div class="skeleton-pulse skel-text" style="width:40%"></div>
-        <div class="skeleton-pulse skel-text"></div>
-        <div class="skeleton-pulse skel-text"></div>
-        <div class="skeleton-pulse skel-text-sm"></div>
+      <div style="display:flex;gap:1.5rem;align-items:flex-start">
+        <div style="flex:1;min-width:0">
+          <div class="card" style="margin-bottom:1rem">
+            <div class="skeleton-pulse skel-header"></div>
+            <div class="skeleton-pulse skel-meta"></div>
+            <div class="skeleton-pulse skel-meta-sm"></div>
+          </div>
+          <div class="skeleton-pulse skel-hero"></div>
+          <div class="skel-grid">
+            <div class="skeleton-pulse skel-card"></div>
+            <div class="skeleton-pulse skel-card"></div>
+            <div class="skeleton-pulse skel-card"></div>
+            <div class="skeleton-pulse skel-card"></div>
+            <div class="skeleton-pulse skel-card"></div>
+          </div>
+          <div class="card" style="margin-top:1rem">
+            <div class="skeleton-pulse skel-text" style="width:30%"></div>
+            <div class="skeleton-pulse skel-bar"></div>
+            <div class="skeleton-pulse skel-text" style="margin-top:12px"></div>
+            <div class="skeleton-pulse skel-text"></div>
+            <div class="skeleton-pulse skel-text-sm"></div>
+          </div>
+        </div>
+        <div class="progress-panel">
+          <div class="progress-title">Engine Activity</div>
+          <div id="progressFeed"></div>
+        </div>
       </div>
     </div>
 
+    <!-- Result -->
     <div class="result" id="result">
 
       <div class="fund-header">
@@ -229,7 +255,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
         </div>
       </div>
 
-      <!-- Hero score card -->
+      <!-- Hero score -->
       <div class="hero-score-card">
         <div class="hero-score-left">
           <div class="hero-score-number" id="mScore">—</div>
@@ -312,7 +338,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
       </div>
 
       <div class="disclaimer">
-        This analysis is generated by an AI powered quantitative scoring model and qualitative AI assessment. It is not financial advice. Always consult a SEBI-registered investment advisor before investing. Past category performance does not guarantee future returns.
+        <strong>Disclaimer:</strong> This analysis is generated by an AI-powered quantitative scoring model and qualitative AI assessment developed by Vikram Bhatia and is provided strictly for informational and educational purposes only. Nothing on this platform constitutes financial advice, investment advice, or a recommendation to buy, sell, or hold any security or mutual fund. All scores, analysis, projections, figures, and recommendations are generated by an AI-powered model using publicly available data and quantitative methodology. They are indicative in nature and should be used as a starting point for research, not as the sole basis for any investment decision. Past category performance is not indicative of future returns. Mutual Fund investments are subject to market risks. Read all scheme-related documents carefully before investing. Always consult a SEBI-registered investment advisor before making any investment decision. For accurate scheme details including risk factors, asset allocation, and investment strategy, refer to the Scheme Information Document (SID) available on the relevant AMC's website. The creators, operators, and contributors of this platform accept no liability whatsoever for any financial loss, damage, or adverse outcome arising directly or indirectly from use of this tool.
       </div>
 
     </div>
@@ -330,8 +356,19 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 </div>
 
 <script>
-  // *** REPLACE THIS WITH YOUR APPS SCRIPT WEB APP URL ***
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzSHZIzZkUu07PL9QA9xfFBpA5OVuL7A0Q5i78zMYLe_9PJAOaIMvbmpIcwd48s6bE/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzSHZIzZkUu07PL9QA9xfFBpA5OVuL7A0Q5i78zMYLe_9PJAOaIMvbmpIcwd48s6bE/exec";
+
+const PROGRESS_STEPS = [
+  "Fetching live fund data from AMFI & mfapi...",
+  "Running quantitative sub-score models...",
+  "Calculating AMC track record & expense efficiency...",
+  "Analysing category attractiveness & theme outlook...",
+  "Running Claude AI qualitative assessment...",
+  "Fetching subscription dates from Sharekhan...",
+  "Running external verification checks...",
+  "Computing final composite score...",
+  "Compiling recommendation & NAV projections..."
+];
 
 function getBadgeClass(rec) {
   if (!rec) return "badge-watchlist";
@@ -357,7 +394,11 @@ function setBadge(el, rec) {
   el.innerHTML = '<span class="badge-icon">' + getBadgeIcon(rec) + '</span>' + rec;
 }
 
-function getScoreColor(score) {
+function getScoreColor(score, rec) {
+  if (rec && rec.toLowerCase().includes("avoid")) return "#ef4444";
+  if (rec && rec.toLowerCase().includes("watchlist")) return "#f59e0b";
+  if (rec && rec.toLowerCase().includes("consider")) return "#22c55e";
+  if (rec && rec.toLowerCase().includes("strong buy")) return "#22c55e";
   const s = parseFloat(score);
   if (s >= 65) return "#22c55e";
   if (s >= 50) return "#f59e0b";
@@ -368,56 +409,72 @@ function fmt(val) {
   return val !== null && val !== undefined && String(val).trim() !== "" ? val : "—";
 }
 
+function showSkeleton() {
+  document.getElementById("loading").style.display = "none";
+  document.getElementById("skeleton").style.display = "block";
+
+  const feed = document.getElementById("progressFeed");
+  feed.innerHTML = "";
+  PROGRESS_STEPS.forEach(function(msg, idx) {
+    const div = document.createElement("div");
+    div.className = "progress-step";
+    div.id = "pstep-" + idx;
+    div.innerHTML = '<div class="progress-dot"></div><span>' + msg + '</span>';
+    feed.appendChild(div);
+  });
+
+  var stepIdx = 0;
+  var stepTimer = setInterval(function() {
+    if (stepIdx > 0) {
+      const prev = document.getElementById("pstep-" + (stepIdx - 1));
+      if (prev) prev.className = "progress-step done";
+    }
+    const curr = document.getElementById("pstep-" + stepIdx);
+    if (curr) curr.className = "progress-step active";
+    stepIdx++;
+    if (stepIdx >= PROGRESS_STEPS.length) clearInterval(stepTimer);
+  }, 9000);
+
+  window._stepTimer = stepTimer;
+}
+
+function hideSkeleton() {
+  document.getElementById("skeleton").style.display = "none";
+  if (window._stepTimer) clearInterval(window._stepTimer);
+}
+
 function analyse() {
   const fundName = document.getElementById("fundInput").value.trim();
   if (!fundName) return;
+
   document.getElementById("errorMsg").style.display = "none";
   document.getElementById("result").style.display = "none";
-  document.getElementById("skeleton").style.display = "none";
+  hideSkeleton();
   document.getElementById("loading").style.display = "block";
+  document.getElementById("loadingMsg").textContent = "Looking up fund details...";
   document.getElementById("analyseBtn").disabled = true;
-  // Show skeleton after 3s while still loading
-  var skeletonTimer = setTimeout(function() {
-    document.getElementById("loading").style.display = "none";
-    document.getElementById("skeleton").style.display = "block";
-  }, 3000);
 
-  const msgs = [
-    "Fetching live market data...",
-    "Running quantitative scoring model...",
-    "AI is analysing fund quality and market context...",
-    "Running external verification checks...",
-    "Compiling final recommendation..."
-  ];
-  let elapsed = 0;
-  const interval = setInterval(() => {
-    elapsed++;
-    if (elapsed < msgs.length) document.getElementById("loadingMsg").textContent = msgs[elapsed];
-  }, 18000);
+  var skeletonTimer = setTimeout(showSkeleton, 3000);
 
   fetch(SCRIPT_URL + "?action=analyse&fund=" + encodeURIComponent(fundName))
     .then(function(response) { return response.text(); })
     .then(function(text) {
-      // Apps Script may redirect — text will be the final HTML or JSON
-      // Strip any HTML wrapper if present and extract JSON
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (!jsonMatch) throw new Error("Invalid response from server");
       return JSON.parse(jsonMatch[0]);
     })
     .then(function(d) {
-      clearInterval(interval);
       clearTimeout(skeletonTimer);
+      hideSkeleton();
       document.getElementById("loading").style.display = "none";
-      document.getElementById("skeleton").style.display = "none";
       document.getElementById("analyseBtn").disabled = false;
       if (!d.success) throw new Error(d.error || "Analysis failed");
       renderResult(d);
     })
     .catch(function(e) {
-      clearInterval(interval);
       clearTimeout(skeletonTimer);
+      hideSkeleton();
       document.getElementById("loading").style.display = "none";
-      document.getElementById("skeleton").style.display = "none";
       document.getElementById("analyseBtn").disabled = false;
       document.getElementById("errorMsg").textContent = "Error: " + e.message;
       document.getElementById("errorMsg").style.display = "block";
@@ -466,13 +523,14 @@ function renderResult(d) {
 
   const score = parseFloat(d.finalScore || 0);
   const rec = d.recommendation || "Watchlist";
+  const scoreColor = getScoreColor(score, rec);
 
   // Hero score
-  const heroScoreEl = document.getElementById("mScore");
-  heroScoreEl.textContent = score.toFixed(1);
-  heroScoreEl.style.color = getScoreColor(score, rec);
+  const heroEl = document.getElementById("mScore");
+  heroEl.textContent = score.toFixed(1);
+  heroEl.style.color = scoreColor;
   document.getElementById("heroScoreBar").style.width = Math.min(100, score) + "%";
-  document.getElementById("heroScoreBar").style.background = getScoreColor(score, rec);
+  document.getElementById("heroScoreBar").style.background = scoreColor;
   document.getElementById("heroRationale").textContent = d.analystRationale || "Analysis complete.";
 
   setBadge(document.getElementById("recBadge"), rec);
@@ -483,11 +541,11 @@ function renderResult(d) {
   document.getElementById("mReturn").textContent = fmt(d.expectedReturn);
   document.getElementById("mAmount").textContent = d.suggestedAmount && d.suggestedAmount !== "0" ? "₹" + Number(d.suggestedAmount).toLocaleString("en-IN") : "₹0";
   const horizonVal = d.investmentHorizon && !d.investmentHorizon.toLowerCase().includes("avoid") ? d.investmentHorizon : "";
-  document.getElementById("mHorizon").textContent = horizonVal;
+  document.getElementById("mHorizon").textContent = horizonVal || "model certainty";
 
   document.getElementById("scoreLabel").textContent = score.toFixed(1) + " / 100";
   document.getElementById("scoreBar").style.width = Math.min(100, score) + "%";
-  document.getElementById("scoreBar").style.background = getScoreColor(score, rec);
+  document.getElementById("scoreBar").style.background = scoreColor;
   document.getElementById("rationale").textContent = d.analystRationale || "Analysis complete.";
 
   const flagsBox = document.getElementById("flagsBox");
@@ -581,6 +639,10 @@ function loadNfoList() {
         const cleanName = nfo.name.replace(/ - Direct Plan - Growth| - Direct - Growth| - Direct Plan/gi, "").trim();
         const div = document.createElement("div");
         div.className = "nfo-item";
+        div.onclick = function() {
+          document.getElementById("fundInput").value = cleanName;
+          document.getElementById("fundInput").focus();
+        };
         div.innerHTML = '<div class="nfo-item-name">' + cleanName + '</div>' +
           '<div class="nfo-item-cat">' + (nfo.category || "—") + '</div>' +
           '<div class="nfo-item-dates">' +
