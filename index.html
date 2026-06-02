@@ -70,16 +70,14 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .skel-text-sm { height: 13px; width: 70%; }
 .skel-hero { height: 100px; border-radius: 12px; margin-bottom: 1rem; }
 
-/* Progress feed */
-.progress-panel { width: 240px; min-width: 240px; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; align-self: flex-start; position: sticky; top: 2rem; }
-.progress-title { font-size: 11px; font-weight: 600; color: var(--orange); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px; }
-.progress-step { display: flex; align-items: flex-start; gap: 10px; font-size: 12px; color: var(--text3); line-height: 1.5; padding: 4px 0; transition: color 0.4s; }
-.progress-step.active { color: var(--text); }
-.progress-step.done { color: var(--green); }
-.progress-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); margin-top: 4px; flex-shrink: 0; transition: background 0.4s, box-shadow 0.4s; }
-.progress-step.active .progress-dot { background: var(--orange); box-shadow: 0 0 8px var(--orange); animation: pulse-dot 1s infinite; }
-.progress-step.done .progress-dot { background: var(--green); box-shadow: none; }
-@keyframes pulse-dot { 0%,100% { transform: scale(1); } 50% { transform: scale(1.4); } }
+/* Progress message */
+.progress-msg-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem; padding: 10px 16px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; }
+.progress-msg-step { font-size: 13px; color: var(--orange); flex: 1; }
+.progress-msg-dots { display: flex; gap: 4px; align-items: center; }
+.progress-msg-dots span { width: 5px; height: 5px; border-radius: 50%; background: var(--orange); animation: dot-bounce 1.2s infinite; }
+.progress-msg-dots span:nth-child(2) { animation-delay: 0.2s; }
+.progress-msg-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dot-bounce { 0%,80%,100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
 
 /* Result */
 .result { display: none; }
@@ -208,35 +206,31 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
       <div class="loading-text" id="loadingMsg">Looking up fund details...</div>
     </div>
 
-    <!-- Skeleton + progress feed (after 3s) -->
+    <!-- Skeleton + progress message (after 3s) -->
     <div class="skeleton" id="skeleton">
-      <div style="display:flex;gap:1.5rem;align-items:flex-start">
-        <div style="flex:1;min-width:0">
-          <div class="card" style="margin-bottom:1rem">
-            <div class="skeleton-pulse skel-header"></div>
-            <div class="skeleton-pulse skel-meta"></div>
-            <div class="skeleton-pulse skel-meta-sm"></div>
-          </div>
-          <div class="skeleton-pulse skel-hero"></div>
-          <div class="skel-grid">
-            <div class="skeleton-pulse skel-card"></div>
-            <div class="skeleton-pulse skel-card"></div>
-            <div class="skeleton-pulse skel-card"></div>
-            <div class="skeleton-pulse skel-card"></div>
-            <div class="skeleton-pulse skel-card"></div>
-          </div>
-          <div class="card" style="margin-top:1rem">
-            <div class="skeleton-pulse skel-text" style="width:30%"></div>
-            <div class="skeleton-pulse skel-bar"></div>
-            <div class="skeleton-pulse skel-text" style="margin-top:12px"></div>
-            <div class="skeleton-pulse skel-text"></div>
-            <div class="skeleton-pulse skel-text-sm"></div>
-          </div>
-        </div>
-        <div class="progress-panel">
-          <div class="progress-title">Engine Activity</div>
-          <div id="progressFeed"></div>
-        </div>
+      <div class="progress-msg-wrap">
+        <div class="progress-msg-step" id="progressMsg"></div>
+        <div class="progress-msg-dots"><span></span><span></span><span></span></div>
+      </div>
+      <div class="card" style="margin-bottom:1rem">
+        <div class="skeleton-pulse skel-header"></div>
+        <div class="skeleton-pulse skel-meta"></div>
+        <div class="skeleton-pulse skel-meta-sm"></div>
+      </div>
+      <div class="skeleton-pulse skel-hero"></div>
+      <div class="skel-grid">
+        <div class="skeleton-pulse skel-card"></div>
+        <div class="skeleton-pulse skel-card"></div>
+        <div class="skeleton-pulse skel-card"></div>
+        <div class="skeleton-pulse skel-card"></div>
+        <div class="skeleton-pulse skel-card"></div>
+      </div>
+      <div class="card" style="margin-top:1rem">
+        <div class="skeleton-pulse skel-text" style="width:30%"></div>
+        <div class="skeleton-pulse skel-bar"></div>
+        <div class="skeleton-pulse skel-text" style="margin-top:12px"></div>
+        <div class="skeleton-pulse skel-text"></div>
+        <div class="skeleton-pulse skel-text-sm"></div>
       </div>
     </div>
 
@@ -357,8 +351,8 @@ const PROGRESS_STEPS = [
   "Running quantitative sub-score models...",
   "Calculating AMC track record & expense efficiency...",
   "Analysing category attractiveness & theme outlook...",
-  "Running Claude AI qualitative assessment...",
-  "Fetching subscription dates from Sharekhan...",
+  "Running AI qualitative assessment...",
+  "Fetching subscription dates...",
   "Running external verification checks...",
   "Computing final composite score...",
   "Compiling recommendation & NAV projections..."
@@ -407,26 +401,17 @@ function showSkeleton() {
   document.getElementById("loading").style.display = "none";
   document.getElementById("skeleton").style.display = "block";
 
-  const feed = document.getElementById("progressFeed");
-  feed.innerHTML = "";
-  PROGRESS_STEPS.forEach(function(msg, idx) {
-    const div = document.createElement("div");
-    div.className = "progress-step";
-    div.id = "pstep-" + idx;
-    div.innerHTML = '<div class="progress-dot"></div><span>' + msg + '</span>';
-    feed.appendChild(div);
-  });
-
   var stepIdx = 0;
+  const msgEl = document.getElementById("progressMsg");
+  if (msgEl) msgEl.textContent = PROGRESS_STEPS[0];
+
   var stepTimer = setInterval(function() {
-    if (stepIdx > 0) {
-      const prev = document.getElementById("pstep-" + (stepIdx - 1));
-      if (prev) prev.className = "progress-step done";
-    }
-    const curr = document.getElementById("pstep-" + stepIdx);
-    if (curr) curr.className = "progress-step active";
     stepIdx++;
-    if (stepIdx >= PROGRESS_STEPS.length) clearInterval(stepTimer);
+    if (stepIdx < PROGRESS_STEPS.length) {
+      if (msgEl) msgEl.textContent = PROGRESS_STEPS[stepIdx];
+    } else {
+      clearInterval(stepTimer);
+    }
   }, 9000);
 
   window._stepTimer = stepTimer;
