@@ -297,17 +297,11 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
         </div>
       </div>
 
-      <div class="rec-card">
-        <div class="rec-top">
-          <span class="rec-label">Recommendation</span>
-          <span class="badge" id="recBadge2">—</span>
-        </div>
-        <div class="score-bar-wrap">
-          <div class="score-bar-label"><span>Composite score</span><span id="scoreLabel">—</span></div>
-          <div class="score-bar-track"><div class="score-bar-fill" id="scoreBar" style="width:0%"></div></div>
-        </div>
-        <div class="rationale-text" id="rationale"></div>
-      </div>
+      <!-- hidden elements to avoid JS errors -->
+      <span id="recBadge2" style="display:none"></span>
+      <span id="scoreLabel" style="display:none"></span>
+      <div id="scoreBar" style="display:none"></div>
+      <div id="rationale" style="display:none"></div>
 
       <div id="flagsBox" class="flags-box"></div>
 
@@ -482,7 +476,6 @@ function analyse() {
 }
 
 function renderResult(d) {
-  console.log("renderResult called, isNfoClosed:", d.isNfoClosed, "fundName:", d.fundName);
   if (d.isNfoClosed) {
     document.getElementById("result").style.display = "block";
     const resultDiv = document.getElementById("result");
