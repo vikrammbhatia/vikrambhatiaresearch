@@ -482,6 +482,7 @@ function analyse() {
 }
 
 function renderResult(d) {
+  console.log("renderResult called, isNfoClosed:", d.isNfoClosed, "fundName:", d.fundName);
   if (d.isNfoClosed) {
     document.getElementById("result").style.display = "block";
     const resultDiv = document.getElementById("result");
