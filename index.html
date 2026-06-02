@@ -435,7 +435,7 @@ function analyse() {
 
   var skeletonTimer = setTimeout(showSkeleton, 3000);
 
-  fetch(SCRIPT_URL + "?action=analyse&fund=" + encodeURIComponent(fundName))
+  fetch(SCRIPT_URL + "?action=analyse&fund=" + encodeURIComponent(fundName) + "&v=" + Date.now())
     .then(function(response) { return response.text(); })
     .then(function(text) {
       const jsonMatch = text.match(/\{[\s\S]*\}/);
