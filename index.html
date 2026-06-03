@@ -141,6 +141,8 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .sub-bar-track { height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; margin-bottom: 3px; }
 .sub-bar-fill { height: 100%; border-radius: 2px; }
 .sub-val { font-size: 12px; font-family: 'DM Mono', monospace; }
+.info-btn { font-size: 11px; color: var(--text3); cursor: pointer; vertical-align: middle; margin-left: 3px; transition: color 0.2s; }
+.info-btn:hover { color: var(--orange); }
 
 /* Points */
 .points-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
@@ -557,18 +559,18 @@ function renderResult(d) {
   const subGrid = document.getElementById("subGrid");
   subGrid.innerHTML = "";
   [
-    { name: "AMC track record", val: d.amcScore },
-    { name: "Fund structure", val: d.structureScore },
-    { name: "Category attractiveness", val: d.categoryScore },
-    { name: "Expense efficiency", val: d.expenseScore },
-    { name: "Theme outlook", val: d.themeScore },
-    { name: "Expert sentiment", val: d.sentimentScore },
-    { name: "Uniqueness", val: d.uniquenessScore },
-    { name: "Risk (lower=better)", val: 100 - parseFloat(d.riskScore || 50) }
+    { name: "AMC track record", val: d.amcScore, tip: "Measures the fund house's reputation, AUM size, fund manager experience and history of past NFO performance." },
+    { name: "Fund structure", val: d.structureScore, tip: "Evaluates the scheme type, SEBI category fit, benchmark appropriateness, expense ratio and exit load structure." },
+    { name: "Category attractiveness", val: d.categoryScore, tip: "Assesses how well the fund's category has performed historically and its current growth momentum among peers." },
+    { name: "Expense efficiency", val: d.expenseScore, tip: "Compares the direct plan expense ratio against category averages — lower cost funds score higher." },
+    { name: "Theme outlook", val: d.themeScore, tip: "Rates the strength of the macro tailwinds, policy support and market timing for the fund's investment theme." },
+    { name: "Expert sentiment", val: d.sentimentScore, tip: "Reflects distributor confidence, retail momentum and overall market appetite for this fund's category." },
+    { name: "Uniqueness", val: d.uniquenessScore, tip: "Measures how differentiated this fund is — whether it offers something not already available in existing funds." },
+    { name: "Risk (lower=better)", val: 100 - parseFloat(d.riskScore || 50), tip: "Inverted risk score — higher bar means lower risk. Factors in concentration, liquidity and volatility risks." }
   ].forEach(function(s) {
     const v = Math.max(0, Math.min(100, parseFloat(s.val) || 0));
     const col = v >= 65 ? "#22c55e" : v >= 45 ? "#f59e0b" : "#ef4444";
-    subGrid.innerHTML += '<div class="sub-item"><div class="sub-name">' + s.name + '</div><div class="sub-bar-track"><div class="sub-bar-fill" style="width:' + v + '%;background:' + col + '"></div></div><div class="sub-val" style="color:' + col + '">' + Math.round(v) + '</div></div>';
+    subGrid.innerHTML += '<div class="sub-item"><div class="sub-name">' + s.name + ' <span class="info-btn" title="' + s.tip + '">ⓘ</span></div><div class="sub-bar-track"><div class="sub-bar-fill" style="width:' + v + '%;background:' + col + '"></div></div><div class="sub-val" style="color:' + col + '">' + Math.round(v) + '</div></div>';
   });
 
   const positivesList = document.getElementById("positivesList");
