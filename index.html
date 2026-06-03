@@ -137,12 +137,14 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 
 /* Score breakdown */
 .sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.sub-name { font-size: 12px; color: var(--text2); margin-bottom: 5px; }
+.sub-name { font-size: 12px; color: var(--text2); margin-bottom: 5px; position: relative; display: inline-flex; align-items: center; gap: 4px; }
 .sub-bar-track { height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; margin-bottom: 3px; }
 .sub-bar-fill { height: 100%; border-radius: 2px; }
 .sub-val { font-size: 12px; font-family: 'DM Mono', monospace; }
-.info-btn { font-size: 11px; color: var(--text3); cursor: pointer; vertical-align: middle; margin-left: 3px; transition: color 0.2s; }
+.info-btn { font-size: 11px; color: var(--text3); cursor: pointer; transition: color 0.2s; line-height: 1; }
 .info-btn:hover { color: var(--orange); }
+.info-btn:hover .tooltip { display: block; }
+.tooltip { display: none; position: absolute; bottom: 100%; left: 0; background: #1a1a1a; border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; font-size: 11px; color: var(--text2); line-height: 1.5; width: 220px; z-index: 100; margin-bottom: 6px; pointer-events: none; }
 
 /* Points */
 .points-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
@@ -570,7 +572,7 @@ function renderResult(d) {
   ].forEach(function(s) {
     const v = Math.max(0, Math.min(100, parseFloat(s.val) || 0));
     const col = v >= 65 ? "#22c55e" : v >= 45 ? "#f59e0b" : "#ef4444";
-    subGrid.innerHTML += '<div class="sub-item"><div class="sub-name">' + s.name + ' <span class="info-btn" title="' + s.tip + '">ⓘ</span></div><div class="sub-bar-track"><div class="sub-bar-fill" style="width:' + v + '%;background:' + col + '"></div></div><div class="sub-val" style="color:' + col + '">' + Math.round(v) + '</div></div>';
+    subGrid.innerHTML += '<div class="sub-item"><div class="sub-name">' + s.name + ' <span class="info-btn">ⓘ<span class="tooltip">' + s.tip + '</span></span></div><div class="sub-bar-track"><div class="sub-bar-fill" style="width:' + v + '%;background:' + col + '"></div></div><div class="sub-val" style="color:' + col + '">' + Math.round(v) + '</div></div>';
   });
 
   const positivesList = document.getElementById("positivesList");
