@@ -634,7 +634,41 @@ function loadNfoList() {
       if (btn) { btn.textContent = "Refresh"; btn.disabled = false; }
       const list = document.getElementById("nfoList");
       if (!d.nfos || d.nfos.length === 0) {
-        list.innerHTML = '<div class="no-nfos">No open NFOs found</div>';
+        // Auto-trigger a cache refresh if empty
+        list.innerHTML = '<div class="no-nfos">Refreshing NFO list...</div>';
+        fetch(SCRIPT_URL + "?action=refreshnfolist&v=" + Date.now())
+          .then(function(r) { return r.text(); })
+          .then(function(t) {
+            const m = t.match(/\{[\s\S]*\}/);
+            if (m) {
+              const rd = JSON.parse(m[0]);
+              if (rd.nfos && rd.nfos.length > 0) {
+                list.innerHTML = "";
+                rd.nfos.forEach(function(nfo) {
+                  const cleanName = nfo.name.replace(/ - Direct Plan - Growth| - Direct - Growth| - Direct Plan/gi, "").trim();
+                  const div = document.createElement("div");
+                  div.className = "nfo-item";
+                  div.onclick = function() {
+                    document.getElementById("fundInput").value = cleanName;
+                    document.getElementById("fundInput").focus();
+                  };
+                  div.innerHTML = '<div class="nfo-item-name">' + cleanName + '</div>' +
+                    '<div class="nfo-item-cat">' + (nfo.category || "—") + '</div>' +
+                    '<div class="nfo-item-dates">' +
+                    (nfo.openDate ? '<strong>Open:</strong> ' + nfo.openDate : '') +
+                    (nfo.closeDate && nfo.closeDate !== "—" ? ' &nbsp;·&nbsp; <strong>Close:</strong> ' + nfo.closeDate : '') +
+                    '</div>' +
+                    (nfo.minInvest && nfo.minInvest !== "—" ? '<div class="nfo-item-min">Min: ₹' + Number(String(nfo.minInvest).replace(/[₹,]/g,"")).toLocaleString("en-IN") + '</div>' : '');
+                  list.appendChild(div);
+                });
+              } else {
+                list.innerHTML = '<div class="no-nfos">No open NFOs found</div>';
+              }
+            }
+          })
+          .catch(function() {
+            list.innerHTML = '<div class="no-nfos">No open NFOs found</div>';
+          });
         return;
       }
       d.nfos.forEach(function(nfo) {
