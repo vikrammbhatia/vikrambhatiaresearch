@@ -647,7 +647,6 @@ function loadNfoList() {
                   const cleanName = nfo.name.replace(/ - Direct Plan - Growth| - Direct - Growth| - Direct Plan/gi, "").trim();
                   const div = document.createElement("div");
                   div.className = "nfo-item";
-                  div.onclick = function() {
                   div.innerHTML = '<div class="nfo-item-name">' + cleanName + '</div>' +
                     '<div class="nfo-item-cat">' + (nfo.category || "—") + '</div>' +
                     '<div class="nfo-item-dates">' +
@@ -671,10 +670,6 @@ function loadNfoList() {
         const cleanName = nfo.name.replace(/ - Direct Plan - Growth| - Direct - Growth| - Direct Plan/gi, "").trim();
         const div = document.createElement("div");
         div.className = "nfo-item";
-        div.onclick = function() {
-          document.getElementById("fundInput").value = cleanName;
-          document.getElementById("fundInput").focus();
-        };
         div.innerHTML = '<div class="nfo-item-name">' + cleanName + '</div>' +
           '<div class="nfo-item-cat">' + (nfo.category || "—") + '</div>' +
           '<div class="nfo-item-dates">' +
