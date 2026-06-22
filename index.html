@@ -464,7 +464,7 @@ function analyse() {
       document.getElementById("analyseBtn").disabled = false;
       if (!d.success) throw new Error(d.error || "Analysis failed");
       // If score is 0, auto-retry once silently
-      if (parseFloat(d.finalScore || 0) === 0) {
+      if (parseFloat(d.finalScore || 0) === 0 && !d.analystRationale) {
         document.getElementById("loading").style.display = "block";
         document.getElementById("analyseBtn").disabled = true;
         var retryTimer = setTimeout(showSkeleton, 3000);
