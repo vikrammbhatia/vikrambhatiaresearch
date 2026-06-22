@@ -489,6 +489,14 @@ function analyse() {
       }
       renderResult(d);
     })
+    .catch(function(e) {
+      clearTimeout(skeletonTimer);
+      hideSkeleton();
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("analyseBtn").disabled = false;
+      document.getElementById("errorMsg").textContent = "Error: " + e.message;
+      document.getElementById("errorMsg").style.display = "block";
+    });
 }
 
 function renderResult(d) {
