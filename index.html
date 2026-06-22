@@ -539,15 +539,15 @@ function renderResult(d) {
   const minVal = d.minimumInvestment ? String(d.minimumInvestment).replace(/[₹,]/g,"").trim() : "";
   document.getElementById("minInvestment").textContent = minVal ? "₹" + Number(minVal).toLocaleString("en-IN") : "—";
 
-  const score = parseFloat(d.finalScore || 0);
+  const nfoScore = parseFloat(d.finalScore || 0);
   const rec = d.recommendation || "Watchlist";
-  const scoreColor = getScoreColor(score, rec);
+  const scoreColor = getScoreColor(nfoScore, rec);
 
   // Hero score
   const heroEl = document.getElementById("mScore");
-  heroEl.textContent = score.toFixed(1);
+  heroEl.textContent = nfoScore.toFixed(1);
   heroEl.style.color = scoreColor;
-  document.getElementById("heroScoreBar").style.width = Math.min(100, score) + "%";
+  document.getElementById("heroScoreBar").style.width = Math.min(100, nfoScore) + "%";
   document.getElementById("heroScoreBar").style.background = scoreColor;
   document.getElementById("heroRationale").textContent = d.analystRationale || "Analysis complete.";
 
@@ -561,8 +561,8 @@ function renderResult(d) {
   const horizonVal = d.investmentHorizon && !d.investmentHorizon.toLowerCase().includes("avoid") ? d.investmentHorizon : "";
   document.getElementById("mHorizon").textContent = horizonVal || "model certainty";
 
-  document.getElementById("scoreLabel").textContent = score.toFixed(1) + " / 100";
-  document.getElementById("scoreBar").style.width = Math.min(100, score) + "%";
+  document.getElementById("scoreLabel").textContent = nfoScore.toFixed(1) + " / 100";
+  document.getElementById("scoreBar").style.width = Math.min(100, nfoScore) + "%";
   document.getElementById("scoreBar").style.background = scoreColor;
   document.getElementById("rationale").textContent = d.analystRationale || "Analysis complete.";
 
