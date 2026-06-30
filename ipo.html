@@ -4,473 +4,421 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>IPO Research Engine by Vikram Bhatia</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --orange: #f97316;
-  --orange-dim: #c2540a;
-  --bg: #080808;
-  --bg2: #111111;
-  --bg3: #181818;
-  --bg4: #222222;
-  --border: #2a2a2a;
-  --text: #f0f0f0;
-  --text2: #999;
-  --text3: #555;
-  --green: #22c55e;
-  --amber: #f59e0b;
-  --red: #ef4444;
-  --blue: #3b82f6;
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --orange:#f97316;--orange-dim:#c2540a;
+  --bg:#080808;--bg2:#0e0e0e;--bg3:#161616;--bg4:#1e1e1e;--bg5:#242424;
+  --border:#242424;--border2:#2e2e2e;
+  --text:#efefef;--text2:#888;--text3:#444;
+  --green:#22c55e;--amber:#f59e0b;--red:#ef4444;--blue:#3b82f6;--purple:#a855f7;--pink:#ec4899;
 }
-body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
 
-/* ── LAYOUT ── */
-.page { display: flex; flex-direction: row; min-height: 100vh; }
-.main-col { flex: 1; padding: 2.5rem 3rem; overflow-y: auto; min-width: 0; }
-.side-col { width: 320px; min-width: 320px; padding: 1.5rem; border-left: 1px solid var(--border); height: 100vh; position: sticky; top: 0; overflow-y: auto; background: var(--bg2); }
-.side-col::-webkit-scrollbar { width: 3px; }
-.side-col::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-@media (max-width: 900px) { .side-col { display: none; } .main-col { padding: 1.5rem; } }
+/* LAYOUT */
+.page{display:flex;min-height:100vh;}
+.main{flex:1;min-width:0;padding:2rem 2.5rem;max-width:900px;}
+.side{width:280px;min-width:280px;border-left:1px solid var(--border);height:100vh;position:sticky;top:0;overflow-y:auto;padding:1.5rem 1.25rem;background:var(--bg2);}
+.side::-webkit-scrollbar{width:2px;}
+.side::-webkit-scrollbar-thumb{background:var(--border2);}
+@media(max-width:860px){.side{display:none;}.main{padding:1.25rem;max-width:100%;}}
 
-/* ── HEADER ── */
-.header { margin-bottom: 2rem; display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
-.header-left h1 { font-size: 22px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; }
-.header-left h1 span { color: var(--orange); }
-.header-left p { font-size: 13px; color: var(--text2); margin-top: 4px; }
-.header-tag { font-size: 11px; background: #1a1a0a; border: 1px solid #3a2a0a; color: var(--amber); padding: 4px 10px; border-radius: 20px; white-space: nowrap; }
+/* HEADER */
+.hdr{margin-bottom:1.75rem;}
+.hdr h1{font-size:20px;font-weight:600;letter-spacing:-0.3px;color:var(--text);}
+.hdr h1 em{font-style:normal;color:var(--orange);}
+.hdr p{font-size:12px;color:var(--text3);margin-top:3px;}
+.hdr-row{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+.powered{font-size:11px;background:#1a1000;border:1px solid #3a2500;color:var(--amber);padding:3px 10px;border-radius:20px;white-space:nowrap;margin-top:2px;}
 
-/* ── SEARCH BOX ── */
-.search-wrap { display: flex; gap: 8px; margin-bottom: 2rem; }
-.search-wrap input {
-  flex: 1; background: var(--bg3); border: 1px solid var(--border); color: var(--text);
-  padding: 12px 16px; border-radius: 8px; font-size: 15px; font-family: 'DM Sans', sans-serif;
-  transition: border-color .2s;
-}
-.search-wrap input:focus { outline: none; border-color: var(--orange); }
-.search-wrap input::placeholder { color: var(--text3); }
-.btn-analyse {
-  background: var(--orange); color: #fff; border: none; padding: 12px 24px;
-  border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer;
-  font-family: 'DM Sans', sans-serif; transition: background .2s; white-space: nowrap;
-}
-.btn-analyse:hover { background: var(--orange-dim); }
-.btn-analyse:disabled { background: #333; color: var(--text3); cursor: not-allowed; }
+/* CONFIG — hidden after save */
+.cfg{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:1.25rem;display:flex;gap:10px;align-items:center;}
+.cfg label{font-size:11px;color:var(--text3);white-space:nowrap;}
+.cfg input{flex:1;background:var(--bg4);border:1px solid var(--border2);color:var(--text2);padding:5px 10px;border-radius:6px;font-size:12px;font-family:'DM Mono',monospace;min-width:0;}
+.cfg input:focus{outline:none;border-color:var(--orange);}
+.cfg-saved{font-size:11px;color:var(--text3);display:none;}
+.btn-cfg{background:transparent;border:1px solid var(--border2);color:var(--text3);padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;}
+.btn-cfg:hover{border-color:var(--orange);color:var(--orange);}
 
-/* ── SECTION LABEL ── */
-.section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+/* SEARCH */
+.search-row{display:flex;gap:8px;margin-bottom:1.5rem;}
+.search-row input{flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:11px 15px;border-radius:8px;font-size:15px;font-family:'DM Sans',sans-serif;transition:border-color .2s;}
+.search-row input:focus{outline:none;border-color:var(--orange);}
+.search-row input::placeholder{color:var(--text3);}
+.btn-go{background:var(--orange);color:#fff;border:none;padding:11px 22px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;transition:background .15s;}
+.btn-go:hover{background:var(--orange-dim);}
+.btn-go:disabled{background:#2a2a2a;color:var(--text3);cursor:not-allowed;}
 
-/* ── LOADING ── */
-.loading-bar { display: none; margin-bottom: 1.5rem; }
-.loading-bar-inner { height: 2px; background: var(--orange); border-radius: 2px; animation: loadbar 2s ease-in-out infinite; }
-@keyframes loadbar { 0%{width:0%} 50%{width:70%} 100%{width:100%} }
-.loading-msg { font-size: 13px; color: var(--text2); margin-top: 8px; }
+/* LOADING */
+.loader{display:none;margin-bottom:1.25rem;}
+.loader-track{height:2px;background:var(--border2);border-radius:2px;overflow:hidden;}
+.loader-fill{height:100%;width:0;background:var(--orange);border-radius:2px;animation:ld 2.4s ease-in-out infinite;}
+@keyframes ld{0%{width:0%}60%{width:75%}100%{width:100%}}
+.loader-msg{font-size:12px;color:var(--text3);margin-top:7px;}
 
-/* ── VERDICT BANNER ── */
-.verdict-banner { display: none; border-radius: 10px; padding: 16px 20px; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.verdict-banner.green  { background: #0a1f0f; border: 1px solid #166534; }
-.verdict-banner.amber  { background: #1a1400; border: 1px solid #854d0e; }
-.verdict-banner.red    { background: #1a0505; border: 1px solid #991b1b; }
-.verdict-label { font-size: 20px; font-weight: 600; }
-.verdict-banner.green  .verdict-label { color: var(--green); }
-.verdict-banner.amber  .verdict-label { color: var(--amber); }
-.verdict-banner.red    .verdict-label { color: var(--red); }
-.verdict-rationale { font-size: 13px; color: var(--text2); flex: 1; }
-.verdict-score-box { text-align: right; }
-.verdict-score-box .big { font-size: 28px; font-weight: 600; color: var(--text); }
-.verdict-score-box .small { font-size: 11px; color: var(--text3); }
+/* ERROR */
+.err{display:none;background:#1a0505;border:1px solid #7f1d1d;color:#fca5a5;padding:10px 14px;border-radius:7px;font-size:13px;margin-bottom:1rem;}
 
-/* ── METRIC CARDS GRID ── */
-.metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
-.metric-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
-.metric-card .mc-label { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
-.metric-card .mc-value { font-size: 16px; font-weight: 500; color: var(--text); }
-.metric-card .mc-sub { font-size: 11px; color: var(--text2); margin-top: 2px; }
+/* VERDICT */
+.verdict{display:none;border-radius:10px;padding:14px 18px;margin-bottom:1.25rem;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.verdict.green{background:#061209;border:1px solid #14532d;}
+.verdict.amber{background:#0e0900;border:1px solid #78350f;}
+.verdict.red{background:#0e0404;border:1px solid #7f1d1d;}
+.v-left{flex:1;min-width:0;}
+.v-label{font-size:18px;font-weight:600;line-height:1.2;}
+.verdict.green .v-label{color:var(--green);}
+.verdict.amber .v-label{color:var(--amber);}
+.verdict.red   .v-label{color:var(--red);}
+.v-sub{font-size:12px;color:var(--text2);margin-top:5px;line-height:1.5;}
+.v-score{text-align:right;flex-shrink:0;}
+.v-score .big{font-size:32px;font-weight:600;color:var(--text);line-height:1;}
+.v-score .lbl{font-size:10px;color:var(--text3);margin-top:3px;}
 
-/* ── CATEGORY SCORES ── */
-.cat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 1.5rem; }
-.cat-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
-.cat-card .cc-name { font-size: 11px; color: var(--text3); margin-bottom: 6px; }
-.cat-card .cc-score { font-size: 18px; font-weight: 600; }
-.cat-card .cc-bar { height: 3px; background: var(--border); border-radius: 2px; margin-top: 6px; overflow: hidden; }
-.cat-card .cc-fill { height: 100%; border-radius: 2px; transition: width 0.8s ease; }
+/* SECTION LABEL */
+.slabel{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;margin-top:1.5rem;}
 
-/* ── FACTOR TABLE ── */
-.factor-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: 13px; }
-.factor-table th { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); color: var(--text3); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
-.factor-table td { padding: 9px 10px; border-bottom: 1px solid #1a1a1a; color: var(--text2); vertical-align: middle; }
-.factor-table tr:hover td { background: var(--bg3); }
-.factor-table .f-name { color: var(--text); }
-.f-score-bar { display: flex; align-items: center; gap: 6px; }
-.f-score-bar .bar { width: 50px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; flex-shrink: 0; }
-.f-score-bar .fill { height: 100%; border-radius: 2px; }
-.score-pill { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 12px; min-width: 36px; text-align: center; }
-.s-green { background: #0a2010; color: var(--green); }
-.s-amber { background: #1a1200; color: var(--amber); }
-.s-red   { background: #1a0505; color: var(--red); }
-.s-gray  { background: var(--bg4); color: var(--text3); }
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:0;}
+.mc{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:10px 12px;}
+.mc-lbl{font-size:10px;color:var(--text3);margin-bottom:3px;}
+.mc-val{font-size:15px;font-weight:500;color:var(--text);}
 
-/* ── AI ANALYSIS SECTION ── */
-.ai-section { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 1.5rem; }
-.ai-section h3 { font-size: 14px; font-weight: 600; color: var(--orange); margin-bottom: 12px; }
-.ai-row { display: flex; gap: 8px; margin-bottom: 8px; font-size: 13px; }
-.ai-row .ai-tag { background: var(--bg4); color: var(--text3); padding: 2px 8px; border-radius: 6px; font-size: 11px; white-space: nowrap; flex-shrink: 0; align-self: flex-start; margin-top: 1px; }
-.ai-row .ai-text { color: var(--text2); line-height: 1.55; }
-.bullets { display: flex; flex-direction: column; gap: 4px; }
-.bullet { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--text2); }
-.bullet::before { content: "·"; color: var(--orange); font-size: 18px; line-height: 1; flex-shrink: 0; margin-top: -2px; }
+/* CATEGORY SCORES */
+.cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;}
+.cc{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:10px 12px;}
+.cc-name{font-size:10px;color:var(--text3);margin-bottom:5px;}
+.cc-val{font-size:17px;font-weight:600;}
+.cc-bar{height:2px;background:var(--border2);border-radius:1px;margin-top:7px;overflow:hidden;}
+.cc-fill{height:100%;border-radius:1px;transition:width .8s ease;}
 
-/* ── DATA TABLE ── */
-.data-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 1.5rem; }
-.data-table td { padding: 6px 8px; border-bottom: 1px solid #161616; }
-.data-table tr td:first-child { color: var(--text3); width: 200px; }
-.data-table tr td:last-child { color: var(--text); font-family: 'DM Mono', monospace; }
+/* AI SECTION */
+.ai-box{background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:16px 18px;}
+.ai-title{font-size:13px;font-weight:600;color:var(--orange);margin-bottom:14px;}
+.ai-block{margin-bottom:12px;}
+.ai-block:last-child{margin-bottom:0;}
+.ai-tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--text3);background:var(--bg4);border:1px solid var(--border2);padding:2px 8px;border-radius:4px;margin-bottom:6px;}
+.ai-text{font-size:13px;color:var(--text2);line-height:1.6;}
+.bullets{display:flex;flex-direction:column;gap:5px;}
+.bullet{display:flex;gap:8px;font-size:13px;color:var(--text2);line-height:1.5;}
+.bullet-dot{color:var(--orange);font-size:16px;line-height:1.1;flex-shrink:0;}
+.divider{height:1px;background:var(--border);margin:1.25rem 0;}
 
-/* ── SIDEBAR ── */
-.side-header { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
-.side-refresh { display: block; width: 100%; background: transparent; border: 1px solid var(--border); color: var(--text3); padding: 7px; border-radius: 6px; font-size: 12px; cursor: pointer; margin-bottom: 12px; font-family: 'DM Sans', sans-serif; transition: border-color .2s; }
-.side-refresh:hover { border-color: var(--orange); color: var(--orange); }
-.ipo-item { padding: 10px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: all .15s; }
-.ipo-item:hover .ii-name { color: var(--orange); }
-.ii-name { font-size: 13px; font-weight: 500; color: var(--text); }
-.ii-meta { display: flex; gap: 8px; margin-top: 3px; align-items: center; }
-.ii-sector { font-size: 11px; color: var(--text3); }
-.ii-score { font-size: 11px; padding: 1px 7px; border-radius: 10px; }
-.ii-score.green { background: #0a2010; color: var(--green); }
-.ii-score.amber { background: #1a1200; color: var(--amber); }
-.ii-score.red   { background: #1a0505; color: var(--red); }
-.no-history { font-size: 13px; color: var(--text3); text-align: center; padding: 2rem 0; }
+/* FACTOR TABLE */
+.ftable{width:100%;border-collapse:collapse;}
+.ftable th{text-align:left;padding:7px 8px;border-bottom:1px solid var(--border);font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3);}
+.ftable td{padding:8px 8px;border-bottom:1px solid #111;vertical-align:middle;}
+.ftable tr:last-child td{border-bottom:none;}
+.ftable tr:hover td{background:var(--bg3);}
+.f-name{font-size:13px;color:var(--text);font-weight:400;}
+.f-cat{font-size:11px;color:var(--text3);}
+.f-bar-wrap{display:flex;align-items:center;gap:8px;}
+.f-bar{width:64px;height:3px;background:var(--border2);border-radius:2px;overflow:hidden;flex-shrink:0;}
+.f-bar-fill{height:100%;border-radius:2px;}
+.spill{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;min-width:38px;text-align:center;}
+.sg{background:#061209;color:var(--green);}
+.sa{background:#0e0900;color:var(--amber);}
+.sr{background:#0e0404;color:var(--red);}
+.sn{background:var(--bg4);color:var(--text3);}
+.f-wt{text-align:right;font-size:11px;color:var(--text3);}
 
-/* ── CONFIG STRIP ── */
-.config-strip { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin-bottom: 1.5rem; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-.config-strip label { font-size: 12px; color: var(--text3); }
-.config-strip input { background: var(--bg4); border: 1px solid var(--border); color: var(--text); padding: 5px 10px; border-radius: 6px; font-size: 12px; font-family: 'DM Mono', monospace; width: 340px; }
-.config-strip input:focus { outline: none; border-color: var(--orange); }
-.btn-save { background: transparent; border: 1px solid var(--border); color: var(--text2); padding: 5px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
-.btn-save:hover { border-color: var(--orange); color: var(--orange); }
+/* DATA TABLE */
+.dtable{width:100%;border-collapse:collapse;}
+.dtable td{padding:7px 6px;border-bottom:1px solid #0e0e0e;font-size:12px;vertical-align:top;}
+.dtable tr:last-child td{border-bottom:none;}
+.dtable td:first-child{color:var(--text3);width:160px;flex-shrink:0;}
+.dtable td:last-child{color:var(--text2);}
 
-.error-box { background: #1a0505; border: 1px solid #991b1b; color: #fca5a5; padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 1rem; display: none; }
-
-/* ── DIVIDER ── */
-.divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
+/* SIDEBAR */
+.side-hdr{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;}
+.btn-ref{display:block;width:100%;background:transparent;border:1px solid var(--border);color:var(--text3);padding:6px;border-radius:6px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:12px;transition:all .15s;}
+.btn-ref:hover{border-color:var(--orange);color:var(--orange);}
+.ipo-item{padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+.ipo-item:hover .ii-name{color:var(--orange);}
+.ii-name{font-size:13px;font-weight:500;color:var(--text);transition:color .15s;}
+.ii-row{display:flex;gap:6px;align-items:center;margin-top:3px;}
+.ii-sec{font-size:11px;color:var(--text3);}
+.ii-score{font-size:11px;font-weight:600;padding:1px 7px;border-radius:10px;}
+.ii-g{background:#061209;color:var(--green);}
+.ii-a{background:#0e0900;color:var(--amber);}
+.ii-r{background:#0e0404;color:var(--red);}
+.no-hist{font-size:12px;color:var(--text3);text-align:center;padding:2rem 0;}
 </style>
 </head>
 <body>
 <div class="page">
 
-  <!-- MAIN COLUMN -->
-  <div class="main-col">
-    <div class="header">
-      <div class="header-left">
-        <h1>IPO Research <span>Engine</span></h1>
-        <p>21-factor quantitative model · Claude AI analysis · Live data · by Vikram Bhatia</p>
+  <!-- MAIN -->
+  <div class="main">
+    <div class="hdr">
+      <div class="hdr-row">
+        <div>
+          <h1>IPO Research <em>Engine</em></h1>
+          <p>21-factor quantitative model · Claude AI analysis · Live data · by Vikram Bhatia</p>
+        </div>
+        <span class="powered">⚡ Powered by Claude AI</span>
       </div>
-      <div class="header-tag">⚡ Powered by Claude AI</div>
     </div>
 
-    <!-- APPS SCRIPT URL CONFIG -->
-    <div class="config-strip">
+    <!-- CONFIG -->
+    <div class="cfg" id="cfgStrip">
       <label>Apps Script URL</label>
-      <input type="text" id="asUrl" placeholder="https://script.google.com/macros/s/YOUR_ID/exec" />
-      <button class="btn-save" onclick="saveConfig()">Save</button>
+      <input type="text" id="asUrl" placeholder="https://script.google.com/macros/s/YOUR_ID/exec"/>
+      <button class="btn-cfg" onclick="saveConfig()">Save</button>
     </div>
 
     <!-- SEARCH -->
-    <div class="search-wrap">
-      <input type="text" id="ipoInput" placeholder="Enter IPO company name, e.g. Ola Electric, Hyundai India…" onkeydown="if(event.key==='Enter')analyse()" />
-      <button class="btn-analyse" id="analyseBtn" onclick="analyse()">Analyse ↗</button>
+    <div class="search-row">
+      <input type="text" id="ipoInput" placeholder="Enter IPO company name, e.g. Hyundai India, Swiggy…" onkeydown="if(event.key==='Enter')analyse()"/>
+      <button class="btn-go" id="goBtn" onclick="analyse()">Analyse ↗</button>
     </div>
 
-    <div class="error-box" id="errorBox"></div>
-
-    <!-- LOADING -->
-    <div class="loading-bar" id="loadingBar">
-      <div class="loading-bar-inner"></div>
-      <div class="loading-msg" id="loadingMsg">Fetching live IPO data…</div>
-    </div>
+    <div class="err" id="errBox"></div>
+    <div class="loader" id="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg" id="loaderMsg">Fetching live IPO data…</div></div>
 
     <!-- RESULTS -->
     <div id="results" style="display:none;">
 
-      <!-- VERDICT BANNER -->
-      <div class="verdict-banner" id="verdictBanner">
-        <div>
-          <div class="verdict-label" id="verdictLabel">—</div>
-          <div class="verdict-rationale" id="verdictRationale">—</div>
+      <div class="verdict" id="verdictEl">
+        <div class="v-left">
+          <div class="v-label" id="vLabel"></div>
+          <div class="v-sub" id="vSub"></div>
         </div>
-        <div class="verdict-score-box">
-          <div class="big" id="compositeScore">—</div>
-          <div class="small">out of 100</div>
+        <div class="v-score">
+          <div class="big" id="vScore"></div>
+          <div class="lbl">out of 100</div>
         </div>
       </div>
 
-      <!-- KEY METRICS -->
-      <div class="section-label">Key metrics</div>
-      <div class="metrics-grid" id="metricsGrid"></div>
+      <div class="slabel">Key metrics</div>
+      <div class="metrics" id="metricsEl"></div>
 
-      <!-- CATEGORY SCORES -->
-      <div class="section-label">Category scores</div>
-      <div class="cat-grid" id="catGrid"></div>
+      <div class="slabel">Category scores</div>
+      <div class="cats" id="catsEl"></div>
 
       <div class="divider"></div>
 
-      <!-- AI ANALYSIS -->
-      <div class="section-label">Claude AI analysis</div>
-      <div class="ai-section" id="aiSection"></div>
+      <div class="slabel">Claude AI analysis</div>
+      <div class="ai-box" id="aiEl"></div>
 
       <div class="divider"></div>
 
-      <!-- FACTOR BREAKDOWN -->
-      <div class="section-label">21-factor breakdown</div>
-      <table class="factor-table">
-        <thead>
-          <tr>
-            <th>Factor</th>
-            <th>Category</th>
-            <th>Score</th>
-            <th style="text-align:right">Weight</th>
-          </tr>
-        </thead>
-        <tbody id="factorTbody"></tbody>
+      <div class="slabel">21-factor breakdown</div>
+      <table class="ftable">
+        <thead><tr><th>Factor</th><th>Category</th><th>Score</th><th class="f-wt">Wt</th></tr></thead>
+        <tbody id="ftbody"></tbody>
       </table>
 
       <div class="divider"></div>
 
-      <!-- RAW DATA -->
-      <div class="section-label">Fetched data</div>
-      <table class="data-table" id="dataTable"></table>
+      <div class="slabel">Fetched data</div>
+      <table class="dtable" id="dtable"></table>
 
     </div>
   </div>
 
   <!-- SIDEBAR -->
-  <div class="side-col">
-    <div class="side-header">Recent analyses</div>
-    <button class="side-refresh" onclick="loadHistory()">↻ Refresh list</button>
-    <div id="ipoList"><div class="no-history">No history yet.</div></div>
+  <div class="side">
+    <div class="side-hdr">Recent analyses</div>
+    <button class="btn-ref" onclick="loadHistory()">↻ Refresh</button>
+    <div id="sideList"><div class="no-hist">No history yet.</div></div>
   </div>
 
 </div>
-
 <script>
-// ── CONFIG ─────────────────────────────────────────────────
 let AS_URL = localStorage.getItem('ipo_as_url') || '';
 
 function saveConfig() {
   const v = document.getElementById('asUrl').value.trim();
-  if (v) { AS_URL = v; localStorage.setItem('ipo_as_url', v); showMsg('URL saved.'); }
+  if (!v) return;
+  AS_URL = v;
+  localStorage.setItem('ipo_as_url', v);
+  // Hide the config strip after saving
+  const strip = document.getElementById('cfgStrip');
+  strip.innerHTML = '<span class="cfg-saved" style="display:inline;font-size:11px;color:var(--text3);">✓ URL saved — <a href="#" onclick="showCfg(event)" style="color:var(--orange);text-decoration:none;">edit</a></span>';
+}
+
+function showCfg(e) {
+  e.preventDefault();
+  const strip = document.getElementById('cfgStrip');
+  strip.innerHTML = `<label>Apps Script URL</label><input type="text" id="asUrl" value="${AS_URL}" style="flex:1;background:var(--bg4);border:1px solid var(--border2);color:var(--text2);padding:5px 10px;border-radius:6px;font-size:12px;font-family:'DM Mono',monospace;min-width:0;"/><button class="btn-cfg" onclick="saveConfig()">Save</button>`;
 }
 
 window.addEventListener('load', function() {
-  if (AS_URL) document.getElementById('asUrl').value = AS_URL;
+  if (AS_URL) {
+    document.getElementById('asUrl').value = AS_URL;
+    saveConfig();
+  }
   loadHistory();
 });
 
-// ── ANALYSE ────────────────────────────────────────────────
 async function analyse() {
   const name = document.getElementById('ipoInput').value.trim();
   if (!name) return;
-  if (!AS_URL) { showError('Please paste your Apps Script URL in the config strip above and click Save.'); return; }
+  if (!AS_URL) { showErr('Please paste your Apps Script URL in the config strip above and click Save.'); return; }
 
-  document.getElementById('analyseBtn').disabled = true;
-  document.getElementById('analyseBtn').textContent = 'Analysing…';
-  document.getElementById('loadingBar').style.display = 'block';
+  const btn = document.getElementById('goBtn');
+  btn.disabled = true; btn.textContent = 'Analysing…';
+  document.getElementById('loader').style.display = 'block';
   document.getElementById('results').style.display = 'none';
-  document.getElementById('errorBox').style.display = 'none';
+  document.getElementById('errBox').style.display = 'none';
 
-  const msgs = [
-    'Fetching live IPO data via web search…',
-    'Scoring 21 factors…',
-    'Running Claude AI qualitative analysis…',
-    'Persisting results to sheet…',
-  ];
+  const msgs = ['Fetching live IPO data via web search…','Scoring 21 factors…','Running Claude AI analysis…','Saving to sheet…'];
   let mi = 0;
-  const msgEl = document.getElementById('loadingMsg');
-  const interval = setInterval(() => { if (mi < msgs.length - 1) msgEl.textContent = msgs[++mi]; }, 8000);
+  const lm = document.getElementById('loaderMsg');
+  const iv = setInterval(() => { if (mi < msgs.length-1) lm.textContent = msgs[++mi]; }, 9000);
 
   try {
-    const url = AS_URL + '?action=analyse&ipo=' + encodeURIComponent(name);
-    const res  = await fetch(url);
+    const res  = await fetch(AS_URL + '?action=analyse&ipo=' + encodeURIComponent(name));
     const data = await res.json();
-
     if (data.error) throw new Error(data.error);
-    renderResults(data);
+    render(data);
     loadHistory();
-  } catch (err) {
-    showError('Error: ' + err.message + '. Check your Apps Script URL and deployment settings.');
+  } catch(err) {
+    showErr('Error: ' + err.message);
   } finally {
-    clearInterval(interval);
-    document.getElementById('loadingBar').style.display = 'none';
-    document.getElementById('analyseBtn').disabled = false;
-    document.getElementById('analyseBtn').textContent = 'Analyse ↗';
+    clearInterval(iv);
+    document.getElementById('loader').style.display = 'none';
+    btn.disabled = false; btn.textContent = 'Analyse ↗';
   }
 }
 
-// ── RENDER ─────────────────────────────────────────────────
-function renderResults(d) {
-  const sc    = d.scores;
-  const fd    = d.fetchedData;
-  const cl    = d.claudeAnalysis;
-  const vrd   = d.verdict;
+function render(d) {
+  const sc = d.scores, fd = d.fetchedData, cl = d.claudeAnalysis, vrd = d.verdict;
 
-  // Verdict banner
-  const banner = document.getElementById('verdictBanner');
-  banner.className = 'verdict-banner ' + (vrd.color || 'amber');
-  banner.style.display = 'flex';
-  document.getElementById('verdictLabel').textContent    = cl.verdict || vrd.label;
-  document.getElementById('verdictRationale').textContent = cl.oneLineRationale || '';
-  document.getElementById('compositeScore').textContent  = sc.composite;
+  // Verdict
+  const ve = document.getElementById('verdictEl');
+  ve.className = 'verdict ' + (vrd.color || 'amber');
+  ve.style.display = 'flex';
+  document.getElementById('vLabel').textContent = cl.verdict || vrd.label;
+  document.getElementById('vSub').textContent   = cl.oneLineRationale || '';
+  document.getElementById('vScore').textContent  = sc.composite;
 
-  // Key metrics
-  const metrics = [
-    { l: 'Sector',           v: fd.sector || '—' },
-    { l: 'Issue Size',       v: fd.issueSize ? '₹' + fd.issueSize + ' Cr' : '—' },
-    { l: 'Price Band',       v: fd.priceBandHigh ? '₹' + fd.priceBandLow + ' – ₹' + fd.priceBandHigh : '—' },
-    { l: 'GMP',              v: fd.gmp !== null ? fd.gmp + '%' : '—' },
-    { l: 'QIB Sub',          v: fd.subscriptionQIB ? fd.subscriptionQIB + '×' : '—' },
-    { l: 'HNI Sub',          v: fd.subscriptionHNI ? fd.subscriptionHNI + '×' : '—' },
-    { l: 'Retail Sub',       v: fd.subscriptionRetail ? fd.subscriptionRetail + '×' : '—' },
-    { l: 'Revenue CAGR',     v: fd.revenueGrowthCAGR ? fd.revenueGrowthCAGR + '%' : '—' },
-    { l: 'PAT CAGR',         v: fd.patGrowthCAGR ? fd.patGrowthCAGR + '%' : '—' },
-    { l: 'RoE',              v: fd.roe ? fd.roe + '%' : '—' },
-    { l: 'D/E Ratio',        v: fd.debtToEquity !== null ? fd.debtToEquity : '—' },
-    { l: 'Promoter Post-IPO',v: fd.promoterHoldingPostIPO ? fd.promoterHoldingPostIPO + '%' : '—' },
+  // Metrics — only show if value exists
+  const mDefs = [
+    {l:'Sector',           v: fd.sector},
+    {l:'Issue Size',       v: fd.issueSize ? '₹' + fd.issueSize + ' Cr' : null},
+    {l:'Price Band',       v: fd.priceBandHigh ? '₹' + fd.priceBandLow + ' – ₹' + fd.priceBandHigh : null},
+    {l:'GMP',              v: fd.gmp !== null && fd.gmp !== undefined ? fd.gmp + '%' : null},
+    {l:'QIB Sub',          v: fd.subscriptionQIB ? fd.subscriptionQIB + '×' : null},
+    {l:'HNI Sub',          v: fd.subscriptionHNI ? fd.subscriptionHNI + '×' : null},
+    {l:'Retail Sub',       v: fd.subscriptionRetail ? fd.subscriptionRetail + '×' : null},
+    {l:'Revenue CAGR',     v: fd.revenueGrowthCAGR ? fd.revenueGrowthCAGR + '%' : null},
+    {l:'PAT CAGR',         v: fd.patGrowthCAGR ? fd.patGrowthCAGR + '%' : null},
+    {l:'RoE',              v: fd.roe ? fd.roe + '%' : null},
+    {l:'RoCE',             v: fd.roce ? fd.roce + '%' : null},
+    {l:'D/E Ratio',        v: fd.debtToEquity !== null && fd.debtToEquity !== undefined ? fd.debtToEquity : null},
+    {l:'Promoter Post-IPO',v: fd.promoterHoldingPostIPO ? fd.promoterHoldingPostIPO + '%' : null},
+    {l:'PE (Issue)',       v: fd.peRatioIssue ? fd.peRatioIssue + '×' : null},
+    {l:'PE (Peers)',       v: fd.pePeers ? fd.pePeers + '×' : null},
   ];
-  document.getElementById('metricsGrid').innerHTML = metrics.map(m =>
-    `<div class="metric-card"><div class="mc-label">${m.l}</div><div class="mc-value">${m.v}</div></div>`
-  ).join('');
+  document.getElementById('metricsEl').innerHTML = mDefs
+    .filter(m => m.v !== null && m.v !== undefined && m.v !== '')
+    .map(m => `<div class="mc"><div class="mc-lbl">${m.l}</div><div class="mc-val">${m.v}</div></div>`)
+    .join('');
 
   // Category scores
   const cats = ['Market','Financials','Valuation','Governance','Strategic','Returns'];
-  const catClrs = { Market:'#3b82f6', Financials:'#22c55e', Valuation:'#f59e0b', Governance:'#a855f7', Strategic:'#f97316', Returns:'#ec4899' };
-  document.getElementById('catGrid').innerHTML = cats.map(cat => {
+  const clrs = {Market:getComputedColor('blue'),Financials:getComputedColor('green'),Valuation:getComputedColor('amber'),Governance:getComputedColor('purple'),Strategic:getComputedColor('orange'),Returns:getComputedColor('pink')};
+  const clrHex = {Market:'#3b82f6',Financials:'#22c55e',Valuation:'#f59e0b',Governance:'#a855f7',Strategic:'#f97316',Returns:'#ec4899'};
+  document.getElementById('catsEl').innerHTML = cats.map(cat => {
     const s = sc.catScores[cat];
-    const pct = s !== null ? s : 0;
-    const clr = catClrs[cat] || '#555';
-    return `<div class="cat-card">
+    const pct = s !== null && s !== undefined ? s : 0;
+    const clr = clrHex[cat];
+    if (s === null || s === undefined) return '';
+    return `<div class="cc">
       <div class="cc-name">${cat}</div>
-      <div class="cc-score" style="color:${clr};">${s !== null ? s + '%' : '—'}</div>
+      <div class="cc-val" style="color:${clr};">${s}%</div>
       <div class="cc-bar"><div class="cc-fill" style="width:${pct}%;background:${clr};"></div></div>
     </div>`;
   }).join('');
 
-  // AI Section
-  const ai = document.getElementById('aiSection');
-  ai.innerHTML = `
-    <h3>Claude AI · Investment Analysis</h3>
-    ${cl.strengths && cl.strengths.length ? `
-    <div class="ai-row">
-      <span class="ai-tag">Strengths</span>
-      <div class="ai-text"><div class="bullets">${cl.strengths.map(s=>`<div class="bullet">${s}</div>`).join('')}</div></div>
-    </div>` : ''}
-    ${cl.risks && cl.risks.length ? `
-    <div class="ai-row">
-      <span class="ai-tag">Risks</span>
-      <div class="ai-text"><div class="bullets">${cl.risks.map(r=>`<div class="bullet">${r}</div>`).join('')}</div></div>
-    </div>` : ''}
-    <div class="ai-row"><span class="ai-tag">Listing</span><div class="ai-text">${cl.listingOutlook || '—'}</div></div>
-    <div class="ai-row"><span class="ai-tag">6–12 months</span><div class="ai-text">${cl.mediumTermOutlook || '—'}</div></div>
-    <div class="ai-row"><span class="ai-tag">Allocation</span><div class="ai-text">${cl.allocationAdvice || vrd.alloc || '—'}</div></div>
-    ${cl.comparablePeers ? `<div class="ai-row"><span class="ai-tag">Peers</span><div class="ai-text">${cl.comparablePeers}</div></div>` : ''}
-    ${cl.analystNote ? `<div class="ai-row"><span class="ai-tag">Analyst note</span><div class="ai-text">${cl.analystNote}</div></div>` : ''}
-  `;
+  // AI Analysis
+  const ai = document.getElementById('aiEl');
+  let html = `<div class="ai-title">Claude AI · Investment Analysis</div>`;
+  if (cl.strengths && cl.strengths.length) {
+    html += `<div class="ai-block"><div class="ai-tag">Strengths</div><div class="bullets">${cl.strengths.map(s=>`<div class="bullet"><span class="bullet-dot">·</span><span>${s}</span></div>`).join('')}</div></div>`;
+  }
+  if (cl.risks && cl.risks.length) {
+    html += `<div class="ai-block"><div class="ai-tag">Risks</div><div class="bullets">${cl.risks.map(r=>`<div class="bullet"><span class="bullet-dot">·</span><span>${r}</span></div>`).join('')}</div></div>`;
+  }
+  if (cl.listingOutlook)    html += `<div class="ai-block"><div class="ai-tag">Listing day</div><div class="ai-text">${cl.listingOutlook}</div></div>`;
+  if (cl.mediumTermOutlook) html += `<div class="ai-block"><div class="ai-tag">6–12 months</div><div class="ai-text">${cl.mediumTermOutlook}</div></div>`;
+  if (cl.allocationAdvice)  html += `<div class="ai-block"><div class="ai-tag">Allocation</div><div class="ai-text">${cl.allocationAdvice}</div></div>`;
+  if (cl.comparablePeers)   html += `<div class="ai-block"><div class="ai-tag">Comparable peers</div><div class="ai-text">${cl.comparablePeers}</div></div>`;
+  if (cl.analystNote)       html += `<div class="ai-block"><div class="ai-tag">Analyst note</div><div class="ai-text">${cl.analystNote}</div></div>`;
+  ai.innerHTML = html;
 
   // Factor table
-  const tbody = document.getElementById('factorTbody');
-  tbody.innerHTML = sc.factors.map(f => {
+  document.getElementById('ftbody').innerHTML = sc.factors.map(f => {
     const s = f.score;
-    const pClass = s === null ? 's-gray' : s >= 4 ? 's-green' : s >= 3 ? 's-amber' : 's-red';
+    const pClass = s === null ? 'sn' : s >= 4 ? 'sg' : s >= 3 ? 'sa' : 'sr';
     const fillClr = s === null ? '#333' : s >= 4 ? '#22c55e' : s >= 3 ? '#f59e0b' : '#ef4444';
     const pct = s !== null ? (s/5*100) : 0;
     return `<tr>
       <td class="f-name">${f.label}</td>
-      <td style="font-size:11px;color:var(--text3);">${f.cat}</td>
-      <td>
-        <div class="f-score-bar">
-          <div class="bar"><div class="fill" style="width:${pct}%;background:${fillClr};"></div></div>
-          <span class="score-pill ${pClass}">${s !== null ? s+'/5' : 'N/A'}</span>
-        </div>
-      </td>
-      <td style="text-align:right;font-size:12px;color:var(--text3);">${f.weight}</td>
+      <td class="f-cat">${f.cat}</td>
+      <td><div class="f-bar-wrap">
+        <div class="f-bar"><div class="f-bar-fill" style="width:${pct}%;background:${fillClr};"></div></div>
+        <span class="spill ${pClass}">${s !== null ? s+'/5' : 'N/A'}</span>
+      </div></td>
+      <td class="f-wt">${f.weight}</td>
     </tr>`;
   }).join('');
 
-  // Raw data table
-  const rawRows = [
-    ['Company',             fd.companyName],
-    ['Open Date',           fd.openDate],
-    ['Close Date',          fd.closeDate],
-    ['Listing Date',        fd.listingDate],
-    ['Anchor Investors',    fd.anchorInvestors],
-    ['Lead Managers',       fd.leadManagers],
-    ['Use of Proceeds',     fd.useOfProceeds],
-    ['P/E (issue)',         fd.peRatioIssue],
-    ['P/E (peers)',         fd.pePeers],
-    ['Promoter Pre-IPO',    fd.promoterHoldingPreIPO ? fd.promoterHoldingPreIPO + '%' : null],
-    ['Fresh Issue %',       fd.freshIssuePercent ? fd.freshIssuePercent + '%' : null],
-    ['OFS %',               fd.ofsPercent ? fd.ofsPercent + '%' : null],
-    ['Lock-in Period',      fd.lockInPeriod],
-    ['Key Risks',           fd.keyRisks],
-    ['Recent News',         fd.recentNews],
+  // Data table — only populated fields
+  const dRows = [
+    ['Company',          fd.companyName],
+    ['Open Date',        fd.openDate],
+    ['Close Date',       fd.closeDate],
+    ['Listing Date',     fd.listingDate],
+    ['Anchor Investors', fd.anchorInvestors],
+    ['Lead Managers',    fd.leadManagers],
+    ['Use of Proceeds',  fd.useOfProceeds],
+    ['Fresh Issue',      fd.freshIssuePercent ? fd.freshIssuePercent + '%' : null],
+    ['OFS',              fd.ofsPercent ? fd.ofsPercent + '%' : null],
+    ['Lock-in Period',   fd.lockInPeriod],
+    ['Key Risks',        fd.keyRisks],
+    ['Recent News',      fd.recentNews],
   ];
-  document.getElementById('dataTable').innerHTML = rawRows
+  document.getElementById('dtable').innerHTML = dRows
     .filter(r => r[1] !== null && r[1] !== undefined && r[1] !== '')
     .map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`)
     .join('');
 
   document.getElementById('results').style.display = 'block';
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ── HISTORY SIDEBAR ────────────────────────────────────────
+function getComputedColor(name) { return getComputedStyle(document.documentElement).getPropertyValue('--'+name).trim(); }
+
 async function loadHistory() {
   if (!AS_URL) return;
-  const listEl = document.getElementById('ipoList');
-  listEl.innerHTML = '<div class="no-history">Loading…</div>';
+  const el = document.getElementById('sideList');
+  el.innerHTML = '<div class="no-hist">Loading…</div>';
   try {
     const res  = await fetch(AS_URL + '?action=ipolist');
     const data = await res.json();
-    if (!data.length) { listEl.innerHTML = '<div class="no-history">No analyses yet.</div>'; return; }
-    listEl.innerHTML = data.map(item => {
+    if (!data.length) { el.innerHTML = '<div class="no-hist">No analyses yet.</div>'; return; }
+    el.innerHTML = data.map(item => {
       const s = parseInt(item.score);
-      const cls = s >= 65 ? 'green' : s >= 45 ? 'amber' : 'red';
-      return `<div class="ipo-item" onclick="quickLoad('${escHtml(item.name)}')">
-        <div class="ii-name">${escHtml(item.name)}</div>
-        <div class="ii-meta">
-          <span class="ii-sector">${escHtml(item.sector || '—')}</span>
+      const cls = s >= 65 ? 'ii-g' : s >= 45 ? 'ii-a' : 'ii-r';
+      return `<div class="ipo-item" onclick="quickLoad('${esc(item.name)}')">
+        <div class="ii-name">${esc(item.name)}</div>
+        <div class="ii-row">
+          <span class="ii-sec">${esc(item.sector||'—')}</span>
           ${s ? `<span class="ii-score ${cls}">${s}</span>` : ''}
         </div>
       </div>`;
     }).join('');
   } catch(e) {
-    listEl.innerHTML = '<div class="no-history">Could not load history.</div>';
+    el.innerHTML = '<div class="no-hist">Could not load.</div>';
   }
 }
 
-function quickLoad(name) {
-  document.getElementById('ipoInput').value = name;
-  analyse();
-}
-
-// ── UTILS ──────────────────────────────────────────────────
-function showError(msg) {
-  const el = document.getElementById('errorBox');
-  el.textContent = msg;
-  el.style.display = 'block';
-}
-
-function showMsg(msg) {
-  const el = document.getElementById('errorBox');
-  el.textContent = msg;
-  el.style.background = '#0a2010';
-  el.style.borderColor = '#166534';
-  el.style.color = '#86efac';
-  el.style.display = 'block';
-  setTimeout(() => { el.style.display = 'none'; el.style.background = ''; el.style.borderColor = ''; el.style.color = ''; }, 3000);
-}
-
-function escHtml(s) {
-  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+function quickLoad(name) { document.getElementById('ipoInput').value = name; analyse(); }
+function showErr(msg) { const e = document.getElementById('errBox'); e.textContent = msg; e.style.display = 'block'; }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 </script>
 </body>
 </html>
