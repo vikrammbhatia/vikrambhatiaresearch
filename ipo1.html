@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IPO Research Engine by Vikram Bhatia</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --orange:#f97316;--orange-dim:#c2540a;
+  --bg:#080808;--bg2:#0e0e0e;--bg3:#161616;--bg4:#1e1e1e;--bg5:#242424;
+  --border:#242424;--border2:#2e2e2e;
+  --text:#efefef;--text2:#888;--text3:#444;
+  --green:#22c55e;--amber:#f59e0b;--red:#ef4444;--blue:#3b82f6;--purple:#a855f7;--pink:#ec4899;
+}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
+
+/* LAYOUT */
+.page{display:flex;min-height:100vh;}
+.main{flex:1;min-width:0;padding:2rem 2.5rem;max-width:900px;}
+.side{width:280px;min-width:280px;border-left:1px solid var(--border);height:100vh;position:sticky;top:0;overflow-y:auto;padding:1.5rem 1.25rem;background:var(--bg2);}
+.side::-webkit-scrollbar{width:2px;}
+.side::-webkit-scrollbar-thumb{background:var(--border2);}
+@media(max-width:860px){.side{display:none;}.main{padding:1.25rem;max-width:100%;}}
+
+/* HEADER */
+.hdr{margin-bottom:1.75rem;}
+.hdr h1{font-size:20px;font-weight:600;letter-spacing:-0.3px;color:var(--text);}
+.hdr h1 em{font-style:normal;color:var(--orange);}
+.hdr p{font-size:12px;color:var(--text3);margin-top:3px;}
+.hdr-row{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+.powered{font-size:11px;background:#1a1000;border:1px solid #3a2500;color:var(--amber);padding:3px 10px;border-radius:20px;white-space:nowrap;margin-top:2px;}
+
+/* CONFIG — hidden after save */
+.cfg{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:1.25rem;display:flex;gap:10px;align-items:center;}
+.cfg label{font-size:11px;color:var(--text3);white-space:nowrap;}
+.cfg input{flex:1;background:var(--bg4);border:1px solid var(--border2);color:var(--text2);padding:5px 10px;border-radius:6px;font-size:12px;font-family:'DM Mono',monospace;min-width:0;}
+.cfg input:focus{outline:none;border-color:var(--orange);}
+.cfg-saved{font-size:11px;color:var(--text3);display:none;}
+.btn-cfg{background:transparent;border:1px solid var(--border2);color:var(--text3);padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;}
+.btn-cfg:hover{border-color:var(--orange);color:var(--orange);}
+
+/* SEARCH */
+.search-row{display:flex;gap:8px;margin-bottom:1.5rem;}
+.search-row input{flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:11px 15px;border-radius:8px;font-size:15px;font-family:'DM Sans',sans-serif;transition:border-color .2s;}
+.search-row input:focus{outline:none;border-color:var(--orange);}
+.search-row input::placeholder{color:var(--text3);}
+.btn-go{background:var(--orange);color:#fff;border:none;padding:11px 22px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;transition:background .15s;}
+.btn-go:hover{background:var(--orange-dim);}
+.btn-go:disabled{background:#2a2a2a;color:var(--text3);cursor:not-allowed;}
+
+/* LOADING */
+.loader{display:none;margin-bottom:1.25rem;}
+.loader-track{height:2px;background:var(--border2);border-radius:2px;overflow:hidden;}
+.loader-fill{height:100%;width:0;background:var(--orange);border-radius:2px;animation:ld 2.4s ease-in-out infinite;}
+@keyframes ld{0%{width:0%}60%{width:75%}100%{width:100%}}
+.loader-msg{font-size:12px;color:var(--text3);margin-top:7px;}
+
+/* ERROR */
+.err{display:none;background:#1a0505;border:1px solid #7f1d1d;color:#fca5a5;padding:10px 14px;border-radius:7px;font-size:13px;margin-bottom:1rem;}
+
+/* VERDICT */
+.verdict{display:none;border-radius:10px;padding:14px 18px;margin-bottom:1.25rem;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.verdict.green{background:#061209;border:1px solid #14532d;}
+.verdict.amber{background:#0e0900;border:1px solid #78350f;}
+.verdict.red{background:#0e0404;border:1px solid #7f1d1d;}
+.v-left{flex:1;min-width:0;}
+.v-label{font-size:18px;font-weight:600;line-height:1.2;}
+.verdict.green .v-label{color:var(--green);}
+.verdict.amber .v-label{color:var(--amber);}
+.verdict.red   .v-label{color:var(--red);}
+.v-sub{font-size:12px;color:var(--text2);margin-top:5px;line-height:1.5;}
+.v-score{text-align:right;flex-shrink:0;}
+.v-score .big{font-size:32px;font-weight:600;color:var(--text);line-height:1;}
+.v-score .lbl{font-size:10px;color:var(--text3);margin-top:3px;}
+
+/* SECTION LABEL */
+.slabel{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;margin-top:1.5rem;}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:0;}
+.mc{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:10px 12px;}
+.mc-lbl{font-size:10px;color:var(--text3);margin-bottom:3px;}
+.mc-val{font-size:15px;font-weight:500;color:var(--text);}
+
+/* CATEGORY SCORES */
+.cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;}
+.cc{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:10px 12px;}
+.cc-name{font-size:10px;color:var(--text3);margin-bottom:5px;}
+.cc-val{font-size:17px;font-weight:600;}
+.cc-bar{height:2px;background:var(--border2);border-radius:1px;margin-top:7px;overflow:hidden;}
+.cc-fill{height:100%;border-radius:1px;transition:width .8s ease;}
+
+/* AI SECTION */
+.ai-box{background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:16px 18px;}
+.ai-title{font-size:13px;font-weight:600;color:var(--orange);margin-bottom:14px;}
+.ai-block{margin-bottom:12px;}
+.ai-block:last-child{margin-bottom:0;}
+.ai-tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--text3);background:var(--bg4);border:1px solid var(--border2);padding:2px 8px;border-radius:4px;margin-bottom:6px;}
+.ai-text{font-size:13px;color:var(--text2);line-height:1.6;}
+.bullets{display:flex;flex-direction:column;gap:5px;}
+.bullet{display:flex;gap:8px;font-size:13px;color:var(--text2);line-height:1.5;}
+.bullet-dot{color:var(--orange);font-size:16px;line-height:1.1;flex-shrink:0;}
+.divider{height:1px;background:var(--border);margin:1.25rem 0;}
+
+/* FACTOR TABLE */
+.ftable{width:100%;border-collapse:collapse;}
+.ftable th{text-align:left;padding:7px 8px;border-bottom:1px solid var(--border);font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3);}
+.ftable td{padding:8px 8px;border-bottom:1px solid #111;vertical-align:middle;}
+.ftable tr:last-child td{border-bottom:none;}
+.ftable tr:hover td{background:var(--bg3);}
+.f-name{font-size:13px;color:var(--text);font-weight:400;}
+.f-cat{font-size:11px;color:var(--text3);}
+.f-bar-wrap{display:flex;align-items:center;gap:8px;}
+.f-bar{width:64px;height:3px;background:var(--border2);border-radius:2px;overflow:hidden;flex-shrink:0;}
+.f-bar-fill{height:100%;border-radius:2px;}
+.spill{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;min-width:38px;text-align:center;}
+.sg{background:#061209;color:var(--green);}
+.sa{background:#0e0900;color:var(--amber);}
+.sr{background:#0e0404;color:var(--red);}
+.sn{background:var(--bg4);color:var(--text3);}
+.f-wt{text-align:right;font-size:11px;color:var(--text3);}
+
+/* DATA TABLE */
+.dtable{width:100%;border-collapse:collapse;}
+.dtable td{padding:7px 6px;border-bottom:1px solid #0e0e0e;font-size:12px;vertical-align:top;}
+.dtable tr:last-child td{border-bottom:none;}
+.dtable td:first-child{color:var(--text3);width:160px;flex-shrink:0;}
+.dtable td:last-child{color:var(--text2);}
+
+/* SIDEBAR */
+.side-hdr{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;}
+.btn-ref{display:block;width:100%;background:transparent;border:1px solid var(--border);color:var(--text3);padding:6px;border-radius:6px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:12px;transition:all .15s;}
+.btn-ref:hover{border-color:var(--orange);color:var(--orange);}
+.ipo-item{padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+.ipo-item:hover .ii-name{color:var(--orange);}
+.ii-name{font-size:13px;font-weight:500;color:var(--text);transition:color .15s;}
+.ii-row{display:flex;gap:6px;align-items:center;margin-top:3px;}
+.ii-sec{font-size:11px;color:var(--text3);}
+.ii-score{font-size:11px;font-weight:600;padding:1px 7px;border-radius:10px;}
+.ii-g{background:#061209;color:var(--green);}
+.ii-a{background:#0e0900;color:var(--amber);}
+.ii-r{background:#0e0404;color:var(--red);}
+.no-hist{font-size:12px;color:var(--text3);text-align:center;padding:2rem 0;}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="hdr">
+      <div class="hdr-row">
+        <div>
+          <h1>IPO Research <em>Engine</em></h1>
+          <p>21-factor quantitative model · Claude AI analysis · Live data · by Vikram Bhatia</p>
+        </div>
+        <span class="powered">⚡ Powered by Claude AI</span>
+      </div>
+    </div>
+
+    <!-- CONFIG -->
+    <div class="cfg" id="cfgStrip">
+      <label>Apps Script URL</label>
+      <input type="text" id="asUrl" placeholder="https://script.google.com/macros/s/YOUR_ID/exec"/>
+      <button class="btn-cfg" onclick="saveConfig()">Save</button>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="search-row">
+      <input type="text" id="ipoInput" placeholder="Enter IPO company name, e.g. Hyundai India, Swiggy…" onkeydown="if(event.key==='Enter')analyse()"/>
+      <button class="btn-go" id="goBtn" onclick="analyse()">Analyse ↗</button>
+    </div>
+
+    <div class="err" id="errBox"></div>
+    <div class="loader" id="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg" id="loaderMsg">Fetching live IPO data…</div></div>
+
+    <!-- RESULTS -->
+    <div id="results" style="display:none;">
+
+      <div class="verdict" id="verdictEl">
+        <div class="v-left">
+          <div class="v-label" id="vLabel"></div>
+          <div class="v-sub" id="vSub"></div>
+        </div>
+        <div class="v-score">
+          <div class="big" id="vScore"></div>
+          <div class="lbl">out of 100</div>
+        </div>
+      </div>
+
+      <div class="slabel">Key metrics</div>
+      <div class="metrics" id="metricsEl"></div>
+
+      <div class="slabel">Category scores</div>
+      <div class="cats" id="catsEl"></div>
+
+      <div class="divider"></div>
+
+      <div class="slabel">Claude AI analysis</div>
+      <div class="ai-box" id="aiEl"></div>
+
+      <div class="divider"></div>
+
+      <div class="slabel">21-factor breakdown</div>
+      <table class="ftable">
+        <thead><tr><th>Factor</th><th>Category</th><th>Score</th><th class="f-wt">Wt</th></tr></thead>
+        <tbody id="ftbody"></tbody>
+      </table>
+
+      <div class="divider"></div>
+
+      <div class="slabel">Fetched data</div>
+      <table class="dtable" id="dtable"></table>
+
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="side">
+    <div class="side-hdr">Recent analyses</div>
+    <button class="btn-ref" onclick="loadHistory()">↻ Refresh</button>
+    <div id="sideList"><div class="no-hist">No history yet.</div></div>
+  </div>
+
+</div>
+<script>
+let AS_URL = localStorage.getItem('ipo_as_url') || '';
+
+function saveConfig() {
+  const v = document.getElementById('asUrl').value.trim();
+  if (!v) return;
+  AS_URL = v;
+  localStorage.setItem('ipo_as_url', v);
+  // Hide the config strip after saving
+  const strip = document.getElementById('cfgStrip');
+  strip.innerHTML = '<span class="cfg-saved" style="display:inline;font-size:11px;color:var(--text3);">✓ URL saved — <a href="#" onclick="showCfg(event)" style="color:var(--orange);text-decoration:none;">edit</a></span>';
+}
+
+function showCfg(e) {
+  e.preventDefault();
+  const strip = document.getElementById('cfgStrip');
+  strip.innerHTML = `<label>Apps Script URL</label><input type="text" id="asUrl" value="${AS_URL}" style="flex:1;background:var(--bg4);border:1px solid var(--border2);color:var(--text2);padding:5px 10px;border-radius:6px;font-size:12px;font-family:'DM Mono',monospace;min-width:0;"/><button class="btn-cfg" onclick="saveConfig()">Save</button>`;
+}
+
+window.addEventListener('load', function() {
+  if (AS_URL) {
+    document.getElementById('asUrl').value = AS_URL;
+    saveConfig();
+  }
+  loadHistory();
+});
+
+async function analyse() {
+  const name = document.getElementById('ipoInput').value.trim();
+  if (!name) return;
+  if (!AS_URL) { showErr('Please paste your Apps Script URL in the config strip above and click Save.'); return; }
+
+  const btn = document.getElementById('goBtn');
+  btn.disabled = true; btn.textContent = 'Analysing…';
+  document.getElementById('loader').style.display = 'block';
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('errBox').style.display = 'none';
+
+  const msgs = ['Fetching live IPO data via web search…','Scoring 21 factors…','Running Claude AI analysis…','Saving to sheet…'];
+  let mi = 0;
+  const lm = document.getElementById('loaderMsg');
+  const iv = setInterval(() => { if (mi < msgs.length-1) lm.textContent = msgs[++mi]; }, 9000);
+
+  try {
+    const res  = await fetch(AS_URL + '?action=analyse&ipo=' + encodeURIComponent(name));
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    render(data);
+    loadHistory();
+  } catch(err) {
+    showErr('Error: ' + err.message);
+  } finally {
+    clearInterval(iv);
+    document.getElementById('loader').style.display = 'none';
+    btn.disabled = false; btn.textContent = 'Analyse ↗';
+  }
+}
+
+function render(d) {
+  const sc = d.scores, fd = d.fetchedData, cl = d.claudeAnalysis, vrd = d.verdict;
+
+  // Verdict
+  const ve = document.getElementById('verdictEl');
+  ve.className = 'verdict ' + (vrd.color || 'amber');
+  ve.style.display = 'flex';
+  document.getElementById('vLabel').textContent = cl.verdict || vrd.label;
+  document.getElementById('vSub').textContent   = cl.oneLineRationale || '';
+  document.getElementById('vScore').textContent  = sc.composite;
+
+  // Metrics — only show if value exists
+  const mDefs = [
+    {l:'Sector',           v: fd.sector},
+    {l:'Issue Size',       v: fd.issueSize ? '₹' + fd.issueSize + ' Cr' : null},
+    {l:'Price Band',       v: fd.priceBandHigh ? '₹' + fd.priceBandLow + ' – ₹' + fd.priceBandHigh : null},
+    {l:'GMP',              v: fd.gmp !== null && fd.gmp !== undefined ? fd.gmp + '%' : null},
+    {l:'QIB Sub',          v: fd.subscriptionQIB ? fd.subscriptionQIB + '×' : null},
+    {l:'HNI Sub',          v: fd.subscriptionHNI ? fd.subscriptionHNI + '×' : null},
+    {l:'Retail Sub',       v: fd.subscriptionRetail ? fd.subscriptionRetail + '×' : null},
+    {l:'Revenue CAGR',     v: fd.revenueGrowthCAGR ? fd.revenueGrowthCAGR + '%' : null},
+    {l:'PAT CAGR',         v: fd.patGrowthCAGR ? fd.patGrowthCAGR + '%' : null},
+    {l:'RoE',              v: fd.roe ? fd.roe + '%' : null},
+    {l:'RoCE',             v: fd.roce ? fd.roce + '%' : null},
+    {l:'D/E Ratio',        v: fd.debtToEquity !== null && fd.debtToEquity !== undefined ? fd.debtToEquity : null},
+    {l:'Promoter Post-IPO',v: fd.promoterHoldingPostIPO ? fd.promoterHoldingPostIPO + '%' : null},
+    {l:'PE (Issue)',       v: fd.peRatioIssue ? fd.peRatioIssue + '×' : null},
+    {l:'PE (Peers)',       v: fd.pePeers ? fd.pePeers + '×' : null},
+  ];
+  document.getElementById('metricsEl').innerHTML = mDefs
+    .filter(m => m.v !== null && m.v !== undefined && m.v !== '')
+    .map(m => `<div class="mc"><div class="mc-lbl">${m.l}</div><div class="mc-val">${m.v}</div></div>`)
+    .join('');
+
+  // Category scores
+  const cats = ['Market','Financials','Valuation','Governance','Strategic','Returns'];
+  const clrs = {Market:getComputedColor('blue'),Financials:getComputedColor('green'),Valuation:getComputedColor('amber'),Governance:getComputedColor('purple'),Strategic:getComputedColor('orange'),Returns:getComputedColor('pink')};
+  const clrHex = {Market:'#3b82f6',Financials:'#22c55e',Valuation:'#f59e0b',Governance:'#a855f7',Strategic:'#f97316',Returns:'#ec4899'};
+  document.getElementById('catsEl').innerHTML = cats.map(cat => {
+    const s = sc.catScores[cat];
+    const pct = s !== null && s !== undefined ? s : 0;
+    const clr = clrHex[cat];
+    if (s === null || s === undefined) return '';
+    return `<div class="cc">
+      <div class="cc-name">${cat}</div>
+      <div class="cc-val" style="color:${clr};">${s}%</div>
+      <div class="cc-bar"><div class="cc-fill" style="width:${pct}%;background:${clr};"></div></div>
+    </div>`;
+  }).join('');
+
+  // AI Analysis
+  const ai = document.getElementById('aiEl');
+  let html = `<div class="ai-title">Claude AI · Investment Analysis</div>`;
+  if (cl.strengths && cl.strengths.length) {
+    html += `<div class="ai-block"><div class="ai-tag">Strengths</div><div class="bullets">${cl.strengths.map(s=>`<div class="bullet"><span class="bullet-dot">·</span><span>${s}</span></div>`).join('')}</div></div>`;
+  }
+  if (cl.risks && cl.risks.length) {
+    html += `<div class="ai-block"><div class="ai-tag">Risks</div><div class="bullets">${cl.risks.map(r=>`<div class="bullet"><span class="bullet-dot">·</span><span>${r}</span></div>`).join('')}</div></div>`;
+  }
+  if (cl.listingOutlook)    html += `<div class="ai-block"><div class="ai-tag">Listing day</div><div class="ai-text">${cl.listingOutlook}</div></div>`;
+  if (cl.mediumTermOutlook) html += `<div class="ai-block"><div class="ai-tag">6–12 months</div><div class="ai-text">${cl.mediumTermOutlook}</div></div>`;
+  if (cl.allocationAdvice)  html += `<div class="ai-block"><div class="ai-tag">Allocation</div><div class="ai-text">${cl.allocationAdvice}</div></div>`;
+  if (cl.comparablePeers)   html += `<div class="ai-block"><div class="ai-tag">Comparable peers</div><div class="ai-text">${cl.comparablePeers}</div></div>`;
+  if (cl.analystNote)       html += `<div class="ai-block"><div class="ai-tag">Analyst note</div><div class="ai-text">${cl.analystNote}</div></div>`;
+  ai.innerHTML = html;
+
+  // Factor table
+  document.getElementById('ftbody').innerHTML = sc.factors.map(f => {
+    const s = f.score;
+    const pClass = s === null ? 'sn' : s >= 4 ? 'sg' : s >= 3 ? 'sa' : 'sr';
+    const fillClr = s === null ? '#333' : s >= 4 ? '#22c55e' : s >= 3 ? '#f59e0b' : '#ef4444';
+    const pct = s !== null ? (s/5*100) : 0;
+    return `<tr>
+      <td class="f-name">${f.label}</td>
+      <td class="f-cat">${f.cat}</td>
+      <td><div class="f-bar-wrap">
+        <div class="f-bar"><div class="f-bar-fill" style="width:${pct}%;background:${fillClr};"></div></div>
+        <span class="spill ${pClass}">${s !== null ? s+'/5' : 'N/A'}</span>
+      </div></td>
+      <td class="f-wt">${f.weight}</td>
+    </tr>`;
+  }).join('');
+
+  // Data table — only populated fields
+  const dRows = [
+    ['Company',          fd.companyName],
+    ['Open Date',        fd.openDate],
+    ['Close Date',       fd.closeDate],
+    ['Listing Date',     fd.listingDate],
+    ['Anchor Investors', fd.anchorInvestors],
+    ['Lead Managers',    fd.leadManagers],
+    ['Use of Proceeds',  fd.useOfProceeds],
+    ['Fresh Issue',      fd.freshIssuePercent ? fd.freshIssuePercent + '%' : null],
+    ['OFS',              fd.ofsPercent ? fd.ofsPercent + '%' : null],
+    ['Lock-in Period',   fd.lockInPeriod],
+    ['Key Risks',        fd.keyRisks],
+    ['Recent News',      fd.recentNews],
+  ];
+  document.getElementById('dtable').innerHTML = dRows
+    .filter(r => r[1] !== null && r[1] !== undefined && r[1] !== '')
+    .map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`)
+    .join('');
+
+  document.getElementById('results').style.display = 'block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function getComputedColor(name) { return getComputedStyle(document.documentElement).getPropertyValue('--'+name).trim(); }
+
+async function loadHistory() {
+  if (!AS_URL) return;
+  const el = document.getElementById('sideList');
+  el.innerHTML = '<div class="no-hist">Loading…</div>';
+  try {
+    const res  = await fetch(AS_URL + '?action=ipolist');
+    const data = await res.json();
+    if (!data.length) { el.innerHTML = '<div class="no-hist">No analyses yet.</div>'; return; }
+    el.innerHTML = data.map(item => {
+      const s = parseInt(item.score);
+      const cls = s >= 65 ? 'ii-g' : s >= 45 ? 'ii-a' : 'ii-r';
+      return `<div class="ipo-item" onclick="quickLoad('${esc(item.name)}')">
+        <div class="ii-name">${esc(item.name)}</div>
+        <div class="ii-row">
+          <span class="ii-sec">${esc(item.sector||'—')}</span>
+          ${s ? `<span class="ii-score ${cls}">${s}</span>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    el.innerHTML = '<div class="no-hist">Could not load.</div>';
+  }
+}
+
+function quickLoad(name) { document.getElementById('ipoInput').value = name; analyse(); }
+function showErr(msg) { const e = document.getElementById('errBox'); e.textContent = msg; e.style.display = 'block'; }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+</script>
+</body>
+</html>
