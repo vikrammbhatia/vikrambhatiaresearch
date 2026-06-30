@@ -14,15 +14,15 @@
   --text:#efefef;--text2:#888;--text3:#444;
   --green:#22c55e;--amber:#f59e0b;--red:#ef4444;--blue:#3b82f6;--purple:#a855f7;--pink:#ec4899;
 }
-html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
+html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
 
 /* LAYOUT */
-.page{display:flex;min-height:100vh;}
-.main{flex:1;min-width:0;padding:2rem 2.5rem;max-width:900px;}
+.page{display:flex;min-height:100vh;width:100%;}
+.main{flex:1;min-width:0;padding:2rem 3rem;overflow-y:auto;}
 .side{width:280px;min-width:280px;border-left:1px solid var(--border);height:100vh;position:sticky;top:0;overflow-y:auto;padding:1.5rem 1.25rem;background:var(--bg2);}
 .side::-webkit-scrollbar{width:2px;}
 .side::-webkit-scrollbar-thumb{background:var(--border2);}
-@media(max-width:860px){.side{display:none;}.main{padding:1.25rem;max-width:100%;}}
+@media(max-width:960px){.side{display:none;}.main{padding:1.5rem;}}
 
 /* HEADER */
 .hdr{margin-bottom:1.75rem;}
