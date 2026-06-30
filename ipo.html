@@ -284,6 +284,12 @@ async function analyse() {
 }
 
 function render(d) {
+  if (d.isIpoClosed) {
+    const r = document.getElementById("results");
+    r.style.display = "block";
+    r.innerHTML = `<div style="background:#1a0a00;border:1px solid #92400e;border-radius:10px;padding:24px 28px;text-align:center;margin-top:1rem;"><div style="font-size:28px;margin-bottom:10px;">🔒</div><div style="font-size:17px;font-weight:600;color:#f59e0b;margin-bottom:8px;">This IPO is closed for subscription</div><div style="font-size:13px;color:#888;margin-bottom:6px;">${d.ipoName}</div><div style="font-size:12px;color:#555;">Subscription closed on ${d.closeDate || "N/A"}. Analysis is only shown for open IPOs.</div></div>`;
+    return;
+  }
   const sc = d.scores, fd = d.fetchedData, cl = d.claudeAnalysis, vrd = d.verdict;
 
   // Verdict
@@ -355,12 +361,13 @@ function render(d) {
     const pClass = s === null ? 'sn' : s >= 4 ? 'sg' : s >= 3 ? 'sa' : 'sr';
     const fillClr = s === null ? '#333' : s >= 4 ? '#22c55e' : s >= 3 ? '#f59e0b' : '#ef4444';
     const pct = s !== null ? (s/5*100) : 0;
+    const label = s !== null ? s+'/5' : '—';
     return `<tr>
       <td class="f-name">${f.label}</td>
       <td class="f-cat">${f.cat}</td>
       <td><div class="f-bar-wrap">
         <div class="f-bar"><div class="f-bar-fill" style="width:${pct}%;background:${fillClr};"></div></div>
-        <span class="spill ${pClass}">${s !== null ? s+'/5' : 'N/A'}</span>
+        <span class="spill ${pClass}">${label}</span>
       </div></td>
       <td class="f-wt">${f.weight}</td>
     </tr>`;
