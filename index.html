@@ -518,9 +518,10 @@ function renderResult(d) {
   // Phase 2 — if no Claude rationale, auto-poll for enrichment after 35s
   if (!d.analystRationale || d.analystRationale === "Analysis complete." || !d.keyPositives) {
     document.getElementById("heroRationale").textContent = "AI qualitative assessment in progress — updating shortly...";
-    var pollFund = document.getElementById("fundInput").value.trim();
+    var pollFund = String(d.fundName || document.getElementById("fundInput").value.trim());
+    var pollUrl = SCRIPT_URL + "?action=enrichclaude&fund=" + encodeURIComponent(pollFund);
     setTimeout(function() {
-      fetch(SCRIPT_URL + "?action=analyse&fund=" + encodeURIComponent(pollFund) + "&v=" + Date.now())
+      fetch(pollUrl + "&v=" + Date.now())
         .then(function(r) { return r.text(); })
         .then(function(t) {
           var m = t.match(/\{[\s\S]*\}/);
