@@ -520,26 +520,6 @@ document.getElementById("fundInput").addEventListener("keydown", function(e) {
   if (e.key === "Enter") analyse();
 });
 
-// If no analyst rationale, result is Phase 1 only — poll for Claude enrichment
-  if (!d.analystRationale || d.analystRationale === "Analysis complete.") {
-    document.getElementById("heroRationale").textContent = "AI qualitative assessment running — refreshing shortly...";
-    setTimeout(function() {
-      fetch(SCRIPT_URL + "?action=analyse&fund=" + encodeURIComponent(document.getElementById("fundInput").value.trim()) + "&v=" + Date.now())
-        .then(function(r) { return r.text(); })
-        .then(function(t) {
-          var m = t.match(/\{[\s\S]*\}/);
-          if (m) {
-            var d2 = JSON.parse(m[0]);
-            if (d2.success && d2.analystRationale && d2.analystRationale !== "Analysis complete.") {
-              renderResult(d2);
-            }
-          }
-        })
-        .catch(function() {});
-    }, 30000); // poll after 30 seconds
-  }
-}
-  
 function buildNfoItem(nfo) {
   var cleanName = nfo.name.replace(/ - Direct Plan - Growth| - Direct - Growth| - Direct Plan/gi, "").trim();
   var div = document.createElement("div");
