@@ -514,6 +514,24 @@ function renderResult(d) {
   linksRow.innerHTML += '<a href="https://www.morningstar.in" target="_blank" class="link-btn">Morningstar &#8599;</a>';
   document.getElementById("result").style.display = "block";
   window.scrollTo(0, 0);
+
+  // Phase 2 — if no Claude rationale, auto-poll for enrichment after 35s
+  if (!d.analystRationale || d.analystRationale === "Analysis complete." || !d.keyPositives) {
+    document.getElementById("heroRationale").textContent = "AI qualitative assessment in progress — updating shortly...";
+    var pollFund = document.getElementById("fundInput").value.trim();
+    setTimeout(function() {
+      fetch(SCRIPT_URL + "?action=analyse&fund=" + encodeURIComponent(pollFund) + "&v=" + Date.now())
+        .then(function(r) { return r.text(); })
+        .then(function(t) {
+          var m = t.match(/\{[\s\S]*\}/);
+          if (m) {
+            var d2 = JSON.parse(m[0]);
+            if (d2.success && d2.keyPositives) renderResult(d2);
+          }
+        })
+        .catch(function() {});
+    }, 35000);
+  }
 }
 
 document.getElementById("fundInput").addEventListener("keydown", function(e) {
