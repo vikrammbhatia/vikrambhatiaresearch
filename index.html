@@ -428,6 +428,8 @@ function analyse() {
 }
 
 function renderResult(d) {
+  var pollFund = String(d.fundName || "");
+  var pollUrl = SCRIPT_URL + "?action=enrichclaude&fund=" + encodeURIComponent(pollFund);
   if (d.isNfoClosed) {
     document.getElementById("result").style.display = "block";
     var resultDiv = document.getElementById("result");
@@ -518,8 +520,6 @@ function renderResult(d) {
   // Phase 2 — if no Claude rationale, auto-poll for enrichment after 35s
   if (!d.analystRationale || d.analystRationale === "Analysis complete." || !d.keyPositives) {
     document.getElementById("heroRationale").textContent = "AI qualitative assessment in progress — updating shortly...";
-    var pollFund = String(d.fundName || document.getElementById("fundInput").value.trim());
-    var pollUrl = SCRIPT_URL + "?action=enrichclaude&fund=" + encodeURIComponent(pollFund);
     setTimeout(function() {
       fetch(pollUrl + "&v=" + Date.now())
         .then(function(r) { return r.text(); })
