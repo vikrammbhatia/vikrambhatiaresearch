@@ -527,7 +527,7 @@ function renderResult(d) {
           var m = t.match(/\{[\s\S]*\}/);
           if (m) {
             var d2 = JSON.parse(m[0]);
-            if (d2.success && d2.keyPositives) renderResult(d2);
+            if (d2.success) renderResult(d2);
           }
         })
         .catch(function() {});
