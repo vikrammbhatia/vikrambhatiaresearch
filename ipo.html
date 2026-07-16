@@ -129,6 +129,20 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
 .dtable td:first-child{color:var(--text3);width:160px;flex-shrink:0;}
 .dtable td:last-child{color:var(--text2);}
 
+/* INVESTMENT CARD */
+.inv-card{background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:16px 18px;}
+.inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:14px;}
+.inv-cell{background:var(--bg4);border:1px solid var(--border2);border-radius:7px;padding:10px 12px;}
+.inv-cell-lbl{font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.06em;}
+.inv-cell-val{font-size:15px;font-weight:600;color:var(--orange);}
+.inv-cell-val.green{color:var(--green);}
+.proj-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px;}
+.proj-cell{background:var(--bg4);border:1px solid var(--border2);border-radius:7px;padding:10px 12px;text-align:center;}
+.proj-cell-lbl{font-size:10px;color:var(--text3);margin-bottom:4px;}
+.proj-cell-val{font-size:14px;font-weight:600;color:var(--green);}
+.proj-cell-chg{font-size:11px;color:var(--text3);margin-top:2px;}
+.inv-note{font-size:11px;color:var(--text3);margin-top:12px;line-height:1.5;}
+
 /* SIDEBAR */
 .side-hdr{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;}
 .btn-ref{display:block;width:100%;background:transparent;border:1px solid var(--border);color:var(--text3);padding:6px;border-radius:6px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:12px;transition:all .15s;}
@@ -195,6 +209,12 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text
 
       <div class="slabel">Category scores</div>
       <div class="cats" id="catsEl"></div>
+
+      <div id="investCard" style="display:none;">
+        <div class="divider"></div>
+        <div class="slabel">Investment recommendation</div>
+        <div class="inv-card" id="invCardInner"></div>
+      </div>
 
       <div class="divider"></div>
 
@@ -299,6 +319,48 @@ function render(d) {
   document.getElementById('vLabel').textContent = cl.verdict || vrd.label;
   document.getElementById('vSub').textContent   = cl.oneLineRationale || '';
   document.getElementById('vScore').textContent  = sc.composite;
+
+  // Investment recommendation card — only for positive verdicts
+  const positiveVerdicts = ["Strong Subscribe", "Subscribe", "Subscribe with Caution"];
+  const investCard = document.getElementById('investCard');
+  if (cl.verdict && positiveVerdicts.some(v => cl.verdict.includes(v)) && cl.suggestedAmount) {
+    const issuePrice = fd.priceBandHigh || fd.priceBandLow || 0;
+    const p3  = cl.projectedPrice3M  || null;
+    const p6  = cl.projectedPrice6M  || null;
+    const p9  = cl.projectedPrice9M  || null;
+    const p12 = cl.projectedPrice12M || null;
+
+    function priceCell(label, price) {
+      if (!price || !issuePrice) return `<div class="proj-cell"><div class="proj-cell-lbl">${label}</div><div class="proj-cell-val">—</div></div>`;
+      const chg = ((price - issuePrice) / issuePrice * 100).toFixed(1);
+      const clr = chg >= 0 ? 'var(--green)' : 'var(--red)';
+      return `<div class="proj-cell">
+        <div class="proj-cell-lbl">${label}</div>
+        <div class="proj-cell-val" style="color:${clr};">₹${Number(price).toLocaleString('en-IN')}</div>
+        <div class="proj-cell-chg" style="color:${clr};">${chg >= 0 ? '+' : ''}${chg}%</div>
+      </div>`;
+    }
+
+    document.getElementById('invCardInner').innerHTML = `
+      <div class="inv-grid">
+        <div class="inv-cell"><div class="inv-cell-lbl">Suggested Investment</div><div class="inv-cell-val">${cl.suggestedAmount || '—'}</div></div>
+        <div class="inv-cell"><div class="inv-cell-lbl">Investment Horizon</div><div class="inv-cell-val">${cl.investmentHorizon || '—'}</div></div>
+        <div class="inv-cell"><div class="inv-cell-lbl">Expected Annual Return</div><div class="inv-cell-val green">${cl.expectedAnnualReturn ? cl.expectedAnnualReturn + '%' : '—'}</div></div>
+        <div class="inv-cell"><div class="inv-cell-lbl">Issue Price</div><div class="inv-cell-val">₹${issuePrice || '—'}</div></div>
+      </div>
+      <div class="slabel" style="margin-top:4px;">Projected share price</div>
+      <div class="proj-grid">
+        ${priceCell('3 Months', p3)}
+        ${priceCell('6 Months', p6)}
+        ${priceCell('9 Months', p9)}
+        ${priceCell('12 Months', p12)}
+      </div>
+      <div class="inv-note">⚠ Projections are model estimates based on issue price, sector PE, growth trajectory and GMP signals. Actual returns may vary. Not financial advice.</div>
+    `;
+    investCard.style.display = 'block';
+  } else {
+    investCard.style.display = 'none';
+  }
 
   // Metrics — only show if value exists
   const mDefs = [
