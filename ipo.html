@@ -26,7 +26,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 /* ── LAYOUT ── */
 .page{display:flex;flex-direction:row;min-height:100vh;width:100%;}
 .main-col{flex:1;padding:2.5rem 3rem;overflow-y:auto;min-width:0;}
-.side-col{width:320px;min-width:320px;padding:1.5rem;border-left:1px solid var(--b1);height:100vh;position:sticky;top:0;overflow-y:auto;background:var(--bg2);}
+.side-col{width:380px;min-width:380px;padding:2rem 1.5rem;border-left:1px solid var(--b1);height:100vh;position:sticky;top:0;overflow-y:auto;background:var(--bg2);}
 .side-col::-webkit-scrollbar{width:3px;}
 .side-col::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px;}
 @media(max-width:900px){.side-col{display:none;}.main-col{padding:1.5rem;}}
@@ -73,7 +73,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .powered{font-size:10px;background:#1a1000;border:1px solid #3a2500;color:var(--amber);padding:3px 10px;border-radius:20px;white-space:nowrap;margin-top:3px;}
 
 /* ── CONFIG ── */
-.cfg{background:var(--bg3);border:1px solid var(--b1);border-radius:7px;padding:8px 12px;margin-bottom:1.25rem;display:flex;gap:8px;align-items:center;}
+.cfg{background:var(--bg2);border:1px solid var(--b1);border-radius:8px;padding:8px 14px;margin-bottom:1.5rem;display:flex;gap:8px;align-items:center;}
 .cfg label{font-size:11px;color:var(--t3);white-space:nowrap;}
 .cfg input{flex:1;background:var(--bg4);border:1px solid var(--b2);color:var(--t2);padding:5px 10px;border-radius:5px;font-size:12px;font-family:'DM Mono',monospace;min-width:0;}
 .cfg input:focus{outline:none;border-color:var(--or);}
@@ -238,6 +238,23 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .dtable td:first-child{color:var(--t3);width:160px;}
 .dtable td:last-child{color:var(--t2);}
 
+/* ── SIDE HEADER — matches NFO engine ── */
+.side-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--b1);}
+.side-title{font-size:13px;font-weight:600;color:var(--or);text-transform:uppercase;letter-spacing:0.06em;}
+.refresh-btn{padding:5px 14px;background:var(--or);border:none;border-radius:6px;color:#fff;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:background .2s;}
+.refresh-btn:hover{background:var(--or2);}
+.refresh-btn:disabled{background:var(--bg4);color:var(--t3);cursor:not-allowed;}
+
+/* ── OPEN IPO CARDS — matches NFO nfo-item style ── */
+.ipo-item-card{background:var(--bg3);border:1px solid var(--b1);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+.ipo-item-name{font-size:13px;font-weight:500;color:var(--t1);margin-bottom:6px;line-height:1.4;}
+.ipo-item-cat{display:inline-block;background:var(--bg4);border-radius:4px;padding:2px 8px;font-size:11px;color:var(--t2);margin-bottom:6px;}
+.ipo-item-meta{font-size:11px;color:var(--t3);margin-top:3px;}
+.ipo-item-meta strong{color:var(--t2);}
+.ipo-item-gmp{font-size:11px;font-weight:500;margin-top:3px;}
+.ipo-item-gmp.pos{color:var(--green);}
+.ipo-item-gmp.neg{color:var(--red);}
+
 /* ── DIVIDER ── */
 .div{height:1px;background:var(--b1);margin:1.5rem 0;}
 </style>
@@ -255,7 +272,6 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
           <div class="ph-sub" style="color:var(--or);font-size:12px;">by Vikram Bhatia</div>
           <div class="ph-sub" style="margin-top:2px;">AI-powered analysis using live data, quantitative scoring and qualitative assessment</div>
         </div>
-        <span class="powered">⚡ Powered by Claude AI</span>
       </div>
     </div>
 
@@ -375,14 +391,13 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 
 
   <div class="side-col">
-    <div class="sb-header" style="display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--b1);">
-      <div style="font-size:13px;font-weight:600;color:var(--or);text-transform:uppercase;letter-spacing:0.06em;">Current Open IPOs</div>
-      <button class="sb-btn" onclick="loadOpenIpos()" style="padding:5px 14px;background:var(--or);border:none;border-radius:6px;color:#fff;font-size:12px;font-weight:500;cursor:pointer;">Refresh</button>
+    <div class="side-header">
+      <div class="side-title">Current Open IPOs</div>
+      <button onclick="loadOpenIpos(); this.textContent='Loading...'; this.disabled=true;" class="refresh-btn" id="refreshBtn">Refresh</button>
     </div>
 
     <!-- Open IPOs -->
     <div class="sb-section" style="flex:1;">
-      <div class="sb-slabel" style="display:none;"></div>
       <div id="openIpoList"><div class="no-data">Loading…</div></div>
     </div>
 
@@ -652,27 +667,25 @@ async function loadOpenIpos() {
   if(!AS_URL) return;
   const el = document.getElementById('openIpoList');
   el.innerHTML = '<div class="no-data">Loading…</div>';
+  const btn = document.getElementById('refreshBtn');
   try {
     const res = await fetch(AS_URL+'?action=openipos');
     const data = await res.json();
     if(!Array.isArray(data)||!data.length) { el.innerHTML='<div class="no-data">No open IPOs found.</div>'; return; }
     el.innerHTML = data.map(ipo=>{
       const gmp = ipo.gmp;
-      const gmpCls = gmp===null?'neu':gmp>0?'pos':'neg';
+      const gmpCls = gmp===null?'':(gmp>0?'pos':'neg');
       const gmpTxt = gmp!==null?(gmp>0?'+'+gmp+'%':gmp+'%'):'GMP N/A';
-      return `<div class="open-ipo" style="cursor:default;">
-        <div class="oi-name">${esc(ipo.name)}</div>
-        <div class="oi-row">
-          <span class="oi-sector">${esc(ipo.sector||'—')}</span>
-          <span class="oi-gmp ${gmpCls}">${gmpTxt}</span>
-        </div>
-        <div class="oi-row" style="margin-top:2px;">
-          <span class="oi-close" style="font-size:9px;">Closes ${esc(ipo.closeDate||'—')}</span>
-          ${ipo.subscriptionTotal?`<span class="oi-sector">${ipo.subscriptionTotal}× sub</span>`:''}
-        </div>
+      return `<div class="ipo-item-card">
+        <div class="ipo-item-name">${esc(ipo.name)}</div>
+        <div class="ipo-item-cat">${esc(ipo.sector||'—')}</div>
+        <div class="ipo-item-meta">${ipo.openDate?'<strong>Open:</strong> '+esc(ipo.openDate):''}${ipo.closeDate?' &nbsp;·&nbsp; <strong>Close:</strong> '+esc(ipo.closeDate):'' }</div>
+        ${ipo.issueSize?`<div class="ipo-item-meta">Issue size: ${esc(ipo.issueSize)}</div>`:''}
+        ${gmp!==null?`<div class="ipo-item-gmp ${gmpCls}">GMP: ${gmpTxt}</div>`:''}
       </div>`;
     }).join('');
   } catch(e) { el.innerHTML='<div class="no-data">Could not load.</div>'; }
+  if(btn){ btn.textContent='Refresh'; btn.disabled=false; }
 }
 
 // ── SIDEBAR: HISTORY ────────────────────────────────────────
