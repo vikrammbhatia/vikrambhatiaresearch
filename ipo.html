@@ -25,12 +25,11 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 
 /* ── LAYOUT ── */
 .page{display:flex;flex-direction:row;min-height:100vh;width:100%;}
-.sidebar{flex-shrink:0;width:240px;border-left:1px solid var(--b1);height:100vh;position:sticky;top:0;overflow-y:auto;background:var(--bg2);display:flex;flex-direction:column;}
-.sidebar::-webkit-scrollbar{width:2px;}
-.sidebar::-webkit-scrollbar-thumb{background:var(--b2);}
-.main{flex:1;min-width:0;overflow-y:auto;height:100vh;}
-.main-inner{max-width:900px;padding:2rem 2.5rem;}
-@media(max-width:900px){.sidebar{display:none;}.main-inner{padding:1.25rem;}}
+.main-col{flex:1;padding:2.5rem 3rem;overflow-y:auto;min-width:0;}
+.side-col{width:320px;min-width:320px;padding:1.5rem;border-left:1px solid var(--b1);height:100vh;position:sticky;top:0;overflow-y:auto;background:var(--bg2);}
+.side-col::-webkit-scrollbar{width:3px;}
+.side-col::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px;}
+@media(max-width:900px){.side-col{display:none;}.main-col{padding:1.5rem;}}
 
 /* ── SIDEBAR ── */
 .sb-header{padding:1.25rem 1rem 0.75rem;border-bottom:1px solid var(--b1);}
@@ -247,8 +246,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 <div class="page">
 
   <!-- ── MAIN ── -->
-  <div class="main">
-  <div class="main-inner">
+  <div class="main-col">
 
     <div class="page-header">
       <div class="ph-row">
@@ -373,12 +371,9 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
     </div>
 
   </div>
-  </div><!-- end .main -->
 
-</div>
 
-  <!-- ── SIDEBAR ── -->
-  <div class="sidebar">
+  <div class="side-col">
     <div class="sb-header">
       <div class="sb-logo">IPO Research <em>Engine</em></div>
       <div class="sb-sub">by Vikram Bhatia</div>
