@@ -562,11 +562,13 @@ function render(d) {
     return Math.round(premium * 10) / 10; // 1 decimal
   }
 
-  const listingPremium = calcListingPremium(fd);
+  // Use server-calculated premium if available, else calculate client-side
+  const listingPremium = (d.expectedListingPremium !== null && d.expectedListingPremium !== undefined) ? d.expectedListingPremium : calcListingPremium(fd);
+  const serverListingPrice = d.expectedListingPrice || null;
   const issuePrice = fd.priceBandHigh || fd.priceBandLow || null;
-  const expectedListingPrice = (listingPremium !== null && issuePrice) 
+  const expectedListingPrice = serverListingPrice || ((listingPremium !== null && issuePrice) 
     ? Math.round(issuePrice * (1 + listingPremium/100)) 
-    : null;
+    : null);
 
   const premiumColor = listingPremium === null ? 'var(--t3)' 
     : listingPremium >= 20 ? 'var(--green)' 
