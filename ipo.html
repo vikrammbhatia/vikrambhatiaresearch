@@ -140,6 +140,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .hero-rationale{font-size:13px;color:var(--t2);line-height:1.5;}
 .hero-right{display:flex;flex-direction:column;gap:6px;flex-shrink:0;}
 .hero-pill{font-size:11px;background:var(--bg4);border:1px solid var(--b2);color:var(--t2);padding:4px 10px;border-radius:20px;text-align:center;}
+.listing-pill{border-color:var(--b2);background:var(--bg3);}
 .hero-pill span{color:var(--t1);font-weight:500;}
 
 /* ── SECTION LABEL ── */
@@ -505,9 +506,86 @@ function render(d) {
   document.getElementById('heroScore').textContent = sc.composite;
   document.getElementById('heroBadge').innerHTML = `<span class="hero-badge-icon">${vrd.icon}</span>${esc(cl.verdict||vrd.label)}`;
   document.getElementById('heroRationale').textContent = cl.oneLineRationale||'';
+  // Calculate expected listing premium
+  function calcListingPremium(fd) {
+    const gmp = fd.gmp;
+    const qib = fd.subscriptionQIB;
+    const hni = fd.subscriptionHNI;
+    const retail = fd.subscriptionRetail;
+    const anchor = fd.anchorInvestorQuality;
+
+    // Convert each signal to an estimated listing premium %
+    let gmpSignal = 0;
+    if (gmp !== null && gmp !== undefined) gmpSignal = gmp; // direct %
+
+    let qibSignal = 0;
+    if (qib !== null && qib !== undefined) {
+      if (qib >= 100) qibSignal = 25;
+      else if (qib >= 50) qibSignal = 18;
+      else if (qib >= 20) qibSignal = 12;
+      else if (qib >= 10) qibSignal = 8;
+      else if (qib >= 3) qibSignal = 3;
+      else qibSignal = -5;
+    }
+
+    let demandSignal = 0;
+    const hniVal = hni || 0;
+    const retailVal = retail || 0;
+    const totalSub = (hniVal + retailVal) / 2;
+    if (totalSub >= 50) demandSignal = 20;
+    else if (totalSub >= 20) demandSignal = 12;
+    else if (totalSub >= 10) demandSignal = 8;
+    else if (totalSub >= 3) demandSignal = 4;
+    else demandSignal = 0;
+
+    let anchorSignal = 0;
+    if (anchor !== null && anchor !== undefined) {
+      anchorSignal = (anchor / 5) * 15; // max 15% contribution
+    }
+
+    // Only calculate if we have at least GMP or QIB data
+    if (gmp === null && qib === null) return null;
+
+    const hasGMP = gmp !== null && gmp !== undefined;
+    const hasQIB = qib !== null && qib !== undefined;
+    const hasDemand = (hni !== null || retail !== null);
+
+    // Weighted average
+    let weighted = 0;
+    let totalWt = 0;
+    if (hasGMP)    { weighted += gmpSignal * 0.40;    totalWt += 0.40; }
+    if (hasQIB)    { weighted += qibSignal * 0.35;    totalWt += 0.35; }
+    if (hasDemand) { weighted += demandSignal * 0.15; totalWt += 0.15; }
+    if (anchor)    { weighted += anchorSignal * 0.10; totalWt += 0.10; }
+
+    const premium = totalWt > 0 ? (weighted / totalWt) : 0;
+    return Math.round(premium * 10) / 10; // 1 decimal
+  }
+
+  const listingPremium = calcListingPremium(fd);
+  const issuePrice = fd.priceBandHigh || fd.priceBandLow || null;
+  const expectedListingPrice = (listingPremium !== null && issuePrice) 
+    ? Math.round(issuePrice * (1 + listingPremium/100)) 
+    : null;
+
+  const premiumColor = listingPremium === null ? 'var(--t3)' 
+    : listingPremium >= 20 ? 'var(--green)' 
+    : listingPremium >= 10 ? 'var(--amber)' 
+    : listingPremium >= 0  ? 'var(--t2)' 
+    : 'var(--red)';
+
+  const premiumDisplay = listingPremium !== null 
+    ? (listingPremium >= 0 ? '+' : '') + listingPremium + '%'
+    : '—';
+
+  const listingPriceDisplay = expectedListingPrice 
+    ? '₹' + expectedListingPrice 
+    : '—';
+
   document.getElementById('heroRight').innerHTML = `
     <div class="hero-pill">Horizon <span>${esc(cl.investmentHorizon||vrd.horizon||'—')}</span></div>
-    <div class="hero-pill">Alloc <span>${esc(cl.suggestedAmount||vrd.alloc||'—')}</span></div>`;
+    <div class="hero-pill">Allocation <span>${esc(cl.suggestedAmount||vrd.alloc||'—')}</span></div>
+    <div class="hero-pill listing-pill">Expected listing <span style="color:${premiumColor};font-weight:600;">${premiumDisplay}</span>${expectedListingPrice ? \` · <span style="color:${premiumColor};">₹${expectedListingPrice}</span>\` : ''}</div>`;
 
   // Metrics — only populated
   const mDefs = [
@@ -527,7 +605,15 @@ function render(d) {
     {l:'Lot Size',         v:fd.lotSize?fd.lotSize+' shares':null},
     {l:'Min Investment',   v:fd.minInvestment?'₹'+Number(fd.minInvestment).toLocaleString('en-IN'):null},
   ];
-  document.getElementById('metricsEl').innerHTML = mDefs
+  // Add expected listing premium as first metric card if available
+  const listingMetricHTML = listingPremium !== null ? `
+    <div class="mc" style="border-color:${premiumColor};background:var(--bg3);">
+      <div class="mc-lbl">Expected listing premium</div>
+      <div class="mc-val" style="color:${premiumColor};">${premiumDisplay}</div>
+      ${expectedListingPrice ? `<div style="font-size:11px;color:var(--t3);margin-top:3px;">Est. price ₹${expectedListingPrice}</div>` : ''}
+    </div>` : '';
+
+  document.getElementById('metricsEl').innerHTML = listingMetricHTML + mDefs
     .filter(m=>m.v!==null&&m.v!==undefined&&m.v!=='')
     .map(m=>`<div class="mc"><div class="mc-lbl">${m.l}</div><div class="mc-val">${esc(String(m.v))}</div></div>`)
     .join('');
