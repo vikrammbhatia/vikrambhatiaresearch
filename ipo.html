@@ -585,10 +585,11 @@ function render(d) {
     ? '₹' + expectedListingPrice 
     : '—';
 
-  document.getElementById('heroRight').innerHTML = `
-    <div class="hero-pill">Horizon <span>${esc(cl.investmentHorizon||vrd.horizon||'—')}</span></div>
-    <div class="hero-pill">Allocation <span>${esc(cl.suggestedAmount||vrd.alloc||'—')}</span></div>
-    <div class="hero-pill listing-pill">Expected listing <span style="color:${premiumColor};font-weight:600;">${premiumDisplay}</span>${expectedListingPrice ? \` · <span style="color:${premiumColor};">₹${expectedListingPrice}</span>\` : ''}</div>`;
+  const listingExtra = expectedListingPrice ? ' &nbsp;·&nbsp; ₹' + expectedListingPrice : '';
+  document.getElementById('heroRight').innerHTML =
+    '<div class="hero-pill">Horizon <span>' + esc(cl.investmentHorizon||vrd.horizon||'—') + '</span></div>' +
+    '<div class="hero-pill">Allocation <span>' + esc(cl.suggestedAmount||vrd.alloc||'—') + '</span></div>' +
+    '<div class="hero-pill listing-pill">Expected listing <span style="color:' + premiumColor + ';font-weight:600;">' + premiumDisplay + '</span>' + listingExtra + '</div>';
 
   // Metrics — only populated
   const mDefs = [
