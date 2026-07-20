@@ -410,7 +410,9 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 
 <script>
 // ── CONFIG ──────────────────────────────────────────────────
-let AS_URL = localStorage.getItem('ipo_as_url') || '';
+let AS_URL = localStorage.getItem('ipo_as_url') || 'https://script.google.com/macros/s/AKfycbzac1Ps3bd4xnRK9-E8ehygibjimRDKzGF2FWpd2A4772tTMdyw6erU6lPB3r0Vm9Q/exec';
+// Save it immediately if not already saved
+if(!localStorage.getItem('ipo_as_url')) localStorage.setItem('ipo_as_url', AS_URL);
 const AF_MSGS = [
   {t:0,    msg:"Searching live IPO data via web…"},
   {t:8000, msg:"Extracting financials, subscription & GMP…"},
@@ -433,7 +435,10 @@ function showCfg(e) {
   document.getElementById('cfgStrip').innerHTML = `<label>Apps Script URL</label><input type="text" id="asUrl" value="${AS_URL}" style="flex:1;background:var(--bg4);border:1px solid var(--b2);color:var(--t2);padding:5px 10px;border-radius:5px;font-size:12px;font-family:'DM Mono',monospace;min-width:0;"/><button class="btn-sm" onclick="saveConfig()">Save</button>`;
 }
 window.addEventListener('load', () => {
-  if(AS_URL) { document.getElementById('asUrl').value = AS_URL; saveConfig(); }
+  if(AS_URL) {
+    // Auto-collapse config strip since URL is already saved
+    document.getElementById('cfgStrip').innerHTML = `<span class="cfg-saved">✓ URL saved — <a href="#" onclick="showCfg(event)" style="color:var(--or);text-decoration:none;font-size:11px;">edit</a></span>`;
+  }
   loadOpenIpos();
 });
 
