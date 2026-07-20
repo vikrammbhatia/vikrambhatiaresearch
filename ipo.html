@@ -471,8 +471,8 @@ async function analyse() {
     const res = await fetch(AS_URL+'?action=analyse&ipo='+encodeURIComponent(name));
     const data = await res.json();
     if(data.error) throw new Error(data.error);
+    document.getElementById('results').style.display='block';
     render(data);
-    loadHistory();
   } catch(err) {
     showErr('Error: '+err.message+'. Check your Apps Script URL and that the deployment is published.');
   } finally {
@@ -499,11 +499,12 @@ function render(d) {
     return;
   }
 
-  const sc=d.scores, fd=d.fetchedData, cl=d.claudeAnalysis, vrd=d.verdict;
+  const sc=d.scores||{}, fd=d.fetchedData||{}, cl=d.claudeAnalysis||{}, vrd=d.verdict||{label:'N/A',color:'amber',alloc:'—',horizon:'—',icon:'?'};
 
   // Hero card
   const heroCard = document.getElementById('heroCard');
-  heroCard.className = 'hero '+vrd.color;
+  if(!heroCard) { console.error('heroCard not found'); return; }
+  heroCard.className = 'hero '+(vrd.color||'amber');
   document.getElementById('heroScore').textContent = sc.composite;
   document.getElementById('heroBadge').innerHTML = `<span class="hero-badge-icon">${vrd.icon}</span>${esc(cl.verdict||vrd.label)}`;
   document.getElementById('heroRationale').textContent = cl.oneLineRationale||'';
@@ -625,7 +626,7 @@ function render(d) {
   // Category bars
   const cats = ['Market','Financials','Valuation','Governance','Strategic','Returns'];
   document.getElementById('catBarsEl').innerHTML = cats.map(cat => {
-    const s = sc.catScores[cat];
+    const s = (sc.catScores||{})[cat];
     if(s===null||s===undefined) return '';
     const clr = CAT_COLORS[cat]||'#555';
     const valClr = s>=65?'var(--green)':s>=45?'var(--amber)':'var(--red)';
@@ -721,7 +722,7 @@ function render(d) {
   ai.innerHTML = html;
 
   // Factor table
-  document.getElementById('ftbody').innerHTML = sc.factors.map(f=>{
+  document.getElementById('ftbody').innerHTML = (sc.factors||[]).map(f=>{
     const s=f.score;
     const pc=s===null?'sn':s>=4?'sg':s>=3?'sa':'sr';
     const fc=s===null?'#333':s>=4?'#22c55e':s>=3?'#f59e0b':'#ef4444';
