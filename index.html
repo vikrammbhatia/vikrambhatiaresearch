@@ -96,6 +96,8 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .hero-score-bar-track { height: 6px; background: var(--bg4); border-radius: 3px; overflow: hidden; }
 .hero-score-bar-fill { height: 100%; border-radius: 3px; transition: width 1s cubic-bezier(0.4,0,0.2,1); }
 .hero-rationale { font-size: 13px; color: var(--text2); line-height: 1.6; }
+.hero-rationale.pulsing { color: var(--orange); animation: pulse-text 1.5s ease-in-out infinite; }
+@keyframes pulse-text { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
 .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 1rem; }
 @media (max-width: 1100px) { .metrics-grid { grid-template-columns: repeat(2, 1fr); } }
 .metric-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
@@ -430,6 +432,7 @@ function analyse() {
 function renderResult(d) {
   var pollFund = String(d.fundName || document.getElementById("fundInput").value.trim());
   var pollUrl = SCRIPT_URL + "?action=enrichclaude&fund=" + encodeURIComponent(pollFund);
+  document.getElementById("heroRationale").classList.remove("pulsing");
   if (d.isNfoClosed) {
     document.getElementById("result").style.display = "block";
     var resultDiv = document.getElementById("result");
@@ -519,7 +522,8 @@ function renderResult(d) {
 
   // Phase 2 — if no Claude rationale, auto-poll for enrichment after 35s
   if (!d.analystRationale || d.analystRationale === "Analysis complete." || !d.keyPositives) {
-    document.getElementById("heroRationale").textContent = "AI qualitative assessment in progress — updating shortly...";
+    document.getElementById("heroRationale").textContent = "⟳ AI qualitative assessment in progress — updating shortly...";
+    document.getElementById("heroRationale").classList.add("pulsing");
     setTimeout(function() {
       fetch(pollUrl + "&v=" + Date.now())
         .then(function(r) { return r.text(); })
@@ -527,7 +531,7 @@ function renderResult(d) {
           var m = t.match(/\{[\s\S]*\}/);
           if (m) {
             var d2 = JSON.parse(m[0]);
-            if (d2.success) renderResult(d2);
+            if (d2.success && d2.keyPositives) renderResult(d2);
           }
         })
         .catch(function() {});
