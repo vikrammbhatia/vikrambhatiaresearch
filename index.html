@@ -98,7 +98,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .hero-rationale { font-size: 13px; color: var(--text2); line-height: 1.6; }
 .hero-rationale.pulsing { color: var(--orange); animation: pulse-text 1.5s ease-in-out infinite; }
 @keyframes pulse-text { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-.metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 1rem; }
+.metrics-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 1rem; }
 @media (max-width: 1100px) { .metrics-grid { grid-template-columns: repeat(2, 1fr); } }
 .metric-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
 .metric-label { font-size: 11px; color: var(--text2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
@@ -246,6 +246,11 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
           <div class="metric-value" style="font-size:16px" id="mAmount">&#8212;</div>
           <div class="metric-sub">investment</div>
         </div>
+        <div class="metric-card">
+          <div class="metric-label">Category avg 1Y return</div>
+          <div class="metric-value" id="mCatReturn">&#8212;</div>
+          <div class="metric-sub" id="mCatReturnSub">existing funds in category</div>
+        </div>
       </div>
       <span id="recBadge2" style="display:none"></span>
       <span id="scoreLabel" style="display:none"></span>
@@ -386,7 +391,42 @@ function doRetry(fundName) {
       document.getElementById("analyseBtn").disabled = false;
     });
 }
+var categoryReturnsCache = null;
 
+function loadCategoryReturns(callback) {
+  if (categoryReturnsCache) { callback(categoryReturnsCache); return; }
+  fetch(SCRIPT_URL + "?action=categoryreturns")
+    .then(function(r) { return r.text(); })
+    .then(function(t) {
+      var m = t.match(/\{[\s\S]*\}/);
+      if (m) {
+        var parsed = JSON.parse(m[0]);
+        if (parsed.success) { categoryReturnsCache = parsed.data; callback(parsed.data); }
+      }
+    })
+    .catch(function() {});
+}
+
+function getCategoryReturn(category, data) {
+  if (!data || !category) return null;
+  var cat = category.toLowerCase();
+  for (var i = 0; i < data.length; i++) {
+    var dc = data[i].category.toLowerCase();
+    if (cat.includes(dc) || dc.includes(cat)) return data[i];
+  }
+  if (cat.includes("large") && cat.includes("mid")) {
+    for (var i = 0; i < data.length; i++) {
+      if (data[i].category === "Large & Mid Cap") return data[i];
+    }
+  }
+  if (cat.includes("index") || cat.includes("etf")) {
+    for (var i = 0; i < data.length; i++) {
+      if (data[i].category === "Index Fund" || data[i].category === "ETF") return data[i];
+    }
+  }
+  return null;
+}
+  
 function analyse() {
   var fundName = document.getElementById("fundInput").value.trim();
   if (!fundName) return;
@@ -517,6 +557,25 @@ function renderResult(d) {
   if (d.amfiSidUrl) linksRow.innerHTML += '<a href="' + d.amfiSidUrl + '" target="_blank" class="link-btn">AMFI SID &#8599;</a>';
   linksRow.innerHTML += '<a href="https://www.valueresearchonline.com" target="_blank" class="link-btn">Value Research &#8599;</a>';
   linksRow.innerHTML += '<a href="https://www.morningstar.in" target="_blank" class="link-btn">Morningstar &#8599;</a>';
+  loadCategoryReturns(function(catData) {
+    var match = getCategoryReturn(d.category, catData);
+    var catReturnEl = document.getElementById("mCatReturn");
+    var catReturnSub = document.getElementById("mCatReturnSub");
+    if (match && catReturnEl) {
+      var ret = parseFloat(match.return1Y);
+      catReturnEl.textContent = (ret > 0 ? "+" : "") + ret.toFixed(1) + "%";
+      catReturnEl.style.color = ret >= 15 ? "#22c55e" : ret >= 8 ? "#f59e0b" : "#ef4444";
+      if (catReturnSub) catReturnSub.textContent = match.category + " \u00B7 " + match.fundCount + " funds";
+    } else if (catReturnEl) {
+      catReturnEl.textContent = "\u2014";
+      if (catReturnSub) catReturnSub.textContent = "category data unavailable";
+    }
+  });
+
+  document.getElementById("result").style.display = "block";
+  window.scrollTo(0, 0);
+
+  // Phase 2 — if no Claude rationale, auto-poll for enrichment after 35s
   document.getElementById("result").style.display = "block";
   window.scrollTo(0, 0);
 
