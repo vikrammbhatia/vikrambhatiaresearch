@@ -472,7 +472,8 @@ function analyse() {
 function renderResult(d) {
   var pollFund = String(d.fundName || document.getElementById("fundInput").value.trim());
   var pollUrl = SCRIPT_URL + "?action=enrichclaude&fund=" + encodeURIComponent(pollFund);
-  document.getElementById("heroRationale").classList.remove("pulsing");
+  var heroRationaleEl = document.getElementById("heroRationale");
+  if (heroRationaleEl) heroRationaleEl.classList.remove("pulsing");
   if (d.isNfoClosed) {
     document.getElementById("result").style.display = "block";
     var resultDiv = document.getElementById("result");
