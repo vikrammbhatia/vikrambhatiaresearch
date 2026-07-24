@@ -407,9 +407,37 @@ function loadCategoryReturns(callback) {
     .catch(function() {});
 }
 
-function getCategoryReturn(category, data) {
-  if (!data || !category) return null;
-  var cat = category.toLowerCase();
+function getCategoryReturn(category, theme, data) {
+  if (!data) return null;
+  var cat = (category || "").toLowerCase();
+  var thm = (theme || "").toLowerCase();
+
+  var themeKeywords = {
+    "insurance": "Insurance",
+    "pharma": "Pharma",
+    "bank": "Banking",
+    "tech": "Technology",
+    "it ": "Technology",
+    "auto": "Auto",
+    "metal": "Metal",
+    "infra": "Infrastructure",
+    "energy": "Energy",
+    "power": "Energy",
+    "consumption": "Consumption",
+    "fmcg": "Consumption",
+    "momentum": "Momentum",
+    "esg": "ESG"
+  };
+
+  for (var key in themeKeywords) {
+    if (thm.includes(key) || cat.includes(key)) {
+      var targetCat = themeKeywords[key];
+      for (var i = 0; i < data.length; i++) {
+        if (data[i].category === targetCat) return data[i];
+      }
+    }
+  }
+
   for (var i = 0; i < data.length; i++) {
     var dc = data[i].category.toLowerCase();
     if (cat.includes(dc) || dc.includes(cat)) return data[i];
@@ -423,6 +451,10 @@ function getCategoryReturn(category, data) {
     for (var i = 0; i < data.length; i++) {
       if (data[i].category === "Index Fund" || data[i].category === "ETF") return data[i];
     }
+  }
+  // Direct exact match fallback
+  for (var i = 0; i < data.length; i++) {
+    if (data[i].category.toLowerCase() === cat) return data[i];
   }
   return null;
 }
