@@ -559,7 +559,7 @@ function renderResult(d) {
   linksRow.innerHTML += '<a href="https://www.valueresearchonline.com" target="_blank" class="link-btn">Value Research &#8599;</a>';
   linksRow.innerHTML += '<a href="https://www.morningstar.in" target="_blank" class="link-btn">Morningstar &#8599;</a>';
   loadCategoryReturns(function(catData) {
-    var match = getCategoryReturn(d.category, catData);
+    var match = getCategoryReturn(d.category, d.theme, catData);
     var catReturnEl = document.getElementById("mCatReturn");
     var catReturnSub = document.getElementById("mCatReturnSub");
     if (match && catReturnEl) {
