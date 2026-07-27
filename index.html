@@ -639,13 +639,28 @@ function buildNfoItem(nfo) {
   var cleanName = nfo.name.replace(/ - Direct Plan - Growth| - Direct - Growth| - Direct Plan/gi, "").trim();
   var div = document.createElement("div");
   div.className = "nfo-item";
+  var scoreBadge = "";
+  if (nfo.score && nfo.score > 0) {
+    var rec = nfo.recommendation || "";
+    var badgeClass = rec.toLowerCase().indexOf("strong buy") >= 0 ? "badge-strong-buy" :
+                     rec.toLowerCase().indexOf("consider") >= 0 ? "badge-consider" :
+                     rec.toLowerCase().indexOf("watchlist") >= 0 ? "badge-watchlist" : "badge-avoid";
+    var badgeIcon = rec.toLowerCase().indexOf("strong buy") >= 0 ? "★" :
+                    rec.toLowerCase().indexOf("consider") >= 0 ? "✓" :
+                    rec.toLowerCase().indexOf("watchlist") >= 0 ? "⚠" : "✕";
+    scoreBadge = '<div style="display:flex;align-items:center;gap:6px;margin-top:6px">' +
+      '<span style="font-size:13px;font-weight:700;font-family:DM Sans,sans-serif;color:#f0f0f0">' + nfo.score.toFixed(1) + '</span>' +
+      '<span class="badge ' + badgeClass + '" style="font-size:11px;padding:2px 8px">' + badgeIcon + ' ' + rec + '</span>' +
+      '</div>';
+  }
   div.innerHTML = '<div class="nfo-item-name">' + cleanName + '</div>' +
-    '<div class="nfo-item-cat">' + (nfo.category || "\u2014") + '</div>' +
-    '<div class="nfo-item-dates">' +
+    '<div class="nfo-item-cat">' + (nfo.category || "—") + '</div>' +
+    scoreBadge +
+    '<div class="nfo-item-dates" style="margin-top:4px">' +
     (nfo.openDate ? '<strong>Open:</strong> ' + nfo.openDate : '') +
-    (nfo.closeDate && nfo.closeDate !== "\u2014" ? ' &nbsp;\u00B7&nbsp; <strong>Close:</strong> ' + nfo.closeDate : '') +
+    (nfo.closeDate && nfo.closeDate !== "—" ? ' &nbsp;·&nbsp; <strong>Close:</strong> ' + nfo.closeDate : '') +
     '</div>' +
-    (nfo.minInvest && nfo.minInvest !== "\u2014" ? '<div class="nfo-item-min">Min: \u20B9' + Number(String(nfo.minInvest).replace(/[\u20B9,]/g,"")).toLocaleString("en-IN") + '</div>' : '');
+    (nfo.minInvest && nfo.minInvest !== "—" ? '<div class="nfo-item-min">Min: ₹' + Number(String(nfo.minInvest).replace(/[₹,]/g,"")).toLocaleString("en-IN") + '</div>' : '');
   return div;
 }
 
