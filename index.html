@@ -639,7 +639,7 @@ function buildNfoItem(nfo) {
   var cleanName = nfo.name.replace(/ - Direct Plan - Growth| - Direct - Growth| - Direct Plan/gi, "").trim();
   var div = document.createElement("div");
   div.className = "nfo-item";
-  var scoreBadge = "";
+  var scoreHtml = "";
   if (nfo.score && nfo.score > 0) {
     var rec = nfo.recommendation || "";
     var badgeClass = rec.toLowerCase().indexOf("strong buy") >= 0 ? "badge-strong-buy" :
@@ -648,15 +648,15 @@ function buildNfoItem(nfo) {
     var badgeIcon = rec.toLowerCase().indexOf("strong buy") >= 0 ? "★" :
                     rec.toLowerCase().indexOf("consider") >= 0 ? "✓" :
                     rec.toLowerCase().indexOf("watchlist") >= 0 ? "⚠" : "✕";
-    scoreBadge = '<div style="display:flex;align-items:center;gap:6px;margin-top:6px">' +
-      '<span style="font-size:13px;font-weight:700;font-family:DM Sans,sans-serif;color:#f0f0f0">' + nfo.score.toFixed(1) + '</span>' +
-      '<span class="badge ' + badgeClass + '" style="font-size:11px;padding:2px 8px">' + badgeIcon + ' ' + rec + '</span>' +
-      '</div>';
+    scoreHtml = '<span style="font-size:12px;font-weight:700;color:#f0f0f0;margin-left:6px">' + nfo.score.toFixed(1) + '</span>' +
+      '<span class="badge ' + badgeClass + '" style="font-size:10px;padding:2px 7px;margin-left:4px">' + badgeIcon + ' ' + rec + '</span>';
   }
-  div.innerHTML = '<div class="nfo-item-name">' + cleanName + '</div>' +
+  div.innerHTML = '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:2px;margin-bottom:6px">' +
+    '<span class="nfo-item-name" style="margin-bottom:0">' + cleanName + '</span>' +
+    scoreHtml +
+    '</div>' +
     '<div class="nfo-item-cat">' + (nfo.category || "—") + '</div>' +
-    scoreBadge +
-    '<div class="nfo-item-dates" style="margin-top:4px">' +
+    '<div class="nfo-item-dates">' +
     (nfo.openDate ? '<strong>Open:</strong> ' + nfo.openDate : '') +
     (nfo.closeDate && nfo.closeDate !== "—" ? ' &nbsp;·&nbsp; <strong>Close:</strong> ' + nfo.closeDate : '') +
     '</div>' +
