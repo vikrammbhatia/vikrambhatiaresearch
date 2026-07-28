@@ -149,7 +149,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 /* ── METRICS ── */
 .metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;}
 .mc{background:var(--bg3);border:1px solid var(--b1);border-radius:7px;padding:10px 12px;}
-.mc-lbl{font-size:10px;color:var(--t3);margin-bottom:3px;}
+.mc-lbl{font-size:10px;color:var(--t2);margin-bottom:3px;text-transform:uppercase;letter-spacing:0.04em;}
 .mc-val{font-size:14px;font-weight:500;color:var(--t1);}
 
 /* ── CATEGORY SCORES ── */
@@ -187,13 +187,13 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .inv-card{background:var(--bg3);border:1px solid var(--b1);border-radius:8px;padding:16px 18px;}
 .inv-top{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:14px;}
 .inv-cell{background:var(--bg4);border:1px solid var(--b2);border-radius:6px;padding:10px 12px;}
-.inv-lbl{font-size:10px;color:var(--t3);margin-bottom:3px;text-transform:uppercase;letter-spacing:0.06em;}
+.inv-lbl{font-size:11px;color:var(--t2);margin-bottom:3px;text-transform:uppercase;letter-spacing:0.04em;}
 .inv-val{font-size:14px;font-weight:600;color:var(--or);}
 .inv-val.green{color:var(--green);}
 .proj-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
 @media(max-width:600px){.proj-grid{grid-template-columns:repeat(2,1fr);}}
 .proj-cell{background:var(--bg4);border:1px solid var(--b2);border-radius:6px;padding:10px 12px;text-align:center;}
-.proj-lbl{font-size:10px;color:var(--t3);margin-bottom:4px;}
+.proj-lbl{font-size:11px;color:var(--t2);margin-bottom:4px;font-weight:500;}
 .proj-val{font-size:14px;font-weight:600;}
 .proj-chg{font-size:10px;margin-top:2px;}
 .inv-note{font-size:11px;color:var(--t4);margin-top:12px;line-height:1.5;padding-top:10px;border-top:1px solid var(--b1);}
@@ -231,6 +231,18 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .cat-Governance{background:#1a0a20;color:var(--purple);}
 .cat-Strategic{background:#1a0800;color:var(--or);}
 .cat-Returns{background:#1a0510;color:var(--pink);}
+
+/* ── FACTOR GRID ── */
+.factor-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-bottom:1rem;}
+.fg-card{background:var(--bg3);border:1px solid var(--b1);border-radius:7px;padding:10px 12px;}
+.fg-cat{font-size:9px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:4px;}
+.fg-name{font-size:12px;color:var(--t1);margin-bottom:6px;line-height:1.3;}
+.fg-bottom{display:flex;align-items:center;justify-content:space-between;gap:6px;}
+.fg-bar-wrap{flex:1;}
+.fg-bar{height:3px;background:var(--b2);border-radius:2px;overflow:hidden;}
+.fg-bar-fill{height:100%;border-radius:2px;}
+.fg-score{font-size:11px;font-weight:600;padding:2px 7px;border-radius:10px;white-space:nowrap;}
+.fg-wt{font-size:10px;color:var(--t3);white-space:nowrap;}
 
 /* ── DATA TABLE ── */
 .dtable{width:100%;border-collapse:collapse;}
@@ -364,17 +376,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 
       <!-- 22-FACTOR BREAKDOWN -->
       <div class="slabel">22-factor breakdown</div>
-      <table class="ftable">
-        <thead>
-          <tr>
-            <th>Factor</th>
-            <th>Category</th>
-            <th>Score</th>
-            <th class="right">Wt</th>
-          </tr>
-        </thead>
-        <tbody id="ftbody"></tbody>
-      </table>
+      <div id="factorGrid" class="factor-grid"></div>
 
       <div class="div"></div>
 
@@ -471,8 +473,8 @@ async function analyse() {
     const res = await fetch(AS_URL+'?action=analyse&ipo='+encodeURIComponent(name));
     const data = await res.json();
     if(data.error) throw new Error(data.error);
+    document.getElementById('results').style.display='block';
     render(data);
-    loadHistory();
   } catch(err) {
     showErr('Error: '+err.message+'. Check your Apps Script URL and that the deployment is published.');
   } finally {
@@ -499,11 +501,20 @@ function render(d) {
     return;
   }
 
-  const sc=d.scores, fd=d.fetchedData, cl=d.claudeAnalysis, vrd=d.verdict;
+  const sc=d.scores||{}, fd=d.fetchedData||{}, cl=d.claudeAnalysis||{}, vrd=d.verdict||{label:'N/A',color:'amber',alloc:'—',horizon:'—',icon:'?'};
+  // Override verdict color based on Claude's actual verdict text
+  if(cl.verdict) {
+    const v = cl.verdict.toLowerCase();
+    if(v.includes('strong subscribe')) vrd.color='green';
+    else if(v.includes('subscribe with caution') || v.includes('caution')) vrd.color='amber';
+    else if(v==='subscribe') vrd.color='green';
+    else if(v.includes('avoid')) vrd.color='red';
+  }
 
   // Hero card
   const heroCard = document.getElementById('heroCard');
-  heroCard.className = 'hero '+vrd.color;
+  if(!heroCard) { console.error('heroCard not found'); return; }
+  heroCard.className = 'hero '+(vrd.color||'amber');
   document.getElementById('heroScore').textContent = sc.composite;
   document.getElementById('heroBadge').innerHTML = `<span class="hero-badge-icon">${vrd.icon}</span>${esc(cl.verdict||vrd.label)}`;
   document.getElementById('heroRationale').textContent = cl.oneLineRationale||'';
@@ -563,8 +574,10 @@ function render(d) {
     return Math.round(premium * 10) / 10; // 1 decimal
   }
 
-  // Use server-calculated premium if available, else calculate client-side
-  const listingPremium = (d.expectedListingPremium !== null && d.expectedListingPremium !== undefined) ? d.expectedListingPremium : calcListingPremium(fd);
+  // Use GMP directly as primary signal for listing premium display
+  const listingPremium = (d.expectedListingPremium !== null && d.expectedListingPremium !== undefined) 
+    ? d.expectedListingPremium 
+    : (fd.gmp !== null && fd.gmp !== undefined ? fd.gmp : calcListingPremium(fd));
   const serverListingPrice = d.expectedListingPrice || null;
   const issuePrice = fd.priceBandHigh || fd.priceBandLow || null;
   const expectedListingPrice = serverListingPrice || ((listingPremium !== null && issuePrice) 
@@ -588,7 +601,7 @@ function render(d) {
   const listingExtra = expectedListingPrice ? ' &nbsp;·&nbsp; ₹' + expectedListingPrice : '';
   document.getElementById('heroRight').innerHTML =
     '<div class="hero-pill">Horizon <span>' + esc(cl.investmentHorizon||vrd.horizon||'—') + '</span></div>' +
-    '<div class="hero-pill">Allocation <span>' + esc(cl.suggestedAmount||vrd.alloc||'—') + '</span></div>' +
+    '<div class="hero-pill">Allocation <span>' + esc((cl.suggestedAmount||vrd.alloc||'—').replace(/Rs\./g,'₹').replace(/Rs /g,'₹')) + '</span></div>' +
     '<div class="hero-pill listing-pill">Expected listing <span style="color:' + premiumColor + ';font-weight:600;">' + premiumDisplay + '</span>' + listingExtra + '</div>';
 
   // Metrics — only populated
@@ -625,14 +638,13 @@ function render(d) {
   // Category bars
   const cats = ['Market','Financials','Valuation','Governance','Strategic','Returns'];
   document.getElementById('catBarsEl').innerHTML = cats.map(cat => {
-    const s = sc.catScores[cat];
+    const s = (sc.catScores||{})[cat];
     if(s===null||s===undefined) return '';
-    const clr = CAT_COLORS[cat]||'#555';
-    const valClr = s>=65?'var(--green)':s>=45?'var(--amber)':'var(--red)';
+    const barClr = s>=65?'var(--green)':s>=45?'var(--amber)':'var(--red)';
     return `<div class="cat-bar-row">
       <div class="cat-bar-name">${cat}</div>
-      <div class="cat-bar-track"><div class="cat-bar-fill" style="width:${s}%;background:${clr};"></div></div>
-      <div class="cat-bar-val" style="color:${valClr};">${s}%</div>
+      <div class="cat-bar-track"><div class="cat-bar-fill" style="width:${s}%;background:${barClr};"></div></div>
+      <div class="cat-bar-val" style="color:${barClr};">${s}%</div>
     </div>`;
   }).join('');
 
@@ -652,15 +664,20 @@ function render(d) {
   // Expert broker consensus
   const brokerSec = document.getElementById('brokerSection');
   if(fd.brokerRecommendations) {
+    // Show only recommendation types, not broker names
     const pairs = fd.brokerRecommendations.split(',').map(s=>s.trim()).filter(Boolean);
-    const pills = pairs.map(pair => {
+    const recCounts = {};
+    pairs.forEach(pair => {
       const parts = pair.split(':');
-      if(parts.length<2) return '';
-      const broker = parts[0].trim();
-      const rec = parts.slice(1).join(':').trim().toLowerCase();
-      const cls = rec.includes('avoid')||rec.includes('skip') ? 'bp-avoid' : rec.includes('neutral')||rec.includes('not rated') ? 'bp-neutral' : 'bp-sub';
-      return `<span class="broker-pill ${cls}">${esc(broker)}: ${esc(parts.slice(1).join(':').trim())}</span>`;
-    }).filter(Boolean).join('');
+      if(parts.length<2) return;
+      const rec = parts.slice(1).join(':').trim();
+      recCounts[rec] = (recCounts[rec]||0)+1;
+    });
+    const pills = Object.entries(recCounts).map(([rec,count]) => {
+      const r = rec.toLowerCase();
+      const cls = r.includes('avoid')||r.includes('skip') ? 'bp-avoid' : r.includes('neutral')||r.includes('not rated') ? 'bp-neutral' : 'bp-sub';
+      return `<span class="broker-pill ${cls}">${esc(rec)}${count>1?' ('+count+')':''}</span>`;
+    }).join('');
 
     const consensus = fd.expertConsensus||'';
     const consClr = consensus.toLowerCase().includes('subscribe') ? 'var(--green)' : consensus.toLowerCase().includes('avoid') ? 'var(--red)' : 'var(--amber)';
@@ -690,9 +707,17 @@ function render(d) {
         <div class="proj-chg" style="color:${clr};">${chg>=0?'+':''}${chg}%</div>
       </div>`;
     }
-    document.getElementById('invCardEl').innerHTML = `
+    // Fix suggested amount display
+  const displayAmount = (cl.suggestedAmount||'').replace(/Rs\./g,'₹').replace(/Rs /g,'₹');
+  // Validate projected prices are logical (ascending trend expected)
+  const p3v  = cl.projectedPrice3M  || null;
+  const p6v  = cl.projectedPrice6M  || null;
+  const p9v  = cl.projectedPrice9M  || null;
+  const p12v = cl.projectedPrice12M || null;
+
+  document.getElementById('invCardEl').innerHTML = `
       <div class="inv-top">
-        <div class="inv-cell"><div class="inv-lbl">Suggested Investment</div><div class="inv-val">${esc(cl.suggestedAmount)}</div></div>
+        <div class="inv-cell"><div class="inv-lbl">Suggested Investment</div><div class="inv-val">${esc(displayAmount||'—')}</div></div>
         <div class="inv-cell"><div class="inv-lbl">Investment Horizon</div><div class="inv-val">${esc(cl.investmentHorizon||'—')}</div></div>
         <div class="inv-cell"><div class="inv-lbl">Expected Annual Return</div><div class="inv-val green">${cl.expectedAnnualReturn?cl.expectedAnnualReturn+'%':'—'}</div></div>
         <div class="inv-cell"><div class="inv-lbl">Issue Price</div><div class="inv-val">₹${ip||'—'}</div></div>
@@ -712,7 +737,7 @@ function render(d) {
 
   // AI Analysis
   const ai = document.getElementById('aiEl');
-  let html = `<div class="ai-title">⬡ Claude AI · Investment Analysis</div>`;
+  let html = `<div class="ai-title">AI ANALYSIS</div>`;
   if(cl.listingOutlook)    html+=`<div class="ai-block"><div class="ai-tag">Listing day</div><div class="ai-text">${esc(cl.listingOutlook)}</div></div>`;
   if(cl.mediumTermOutlook) html+=`<div class="ai-block"><div class="ai-tag">6–12 months</div><div class="ai-text">${esc(cl.mediumTermOutlook)}</div></div>`;
   if(cl.allocationAdvice)  html+=`<div class="ai-block"><div class="ai-tag">Allocation</div><div class="ai-text">${esc(cl.allocationAdvice)}</div></div>`;
@@ -720,18 +745,25 @@ function render(d) {
   if(cl.analystNote)       html+=`<div class="ai-block"><div class="ai-tag">Analyst note</div><div class="ai-text">${esc(cl.analystNote)}</div></div>`;
   ai.innerHTML = html;
 
-  // Factor table
-  document.getElementById('ftbody').innerHTML = sc.factors.map(f=>{
+  // Factor grid — horizontal card layout
+  const catColors2 = {Market:'#3b82f6',Financials:'#22c55e',Valuation:'#f59e0b',Governance:'#a855f7',Strategic:'#f97316',Returns:'#ec4899'};
+  document.getElementById('factorGrid').innerHTML = (sc.factors||[]).map(f=>{
     const s=f.score;
-    const pc=s===null?'sn':s>=4?'sg':s>=3?'sa':'sr';
-    const fc=s===null?'#333':s>=4?'#22c55e':s>=3?'#f59e0b':'#ef4444';
+    const fc=s===null?'#444':s>=4?'#22c55e':s>=3?'#f59e0b':'#ef4444';
     const pct=s!==null?(s/5*100):0;
-    return `<tr>
-      <td class="f-name">${esc(f.label)}</td>
-      <td><span class="cat-badge cat-${f.cat}">${f.cat}</span></td>
-      <td><div class="f-bar-wrap"><div class="f-bar"><div class="f-bar-fill" style="width:${pct}%;background:${fc};"></div></div><span class="spill ${pc}">${s!==null?s+'/5':'—'}</span></div></td>
-      <td class="f-wt">${f.weight}</td>
-    </tr>`;
+    const catClr=catColors2[f.cat]||'#555';
+    const scoreClass=s===null?'sn':s>=4?'sg':s>=3?'sa':'sr';
+    return `<div class="fg-card">
+      <div class="fg-cat" style="color:${catClr};">${f.cat}</div>
+      <div class="fg-name">${esc(f.label)}</div>
+      <div class="fg-bottom">
+        <div class="fg-bar-wrap">
+          <div class="fg-bar"><div class="fg-bar-fill" style="width:${pct}%;background:${fc};"></div></div>
+        </div>
+        <span class="fg-score ${scoreClass}">${s!==null?s+'/5':'—'}</span>
+        <span class="fg-wt">w:${f.weight}</span>
+      </div>
+    </div>`;
   }).join('');
 
   // Data table
