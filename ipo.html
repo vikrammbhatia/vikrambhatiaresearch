@@ -200,7 +200,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 
 /* ── AI ANALYSIS ── */
 .ai-box{background:var(--bg3);border:1px solid var(--b1);border-radius:8px;padding:16px 18px;}
-.ai-title{font-size:12px;font-weight:600;color:var(--or);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+
 .ai-block{margin-bottom:10px;}
 .ai-block:last-child{margin-bottom:0;}
 .ai-tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--t3);background:var(--bg4);border:1px solid var(--b2);padding:2px 8px;border-radius:4px;margin-bottom:5px;}
@@ -356,7 +356,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 
       <!-- EXPERT BROKER CONSENSUS -->
       <div id="brokerSection" style="display:none;">
-        <div class="slabel">Expert broker consensus</div>
+        <div class="slabel">Market Expert Recommendations</div>
         <div class="broker-box" id="brokerEl"></div>
         <div class="div"></div>
       </div>
@@ -369,7 +369,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
       </div>
 
       <!-- AI ANALYSIS -->
-      <div class="slabel">Claude AI analysis</div>
+      <div class="slabel">AI Analysis</div>
       <div class="ai-box" id="aiEl"></div>
 
       <div class="div"></div>
@@ -381,7 +381,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
       <div class="div"></div>
 
       <!-- FETCHED DATA -->
-      <div class="slabel">Fetched data</div>
+      <div class="slabel">Other IPO Details</div>
       <table class="dtable" id="dtable"></table>
 
     </div>
@@ -684,9 +684,9 @@ function render(d) {
     document.getElementById('brokerEl').innerHTML = `
       <div class="broker-consensus-badge" style="color:${consClr};">
         <span style="font-size:16px;">${consensus.toLowerCase().includes('subscribe')?'✓':'✕'}</span>
-        Expert consensus: <strong>${esc(consensus)}</strong>
+        Market Expert Consensus: <strong>${esc(consensus)}</strong>
       </div>
-      <div class="broker-pills">${pills||'<span style="font-size:12px;color:var(--t3);">No broker data available.</span>'}</div>`;
+      ${pills ? '<div class="broker-pills">'+pills+'</div>' : ''}`;
     brokerSec.style.display='block';
   } else {
     brokerSec.style.display='none';
@@ -737,7 +737,7 @@ function render(d) {
 
   // AI Analysis
   const ai = document.getElementById('aiEl');
-  let html = `<div class="ai-title">AI ANALYSIS</div>`;
+  let html = ``;
   if(cl.listingOutlook)    html+=`<div class="ai-block"><div class="ai-tag">Listing day</div><div class="ai-text">${esc(cl.listingOutlook)}</div></div>`;
   if(cl.mediumTermOutlook) html+=`<div class="ai-block"><div class="ai-tag">6–12 months</div><div class="ai-text">${esc(cl.mediumTermOutlook)}</div></div>`;
   if(cl.allocationAdvice)  html+=`<div class="ai-block"><div class="ai-tag">Allocation</div><div class="ai-text">${esc(cl.allocationAdvice)}</div></div>`;
@@ -773,7 +773,7 @@ function render(d) {
     ['Lead Managers',fd.leadManagers],['Use of Proceeds',fd.useOfProceeds],
     ['Fresh Issue',fd.freshIssuePercent?fd.freshIssuePercent+'%':null],
     ['OFS',fd.ofsPercent?fd.ofsPercent+'%':null],
-    ['Lock-in',fd.lockInPeriod],['Key Risks',fd.keyRisks],['Recent News',fd.recentNews],
+    ['Lock-in',fd.lockInPeriod],['Recent News',fd.recentNews],
   ];
   document.getElementById('dtable').innerHTML = dRows
     .filter(r=>r[1]!==null&&r[1]!==undefined&&r[1]!=='')
