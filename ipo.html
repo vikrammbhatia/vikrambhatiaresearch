@@ -470,7 +470,8 @@ async function analyse() {
   const skelTimer = setTimeout(()=>{ document.getElementById('skeleton').style.display='block'; }, 4000);
 
   try {
-    const res = await fetch(AS_URL+'?action=analyse&ipo='+encodeURIComponent(name));
+    const res = await fetch(AS_URL+'?action=analyse&ipo='+encodeURIComponent(name)+(window._forceRefresh?'&refresh=1':''));
+    window._forceRefresh = false;
     const data = await res.json();
     if(data.error) throw new Error(data.error);
     document.getElementById('results').style.display='block';
@@ -516,6 +517,13 @@ function render(d) {
   if(!heroCard) { console.error('heroCard not found'); return; }
   heroCard.className = 'hero '+(vrd.color||'amber');
   document.getElementById('heroScore').textContent = sc.composite;
+  // Show cache indicator if result is from sheet cache
+  if(d.fromCache) {
+    const cacheNote = document.createElement('div');
+    cacheNote.style.cssText = 'font-size:10px;color:var(--t3);margin-top:6px;text-align:center;';
+    cacheNote.innerHTML = '⚡ Loaded from cache · <a href="#" onclick="forceRefresh(event)" style="color:var(--or);text-decoration:none;">Refresh</a>';
+    document.getElementById('heroScore').parentNode.appendChild(cacheNote);
+  }
   document.getElementById('heroBadge').innerHTML = `<span class="hero-badge-icon">${vrd.icon}</span>${esc(cl.verdict||vrd.label)}`;
   document.getElementById('heroRationale').textContent = cl.oneLineRationale||'';
   // Calculate expected listing premium
@@ -835,6 +843,16 @@ async function loadHistory() {
 
 function loadIpo(name) { document.getElementById('ipoInput').value=name; analyse(); }
 function showErr(msg) { const e=document.getElementById('errBox'); e.textContent=msg; e.style.display='block'; }
+function forceRefresh(e) {
+  e.preventDefault();
+  // Force re-analysis by temporarily appending a space
+  const input = document.getElementById('ipoInput');
+  const name = input.value.trim();
+  // We need a way to bypass cache — add a refresh param
+  window._forceRefresh = true;
+  analyse();
+}
+
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 </script>
 </body>
