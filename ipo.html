@@ -489,6 +489,17 @@ async function analyse() {
     const res = await fetch(AS_URL+'?action=analyse&ipo='+encodeURIComponent(name)+(window._forceRefresh?'&refresh=1':''));
     window._forceRefresh = false;
     const data = await res.json();
+    if(data.error === 'insufficient_data') {
+      document.getElementById('results').style.display='block';
+      document.getElementById('results').innerHTML = `
+        <div style="background:#1a0e00;border:1px solid #92400e;border-radius:10px;padding:28px;text-align:center;">
+          <div style="font-size:28px;margin-bottom:10px;">🔍</div>
+          <div style="font-size:16px;font-weight:600;color:var(--amber);margin-bottom:8px;">Insufficient Data Found</div>
+          <div style="font-size:13px;color:var(--t2);margin-bottom:6px;">${esc(data.ipoName)}</div>
+          <div style="font-size:12px;color:var(--t3);line-height:1.7;">${esc(data.message)}</div>
+        </div>`;
+      return;
+    }
     if(data.error) throw new Error(data.error);
     document.getElementById('results').style.display='block';
     render(data);
