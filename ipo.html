@@ -496,9 +496,17 @@ async function analyse() {
       document.getElementById('results').innerHTML = `
         <div style="background:#1a0e00;border:1px solid #92400e;border-radius:10px;padding:28px;text-align:center;">
           <div style="font-size:28px;margin-bottom:10px;">🔍</div>
-          <div style="font-size:16px;font-weight:600;color:var(--amber);margin-bottom:8px;">Insufficient Data Found</div>
-          <div style="font-size:13px;color:var(--t2);margin-bottom:6px;">${esc(data.ipoName)}</div>
-          <div style="font-size:12px;color:var(--t3);line-height:1.7;">${esc(data.message)}</div>
+          <div style="font-size:16px;font-weight:600;color:var(--amber);margin-bottom:8px;">Data Not Found</div>
+          <div style="font-size:13px;color:var(--t2);margin-bottom:8px;">${esc(data.ipoName)}</div>
+          <div style="font-size:12px;color:var(--t3);line-height:1.8;">${esc(data.message)}</div>
+          <div style="margin-top:14px;font-size:12px;color:var(--t3);">
+            This engine is designed for mainboard and SME IPOs only.<br>
+            Delisting offers, buybacks, rights issues and bond offers are not supported.
+          </div>
+          <a href="https://www.icicidirect.com/ipo" target="_blank" 
+             style="display:inline-block;margin-top:14px;padding:7px 18px;background:var(--or);color:#fff;border-radius:6px;font-size:12px;text-decoration:none;">
+            View open IPOs on ICICIdirect ↗
+          </a>
         </div>`;
       return;
     }
