@@ -264,6 +264,13 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .side-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--b1);}
 .side-title{font-size:13px;font-weight:600;color:var(--or);text-transform:uppercase;letter-spacing:0.06em;}
 .refresh-btn{padding:5px 14px;background:var(--or);border:none;border-radius:6px;color:#fff;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:background .2s;}
+.nfo-item{background:var(--bg3);border:1px solid var(--b1);border-radius:8px;padding:12px 14px;margin-bottom:10px;}
+.nfo-item-name{font-size:13px;font-weight:500;color:var(--t1);margin-bottom:4px;line-height:1.4;}
+.nfo-item-cat{display:inline-block;background:var(--bg4);border-radius:4px;padding:2px 8px;font-size:11px;color:var(--t2);margin-bottom:5px;}
+.nfo-item-dates{font-size:11px;color:var(--t3);margin-top:3px;}
+.nfo-item-dates strong{color:var(--t2);}
+.nfo-item-min{font-size:11px;color:var(--t3);margin-top:3px;}
+.no-nfos{font-size:13px;color:var(--t3);padding:1rem 0;text-align:center;}
 .refresh-btn:hover{background:var(--or2);}
 .refresh-btn:disabled{background:var(--bg4);color:var(--t3);cursor:not-allowed;}
 
@@ -973,9 +980,9 @@ async function loadHistory() {
         </div>
         <div class="nfo-item-cat">${esc(item.sector||'—')}</div>
         ${verdictShort?`<div style="font-size:11px;color:${verdictClr};margin-top:3px;font-weight:500;">${verdictShort}</div>`:''}
-        <div style="display:flex;gap:10px;margin-top:5px;flex-wrap:wrap;">
-          ${gmpTxt?`<div style="font-size:11px;"><span style="color:var(--t3);">GMP </span><span style="color:${gmpClr};font-weight:500;">${gmpTxt}</span></div>`:''}
-          ${lpTxt?`<div style="font-size:11px;"><span style="color:var(--t3);">Est. listing </span><span style="color:${lpClr};font-weight:500;">${lpTxt}${lpPrice?' · '+lpPrice:''}</span></div>`:''}
+        <div style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;">
+          <div style="font-size:11px;"><span style="color:var(--t3);">GMP </span><span style="color:${gmpTxt?gmpClr:'var(--t3)'};font-weight:500;">${gmpTxt||'N/A'}</span></div>
+          <div style="font-size:11px;"><span style="color:var(--t3);">Est. listing </span><span style="color:${lpTxt?lpClr:'var(--t3)'};font-weight:500;">${lpTxt?lpTxt+(lpPrice?' · '+lpPrice:''):'N/A'}</span></div>
         </div>
       </div>`;
     }).join('');
