@@ -513,7 +513,17 @@ async function analyse() {
     }
     if(data.error) throw new Error(data.error);
     document.getElementById('results').style.display='block';
-    render(data);
+    try {
+      render(data);
+    } catch(renderErr) {
+      console.error('Render error:', renderErr);
+      document.getElementById('results').innerHTML = `
+        <div style="background:#1a0505;border:1px solid #7f1d1d;border-radius:10px;padding:20px;text-align:center;">
+          <div style="font-size:16px;font-weight:600;color:var(--red);margin-bottom:8px;">Display Error</div>
+          <div style="font-size:12px;color:var(--t3);">Analysis completed but could not display results.<br>Error: ${renderErr.message}</div>
+          <div style="font-size:12px;color:var(--t3);margin-top:8px;">Try clicking Analyse again — the data is cached and will load instantly.</div>
+        </div>`;
+    }
     loadHistory();
   } catch(err) {
     showErr('Error: '+err.message+'. Check your Apps Script URL and that the deployment is published.');
@@ -529,7 +539,10 @@ async function analyse() {
 // ── RENDER ──────────────────────────────────────────────────
 function render(d) {
   // Closed IPO
-  if(d.isIpoClosed) {
+  // IPO is closed only if closeDate is strictly before today
+  const todayCheck = new Date().toISOString().split('T')[0];
+  const effectivelyClosed = d.isIpoClosed || (d.closeDate && d.closeDate < todayCheck);
+  if(effectivelyClosed) {
     document.getElementById('results').style.display='block';
     document.getElementById('results').innerHTML = `
       <div class="closed-box">
