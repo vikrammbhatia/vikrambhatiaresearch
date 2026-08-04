@@ -469,6 +469,7 @@ async function analyse() {
   document.getElementById('loader').style.display='block';
   document.getElementById('skeleton').style.display='none';
   document.getElementById('results').style.display='none';
+  document.getElementById('results').innerHTML = '';  // clear previous result
   document.getElementById('errBox').style.display='none';
 
   // Activity feed
@@ -874,10 +875,18 @@ async function loadOpenIpos() {
       el.innerHTML='<div class="no-nfos">No open or upcoming IPOs found.</div>';
       return;
     }
-    el.innerHTML = data.map(ipo => {
-      const isOpen    = ipo.status === 'Open' || !ipo.status;
-      const statusClr = isOpen ? 'var(--green)' : 'var(--amber)';
-      const statusTxt = isOpen ? '● Open now' : '◈ Opening soon';
+    const todayStr = new Date().toISOString().split('T')[0];
+    // Filter: only show IPOs that haven't closed yet
+    const filtered = data.filter(ipo => !ipo.closeDate || ipo.closeDate >= todayStr);
+    if(!filtered.length) {
+      el.innerHTML='<div class="no-nfos">No open or upcoming IPOs today.</div>';
+      return;
+    }
+    el.innerHTML = filtered.map(ipo => {
+      const isDelisting = ipo.status && ipo.status.toLowerCase().includes('delist');
+      const isOpen = !isDelisting && (ipo.status === 'Open' || (!ipo.status && ipo.closeDate >= todayStr));
+      const statusClr = isDelisting ? 'var(--t3)' : isOpen ? 'var(--green)' : 'var(--amber)';
+      const statusTxt = isDelisting ? '○ Delisting' : isOpen ? '● Open now' : '◈ Opening soon';
       const pb = (ipo.priceBandLow && ipo.priceBandHigh)
         ? '₹'+ipo.priceBandLow+' – ₹'+ipo.priceBandHigh
         : (ipo.priceBandHigh ? '₹'+ipo.priceBandHigh : null);
@@ -932,13 +941,29 @@ async function loadHistory() {
       const verdictClr = v.includes('strong subscribe')||v==='subscribe' ? 'var(--green)'
         : v.includes('caution') ? 'var(--amber)' : 'var(--red)';
 
+      const gmp = item.gmp;
+      const gmpTxt = gmp !== null && gmp !== undefined
+        ? (gmp > 0 ? '+'+gmp+'%' : gmp+'%') : null;
+      const gmpClr = gmp > 0 ? 'var(--green)' : gmp < 0 ? 'var(--red)' : 'var(--t3)';
+
+      const lp = item.listingPremium;
+      const lpTxt = lp !== null && lp !== undefined
+        ? (lp > 0 ? '+'+lp+'%' : lp+'%') : null;
+      const lpClr = lp > 0 ? 'var(--green)' : lp < 0 ? 'var(--red)' : 'var(--t3)';
+
+      const lpPrice = item.listingPrice ? '₹'+Number(item.listingPrice).toLocaleString('en-IN') : null;
+
       return `<div class="nfo-item" onclick="loadIpo('${esc(item.name)}')" style="cursor:pointer;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;margin-bottom:2px;">
           <div class="nfo-item-name">${esc(item.name)}</div>
-          ${s?`<span style="font-size:11px;font-weight:600;color:${scoreClr};flex-shrink:0;">${s}</span>`:''}
+          ${s?`<span style="font-size:12px;font-weight:600;color:${scoreClr};flex-shrink:0;">${s}</span>`:''}
         </div>
         <div class="nfo-item-cat">${esc(item.sector||'—')}</div>
-        ${verdictShort?`<div style="font-size:11px;color:${verdictClr};margin-top:2px;">${verdictShort}</div>`:''}
+        ${verdictShort?`<div style="font-size:11px;color:${verdictClr};margin-top:3px;font-weight:500;">${verdictShort}</div>`:''}
+        <div style="display:flex;gap:10px;margin-top:5px;flex-wrap:wrap;">
+          ${gmpTxt?`<div style="font-size:11px;"><span style="color:var(--t3);">GMP </span><span style="color:${gmpClr};font-weight:500;">${gmpTxt}</span></div>`:''}
+          ${lpTxt?`<div style="font-size:11px;"><span style="color:var(--t3);">Est. listing </span><span style="color:${lpClr};font-weight:500;">${lpTxt}${lpPrice?' · '+lpPrice:''}</span></div>`:''}
+        </div>
       </div>`;
     }).join('');
   } catch(e) {
