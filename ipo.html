@@ -264,7 +264,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .side-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--b1);}
 .side-title{font-size:13px;font-weight:600;color:var(--or);text-transform:uppercase;letter-spacing:0.06em;}
 .refresh-btn{padding:5px 14px;background:var(--or);border:none;border-radius:6px;color:#fff;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:background .2s;}
-.nfo-item{background:var(--bg3);border:1px solid var(--b1);border-radius:8px;padding:12px 14px;margin-bottom:10px;}
+.nfo-item{background:var(--bg3);border:1px solid var(--b1);border-radius:8px;padding:12px 14px;margin-bottom:12px;}
 .nfo-item-name{font-size:13px;font-weight:500;color:var(--t1);margin-bottom:4px;line-height:1.4;}
 .nfo-item-cat{display:inline-block;background:var(--bg4);border-radius:4px;padding:2px 8px;font-size:11px;color:var(--t2);margin-bottom:5px;}
 .nfo-item-dates{font-size:11px;color:var(--t3);margin-top:3px;}
@@ -546,10 +546,8 @@ async function analyse() {
 // ── RENDER ──────────────────────────────────────────────────
 function render(d) {
   // Closed IPO
-  // IPO is closed only if closeDate is strictly before today
-  const todayCheck = new Date().toISOString().split('T')[0];
-  const effectivelyClosed = d.isIpoClosed || (d.closeDate && d.closeDate < todayCheck);
-  if(effectivelyClosed) {
+  // Only show closed message if server explicitly says it's closed (not for cached results)
+  if(d.isIpoClosed && !d.fromCache) {
     document.getElementById('results').style.display='block';
     document.getElementById('results').innerHTML = `
       <div class="closed-box">
@@ -973,7 +971,7 @@ async function loadHistory() {
 
       const lpPrice = item.listingPrice ? '₹'+Number(item.listingPrice).toLocaleString('en-IN') : null;
 
-      return `<div class="nfo-item" onclick="loadIpo('${esc(item.name)}')" style="cursor:pointer;">
+      return `<div class="nfo-item" onclick="loadIpo('${esc(item.name)}')" style="cursor:pointer;margin-bottom:12px;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;margin-bottom:2px;">
           <div class="nfo-item-name">${esc(item.name)}</div>
           ${s?`<span style="font-size:12px;font-weight:600;color:${scoreClr};flex-shrink:0;">${s}</span>`:''}
