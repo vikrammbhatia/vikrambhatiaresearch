@@ -459,14 +459,38 @@ function render(d) {
   if(cl.analystNote)       aiHtml+=`<div class="ai-block"><div class="ai-tag">Analyst note</div><div class="ai-text">${esc(cl.analystNote)}</div></div>`;
   aiHtml += '</div>';
 
+  // Map factor IDs to raw data fields to detect penalty scores
+  const rawDataMap = {
+    gmp: fd.gmp, subQIB: fd.subscriptionQIB, subHNI: fd.subscriptionHNI,
+    subRetail: fd.subscriptionRetail, anchorQuality: fd.anchorInvestorQuality,
+    brokerConsensus: fd.expertConsensus, revGrowth: fd.revenueGrowthCAGR,
+    patGrowth: fd.patGrowthCAGR, roe: fd.roe, roce: fd.roce, dte: fd.debtToEquity,
+    peVsPeers: fd.peRatioIssue, issueSize: fd.issueSize, promoterHold: fd.promoterHoldingPostIPO,
+    freshVsOFS: fd.freshIssuePercent, leadMgr: fd.leadManagerScore,
+    mgmtQuality: fd.managementBackground, tailwinds: fd.industryTailwinds,
+    moat: fd.competitiveMoat, listingGain: fd.listingGainExpected,
+    useProceeds: fd.useOfProceeds, lockIn: fd.lockInPeriod
+  };
+
   // Factor grid
   const factorGrid = (sc.factors||[]).map(f=>{
     const s=f.score;
-    const fc=s===null?'#444':s>=4?'#22c55e':s>=3?'#f59e0b':'#ef4444';
+    const rawVal = rawDataMap[f.id];
+    const isPenalty = (s===2||s===3) && (rawVal===null||rawVal===undefined||rawVal==='');
+    const fc=s>=4?'#22c55e':s>=3?'#f59e0b':'#ef4444';
     const pct=s!==null?(s/5*100):0;
-    const sc2=s===null?'sn':s>=4?'sg':s>=3?'sa':'sr';
+    const sc2=s>=4?'sg':s>=3?'sa':'sr';
     const tip=FACTOR_TIPS[f.id]||f.label;
-    return `<div class="fg-card"><div class="fg-cat">${f.cat}</div><div class="fg-name">${esc(f.label)} <span class="info-i" title="${tip}">ⓘ</span></div><div class="fg-bottom"><div class="fg-bar"><div class="fg-bar-fill" style="width:${pct}%;background:${fc};"></div></div><span class="fg-score ${sc2}">${s!==null?s+'/5':'—'}</span></div></div>`;
+    const penaltyNote = isPenalty ? ' title="Data not available — penalty score applied"' : '';
+    const penaltyIcon = isPenalty ? '<span style="font-size:9px;color:var(--t3);margin-left:2px;">⚠</span>' : '';
+    return `<div class="fg-card"${isPenalty?` style="border-color:var(--b3);"`:''}>
+      <div class="fg-cat">${f.cat}</div>
+      <div class="fg-name">${esc(f.label)} <span class="info-i" title="${tip}">ⓘ</span>${penaltyIcon}</div>
+      <div class="fg-bottom">
+        <div class="fg-bar"><div class="fg-bar-fill" style="width:${pct}%;background:${isPenalty?'#444':fc};${isPenalty?'opacity:0.5;':''}"></div></div>
+        <span class="fg-score ${isPenalty?'sn':sc2}"${penaltyNote}>${s!==null?s+'/5':'—'}${isPenalty?'*':''}</span>
+      </div>
+    </div>`;
   }).join('');
 
   // Data table
@@ -495,6 +519,9 @@ function render(d) {
     <div class="slabel">Scoring Parameters</div>
     <div class="factor-grid">${factorGrid}</div>
     <div class="div"></div>
+    <div style="font-size:11px;color:var(--t3);margin-top:8px;margin-bottom:1.5rem;">
+      * Score marked with ⚠ indicates data was not available. A penalty score of 2/5 has been applied to ensure the composite score accurately reflects disclosure quality. All 22 factors carry their full weight in the calculation.
+    </div>
     <div class="slabel">Other IPO Details</div>
     <table class="dtable">${dtable}</table>
     <div class="disclaimer">
@@ -555,8 +582,14 @@ async function loadHistory() {
     const data = await res.json();
     if(!Array.isArray(data)||!data.length) { el.innerHTML='<div class="no-nfos">No analyses yet.</div>'; return; }
     // Deduplicate by name — keep highest score per company
+    // Also filter out closed IPOs from sidebar
+    const todayIST = new Date().toLocaleDateString('en-CA', {timeZone:'Asia/Kolkata'}); // YYYY-MM-DD in IST
     const seen = new Map();
     data.forEach(item => {
+      // Skip if IPO has been closed for more than 30 days (keep recent ones for reference)
+      if(item.closeDate && item.closeDate < todayIST) {
+        // Keep in sidebar but mark as closed — don't exclude completely
+      }
       const key = item.name.toLowerCase().trim();
       const existing = seen.get(key);
       if(!existing || parseInt(item.score) > parseInt(existing.score)) seen.set(key, item);
@@ -584,7 +617,10 @@ async function loadHistory() {
           ${s?`<span style="font-size:12px;font-weight:600;color:${scoreClr};flex-shrink:0;">${s}</span>`:''}
         </div>
         <div class="nfo-item-cat">${esc(item.sector||'—')}</div>
-        <div style="font-size:11px;color:${verdictClr};margin-top:3px;font-weight:500;">${verdictShort}</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:3px;">
+          <div style="font-size:11px;color:${verdictClr};font-weight:500;">${verdictShort}</div>
+          ${(item.closeDate && item.closeDate < todayIST)?'<span style="font-size:9px;color:var(--t3);background:var(--bg4);padding:1px 5px;border-radius:3px;">Closed</span>':''}
+        </div>
         <div style="display:flex;gap:10px;margin-top:5px;flex-wrap:wrap;">
           <div style="font-size:11px;"><span style="color:var(--t3);">GMP </span><span style="color:${(gmp!==null&&gmp!==undefined)?gmpClr:'var(--t3)'};font-weight:500;">${(gmp!==null&&gmp!==undefined)?gmpTxt:'N/A'}</span></div>
           <div style="font-size:11px;"><span style="color:var(--t3);">Est. listing </span><span style="color:${(lp!==null&&lp!==undefined)?lpClr:'var(--t3)'};font-weight:500;">${(lp!==null&&lp!==undefined)?(lpTxt+(lpPrice?' · '+lpPrice:'')):'N/A'}</span></div>
