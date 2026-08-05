@@ -4,9 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<!-- v2.1 sidebar-right -->
 <title>IPO Research Engine · Vikram Bhatia</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -15,152 +12,82 @@
   --or:#f97316;--or2:#c2540a;
   --bg:#080808;--bg2:#0d0d0d;--bg3:#141414;--bg4:#1c1c1c;--bg5:#222;
   --b1:#1e1e1e;--b2:#2a2a2a;--b3:#333;
-  --t1:#f0f0f0;--t2:#999;--t3:#555;--t4:#333;
+  --t1:#efefef;--t2:#888;--t3:#555;--t4:#333;
   --green:#22c55e;--amber:#f59e0b;--red:#ef4444;--blue:#3b82f6;--purple:#a855f7;--pink:#ec4899;
   --green-bg:#061209;--green-bd:#14532d;
   --amber-bg:#0e0900;--amber-bd:#78350f;
   --red-bg:#0e0404;--red-bd:#7f1d1d;
+  --border:#1e1e1e;--text:var(--t1);--text2:var(--t2);--text3:var(--t3);
 }
-html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);font-size:14px;line-height:1.5;}
-
-/* ── LAYOUT ── */
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);font-size:14px;}
 .page{display:flex;flex-direction:row;min-height:100vh;width:100%;}
 .main-col{flex:1;padding:2.5rem 3rem;overflow-y:auto;min-width:0;}
-.side-col{width:380px;min-width:380px;padding:2rem 1.5rem;border-left:1px solid var(--b1);height:100vh;position:sticky;top:0;overflow-y:auto;background:var(--bg2);}
+.side-col{width:320px;min-width:320px;padding:1.5rem;border-left:1px solid var(--b1);height:100vh;position:sticky;top:0;overflow-y:auto;background:var(--bg2);display:flex;flex-direction:column;}
 .side-col::-webkit-scrollbar{width:3px;}
-.side-col::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px;}
+.side-col::-webkit-scrollbar-thumb{background:var(--b2);}
 @media(max-width:900px){.side-col{display:none;}.main-col{padding:1.5rem;}}
 
-/* ── SIDEBAR ── */
-.sb-header{padding:1.25rem 1rem 0.75rem;border-bottom:1px solid var(--b1);}
-.sb-logo{font-size:13px;font-weight:600;color:var(--t1);}
-.sb-logo em{font-style:normal;color:var(--or);}
-.sb-sub{font-size:11px;color:var(--t3);margin-top:2px;}
-.sb-section{padding:0.75rem 1rem 0.5rem;}
-.sb-slabel{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--t3);margin-bottom:8px;}
-.open-ipo{padding:8px 0;border-bottom:1px solid var(--b1);cursor:pointer;}
-.open-ipo:last-child{border-bottom:none;}
-.open-ipo-hist:hover .oi-name{color:var(--or);}
-.oi-name{font-size:12px;font-weight:500;color:var(--t1);transition:color .15s;margin-bottom:2px;}
-.oi-row{display:flex;justify-content:space-between;align-items:center;gap:4px;}
-.oi-sector{font-size:10px;color:var(--t3);}
-.oi-close{font-size:10px;color:var(--t3);}
-.oi-gmp{font-size:10px;font-weight:500;padding:1px 6px;border-radius:8px;}
-.oi-gmp.pos{background:#0a1f0a;color:var(--green);}
-.oi-gmp.neg{background:#1a0505;color:var(--red);}
-.oi-gmp.neu{background:var(--bg4);color:var(--t3);}
-.sb-divider{height:1px;background:var(--b1);margin:0 1rem;}
-.history-item{padding:8px 0;border-bottom:1px solid var(--b1);cursor:pointer;}
-.history-item:hover .hi-name{color:var(--or);}
-.hi-name{font-size:12px;font-weight:500;color:var(--t1);transition:color .15s;}
-.hi-row{display:flex;align-items:center;gap:6px;margin-top:2px;}
-.hi-sector{font-size:10px;color:var(--t3);}
-.hi-score{font-size:10px;font-weight:600;padding:1px 6px;border-radius:8px;}
-.hi-g{background:var(--green-bg);color:var(--green);}
-.hi-a{background:var(--amber-bg);color:var(--amber);}
-.hi-r{background:var(--red-bg);color:var(--red);}
-.sb-refresh{display:flex;gap:6px;padding:8px 1rem;margin-top:auto;border-top:1px solid var(--b1);}
-.sb-btn{flex:1;background:transparent;border:1px solid var(--b2);color:var(--t3);padding:5px 8px;border-radius:5px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
-.sb-btn:hover{border-color:var(--or);color:var(--or);}
-.no-data{font-size:11px;color:var(--t3);text-align:center;padding:1.5rem 0;}
+/* HEADER */
+.ph-title{font-size:20px;font-weight:600;color:var(--or);}
+.ph-sub-orange{font-size:12px;color:var(--or);margin-top:2px;}
+.ph-sub{font-size:12px;color:var(--t3);margin-top:2px;}
 
-/* ── HEADER ── */
-.page-header{margin-bottom:1.5rem;}
-.ph-row{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
-.ph-title{font-size:19px;font-weight:600;letter-spacing:-0.3px;}
-.ph-title em{font-style:normal;color:var(--or);}
-.ph-sub{font-size:12px;color:var(--t3);margin-top:3px;}
-.powered{font-size:10px;background:#1a1000;border:1px solid #3a2500;color:var(--amber);padding:3px 10px;border-radius:20px;white-space:nowrap;margin-top:3px;}
-
-/* ── CONFIG ── */
-.cfg{background:var(--bg2);border:1px solid var(--b1);border-radius:8px;padding:8px 14px;margin-bottom:1.5rem;display:flex;gap:8px;align-items:center;}
-.cfg label{font-size:11px;color:var(--t3);white-space:nowrap;}
-.cfg input{flex:1;background:var(--bg4);border:1px solid var(--b2);color:var(--t2);padding:5px 10px;border-radius:5px;font-size:12px;font-family:'DM Mono',monospace;min-width:0;}
-.cfg input:focus{outline:none;border-color:var(--or);}
-.cfg-saved{font-size:11px;color:var(--t3);}
-.btn-sm{background:transparent;border:1px solid var(--b2);color:var(--t3);padding:5px 12px;border-radius:5px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;transition:all .15s;}
-.btn-sm:hover{border-color:var(--or);color:var(--or);}
-
-/* ── SEARCH ── */
-.search-row{display:flex;gap:8px;margin-bottom:1.5rem;}
-.search-row input{flex:1;background:var(--bg3);border:1px solid var(--b2);color:var(--t1);padding:11px 15px;border-radius:7px;font-size:15px;font-family:'DM Sans',sans-serif;transition:border-color .2s;}
+/* SEARCH */
+.search-row{display:flex;gap:8px;margin-bottom:1.5rem;margin-top:1.25rem;}
+.search-row input{flex:1;background:var(--bg3);border:1px solid var(--b2);color:var(--t1);padding:11px 15px;border-radius:7px;font-size:15px;font-family:'DM Sans',sans-serif;}
 .search-row input:focus{outline:none;border-color:var(--or);}
 .search-row input::placeholder{color:var(--t3);}
-.btn-go{background:var(--or);color:#fff;border:none;padding:11px 22px;border-radius:7px;font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .15s;}
+.btn-go{background:var(--or);color:#fff;border:none;padding:11px 22px;border-radius:7px;font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap;}
 .btn-go:hover{background:var(--or2);}
 .btn-go:disabled{background:var(--bg4);color:var(--t3);cursor:not-allowed;}
 
-/* ── LOADING / SKELETON ── */
+/* LOADING */
 .loader{display:none;margin-bottom:1.25rem;}
 .loader-track{height:2px;background:var(--b1);border-radius:1px;overflow:hidden;}
-.loader-fill{height:100%;background:var(--or);border-radius:1px;animation:ld 2.4s ease-in-out infinite;}
+.loader-fill{height:100%;background:var(--or);animation:ld 2.4s ease-in-out infinite;}
 @keyframes ld{0%{width:0%}60%{width:75%}100%{width:100%}}
 .loader-msg{font-size:12px;color:var(--t3);margin-top:8px;}
-.activity-feed{background:var(--bg3);border:1px solid var(--b1);border-radius:7px;padding:12px 14px;margin-top:10px;display:none;}
-.af-title{font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;}
-.af-item{display:flex;gap:8px;align-items:flex-start;padding:4px 0;font-size:12px;color:var(--t2);}
-.af-dot{width:6px;height:6px;border-radius:50%;background:var(--or);flex-shrink:0;margin-top:4px;}
-.af-dot.done{background:var(--green);}
-.skeleton{display:none;}
-.skel-pulse{background:linear-gradient(90deg,var(--bg3) 25%,var(--b1) 50%,var(--bg3) 75%);background-size:200% 100%;animation:pulse 1.6s ease infinite;border-radius:5px;}
-@keyframes pulse{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.skel-hero{height:100px;margin-bottom:12px;}
-.skel-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
-.skel-card{height:60px;}
-.skel-line{height:12px;margin-bottom:8px;}
-.skel-line.w70{width:70%;}
-.skel-line.w50{width:50%;}
-
-/* ── ERROR ── */
 .err{display:none;background:var(--red-bg);border:1px solid var(--red-bd);color:#fca5a5;padding:10px 14px;border-radius:7px;font-size:12px;margin-bottom:1rem;}
 
-/* ── CLOSED MESSAGE ── */
-.closed-box{background:#1a0a00;border:1px solid #92400e;border-radius:10px;padding:28px;text-align:center;}
-.closed-icon{font-size:32px;margin-bottom:10px;}
-.closed-title{font-size:16px;font-weight:600;color:var(--amber);margin-bottom:6px;}
-.closed-sub{font-size:12px;color:var(--t3);}
+/* SECTION LABEL */
+.slabel{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--or);margin-bottom:12px;margin-top:1.5rem;}
 
-/* ── HERO SCORE CARD ── */
+/* HERO */
 .hero{border-radius:10px;padding:18px 22px;margin-bottom:1.25rem;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
 .hero.green{background:var(--green-bg);border:1px solid var(--green-bd);}
 .hero.amber{background:var(--amber-bg);border:1px solid var(--amber-bd);}
 .hero.red{background:var(--red-bg);border:1px solid var(--red-bd);}
-.hero-score-wrap{text-align:center;flex-shrink:0;min-width:70px;}
-.hero-score{font-size:52px;font-weight:600;line-height:1;}
+.hero-score{font-size:52px;font-weight:600;line-height:1;text-align:center;}
+.hero-score-lbl{font-size:10px;color:var(--t3);margin-top:2px;text-align:center;}
 .hero.green .hero-score{color:var(--green);}
 .hero.amber .hero-score{color:var(--amber);}
 .hero.red   .hero-score{color:var(--red);}
-.hero-score-lbl{font-size:10px;color:var(--t3);margin-top:2px;}
 .hero-center{flex:1;min-width:0;}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;font-size:16px;font-weight:600;margin-bottom:6px;}
+.hero-badge{font-size:17px;font-weight:600;margin-bottom:6px;}
 .hero.green .hero-badge{color:var(--green);}
 .hero.amber .hero-badge{color:var(--amber);}
 .hero.red   .hero-badge{color:var(--red);}
-.hero-badge-icon{font-size:18px;}
 .hero-rationale{font-size:13px;color:var(--t2);line-height:1.5;}
 .hero-right{display:flex;flex-direction:column;gap:6px;flex-shrink:0;}
-.hero-pill{font-size:11px;background:var(--bg4);border:1px solid var(--b2);color:var(--t2);padding:4px 10px;border-radius:20px;text-align:center;}
-.listing-pill{border-color:var(--b2);background:var(--bg3);}
-.hero-pill span{color:var(--t1);font-weight:500;}
+.hero-pill{font-size:11px;background:var(--bg4);border:1px solid var(--b2);color:var(--t2);padding:4px 10px;border-radius:20px;}
 
-/* ── SECTION LABEL ── */
-.slabel{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--or);margin-bottom:12px;margin-top:1.5rem;font-family:'DM Sans',sans-serif;}
-
-/* ── METRICS ── */
+/* METRICS */
 .metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px;}
 .mc{background:var(--bg3);border:1px solid var(--b1);border-radius:7px;padding:8px 10px;}
 .mc-lbl{font-size:9px;color:var(--t2);margin-bottom:2px;text-transform:uppercase;letter-spacing:0.04em;}
 .mc-val{font-size:13px;font-weight:500;color:var(--t1);}
 
-/* ── CATEGORY SCORES ── */
+/* CATEGORY BARS */
 .cat-bars{display:flex;flex-direction:column;gap:8px;}
 .cat-bar-row{display:flex;align-items:center;gap:10px;}
 .cat-bar-name{font-size:12px;color:var(--t2);width:90px;flex-shrink:0;}
 .cat-bar-track{flex:1;height:6px;background:var(--b1);border-radius:3px;overflow:hidden;}
 .cat-bar-fill{height:100%;border-radius:3px;transition:width .8s ease;}
 .cat-bar-val{font-size:12px;font-weight:500;width:36px;text-align:right;flex-shrink:0;}
+.info-i{font-size:11px;color:var(--t3);cursor:help;margin-left:3px;}
+.info-i:hover{color:var(--or);}
 
-/* ── POSITIVES / RISKS ── */
+/* POS/RISK */
 .pos-risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 @media(max-width:600px){.pos-risk-grid{grid-template-columns:1fr;}}
 .pos-box{background:var(--green-bg);border:1px solid var(--green-bd);border-radius:8px;padding:14px 16px;}
@@ -168,262 +95,128 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .pr-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;}
 .pos-box .pr-title{color:var(--green);}
 .risk-box .pr-title{color:var(--red);}
-.pr-item{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--t2);margin-bottom:6px;line-height:1.5;}
-.pr-item:last-child{margin-bottom:0;}
+.pr-item{display:flex;gap:8px;font-size:12px;color:var(--t2);margin-bottom:6px;line-height:1.5;}
 .pr-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:5px;}
 .pos-box .pr-dot{background:var(--green);}
 .risk-box .pr-dot{background:var(--red);}
 
-/* ── EXPERT BROKER CONSENSUS ── */
+/* BROKER */
 .broker-box{background:var(--bg3);border:1px solid var(--b1);border-radius:8px;padding:14px 16px;}
-.broker-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
-.broker-pill{font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid;}
-.bp-sub{background:#061209;border-color:#14532d;color:var(--green);}
-.bp-avoid{background:var(--red-bg);border-color:var(--red-bd);color:var(--red);}
-.bp-neutral{background:var(--bg4);border-color:var(--b2);color:var(--t3);}
-.broker-consensus-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;margin-bottom:8px;}
+.broker-consensus-badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;}
 
-/* ── INVESTMENT CARD ── */
+/* INVESTMENT CARD */
 .inv-card{background:var(--bg3);border:1px solid var(--b1);border-radius:8px;padding:16px 18px;}
 .inv-top{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:14px;}
 .inv-cell{background:var(--bg4);border:1px solid var(--b2);border-radius:6px;padding:10px 12px;}
 .inv-lbl{font-size:9px;color:var(--t3);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.06em;}
 .inv-val{font-size:15px;font-weight:600;color:var(--t1);}
-.inv-val.green{color:var(--green);font-size:15px;font-weight:600;}
+.inv-val.green{color:var(--green);}
 .proj-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
 @media(max-width:600px){.proj-grid{grid-template-columns:repeat(2,1fr);}}
 .proj-cell{background:var(--bg4);border:1px solid var(--b2);border-radius:6px;padding:10px 12px;text-align:center;}
 .proj-lbl{font-size:9px;color:var(--t3);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.04em;}
 .proj-val{font-size:15px;font-weight:600;}
 .proj-chg{font-size:10px;margin-top:2px;}
-.inv-note{font-size:11px;color:var(--t4);margin-top:12px;line-height:1.5;padding-top:10px;border-top:1px solid var(--b1);}
 
-/* ── AI ANALYSIS ── */
+/* AI */
 .ai-box{background:var(--bg3);border:1px solid var(--b1);border-radius:8px;padding:16px 18px;}
-
 .ai-block{margin-bottom:10px;}
 .ai-block:last-child{margin-bottom:0;}
 .ai-tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--t3);background:var(--bg4);border:1px solid var(--b2);padding:2px 8px;border-radius:4px;margin-bottom:5px;}
 .ai-text{font-size:12px;color:var(--t2);line-height:1.6;}
 
-/* ── FACTOR TABLE ── */
-.ftable{width:100%;border-collapse:collapse;}
-.ftable th{text-align:left;padding:7px 8px;border-bottom:1px solid var(--b1);font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--t3);}
-.ftable th.right{text-align:right;}
-.ftable td{padding:8px;border-bottom:1px solid #0e0e0e;vertical-align:middle;}
-.ftable tr:hover td{background:var(--bg3);}
-.ftable tr:last-child td{border-bottom:none;}
-.f-name{font-size:12px;color:var(--t1);}
-.f-cat{font-size:10px;color:var(--t3);}
-.f-bar-wrap{display:flex;align-items:center;gap:6px;}
-.f-bar{width:60px;height:3px;background:var(--b2);border-radius:2px;overflow:hidden;flex-shrink:0;}
-.f-bar-fill{height:100%;border-radius:2px;}
-.spill{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;min-width:34px;text-align:center;}
+/* FACTOR GRID */
+.factor-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;}
+.fg-card{background:var(--bg3);border:1px solid var(--b1);border-radius:7px;padding:10px 12px;}
+.fg-cat{font-size:9px;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:4px;color:var(--t3);}
+.fg-name{font-size:12px;color:var(--t1);margin-bottom:6px;line-height:1.3;}
+.fg-bottom{display:flex;align-items:center;gap:8px;}
+.fg-bar{flex:1;height:3px;background:var(--b2);border-radius:2px;overflow:hidden;}
+.fg-bar-fill{height:100%;border-radius:2px;}
+.fg-score{font-size:11px;font-weight:600;padding:2px 7px;border-radius:10px;min-width:34px;text-align:center;}
 .sg{background:var(--green-bg);color:var(--green);}
 .sa{background:var(--amber-bg);color:var(--amber);}
 .sr{background:var(--red-bg);color:var(--red);}
 .sn{background:var(--bg4);color:var(--t3);}
-.f-wt{text-align:right;font-size:11px;color:var(--t3);}
-.cat-badge{display:inline-block;font-size:9px;padding:1px 6px;border-radius:4px;font-weight:500;}
-.cat-Market{background:#0a1020;color:var(--blue);}
-.cat-Financials{background:var(--green-bg);color:var(--green);}
-.cat-Valuation{background:var(--amber-bg);color:var(--amber);}
-.cat-Governance{background:#1a0a20;color:var(--purple);}
-.cat-Strategic{background:#1a0800;color:var(--or);}
-.cat-Returns{background:#1a0510;color:var(--pink);}
 
-/* ── INFO TOOLTIP ── */
-.info-i{font-size:11px;color:var(--t3);cursor:help;position:relative;display:inline-block;}
-.info-i:hover{color:var(--or);}
-[title]{position:relative;}
-
-/* ── DISCLAIMER ── */
-.disclaimer{font-size:11px;color:var(--t3);line-height:1.7;margin-top:1.5rem;padding:14px 16px;background:var(--bg2);border-radius:8px;border:1px solid var(--b1);}
-.disclaimer strong{color:var(--t2);}
-
-/* ── FACTOR GRID ── */
-.factor-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-bottom:1rem;}
-.fg-card{background:var(--bg3);border:1px solid var(--b1);border-radius:7px;padding:10px 12px;}
-.fg-cat{font-size:9px;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:4px;color:var(--t3);}
-.fg-name{font-size:12px;color:var(--t1);margin-bottom:6px;line-height:1.3;}
-.fg-bottom{display:flex;align-items:center;justify-content:space-between;gap:6px;}
-.fg-bar-wrap{flex:1;}
-.fg-bar{height:3px;background:var(--b2);border-radius:2px;overflow:hidden;}
-.fg-bar-fill{height:100%;border-radius:2px;}
-.fg-score{font-size:11px;font-weight:600;padding:2px 7px;border-radius:10px;white-space:nowrap;}
-.fg-wt{font-size:10px;color:var(--t3);white-space:nowrap;}
-
-/* ── DATA TABLE ── */
+/* DATA TABLE */
 .dtable{width:100%;border-collapse:collapse;}
 .dtable td{padding:7px 6px;border-bottom:1px solid #0e0e0e;font-size:12px;vertical-align:top;}
 .dtable tr:last-child td{border-bottom:none;}
 .dtable td:first-child{color:var(--t3);width:160px;}
 .dtable td:last-child{color:var(--t2);}
 
-/* ── SIDE HEADER — matches NFO engine ── */
-.side-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--b1);}
-.side-title{font-size:13px;font-weight:600;color:var(--or);text-transform:uppercase;letter-spacing:0.06em;}
-.refresh-btn{padding:5px 14px;background:var(--or);border:none;border-radius:6px;color:#fff;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:background .2s;}
-.nfo-item{background:var(--bg3);border:1px solid var(--b1);border-radius:8px;padding:12px 14px;margin-bottom:12px;}
-.nfo-item-name{font-size:13px;font-weight:500;color:var(--t1);margin-bottom:4px;line-height:1.4;}
-.nfo-item-cat{display:inline-block;background:var(--bg4);border-radius:4px;padding:2px 8px;font-size:11px;color:var(--t2);margin-bottom:5px;}
-.nfo-item-dates{font-size:11px;color:var(--t3);margin-top:3px;}
-.nfo-item-dates strong{color:var(--t2);}
-.nfo-item-min{font-size:11px;color:var(--t3);margin-top:3px;}
-.no-nfos{font-size:13px;color:var(--t3);padding:1rem 0;text-align:center;}
-.refresh-btn:hover{background:var(--or2);}
-.refresh-btn:disabled{background:var(--bg4);color:var(--t3);cursor:not-allowed;}
+/* DISCLAIMER */
+.disclaimer{font-size:11px;color:var(--t3);line-height:1.7;margin-top:1.5rem;padding:14px 16px;background:var(--bg2);border-radius:8px;border:1px solid var(--b1);}
+.disclaimer strong{color:var(--t2);}
 
-/* ── OPEN IPO CARDS — matches NFO nfo-item style ── */
-.ipo-item-card{background:var(--bg3);border:1px solid var(--b1);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
-.ipo-item-name{font-size:13px;font-weight:500;color:var(--t1);margin-bottom:6px;line-height:1.4;}
-.ipo-item-cat{display:inline-block;background:var(--bg4);border-radius:4px;padding:2px 8px;font-size:11px;color:var(--t2);margin-bottom:6px;}
-.ipo-item-meta{font-size:11px;color:var(--t3);margin-top:3px;}
-.ipo-item-meta strong{color:var(--t2);}
-.ipo-item-gmp{font-size:11px;font-weight:500;margin-top:3px;}
-.ipo-item-gmp.pos{color:var(--green);}
-.ipo-item-gmp.neg{color:var(--red);}
+/* CLOSED / NOT FOUND */
+.info-box{border-radius:10px;padding:28px;text-align:center;margin-top:1rem;}
+.info-box.closed{background:#1a0a00;border:1px solid #92400e;}
+.info-box.notfound{background:#1a0e00;border:1px solid #92400e;}
+.info-box.error{background:var(--red-bg);border:1px solid var(--red-bd);}
+.info-icon{font-size:32px;margin-bottom:10px;}
+.info-title{font-size:16px;font-weight:600;margin-bottom:8px;}
+.info-box.closed .info-title{color:var(--amber);}
+.info-box.notfound .info-title{color:var(--amber);}
+.info-box.error .info-title{color:var(--red);}
+.info-sub{font-size:12px;color:var(--t3);line-height:1.7;}
 
-/* ── DIVIDER ── */
+/* DIVIDER */
 .div{height:1px;background:var(--b1);margin:1.5rem 0;}
+
+/* SIDEBAR */
+.side-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--b1);}
+.side-title{font-size:11px;font-weight:600;color:var(--or);text-transform:uppercase;letter-spacing:0.08em;}
+.refresh-btn{padding:4px 12px;background:var(--or);border:none;border-radius:5px;color:#fff;font-size:11px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;}
+.refresh-btn:hover{background:var(--or2);}
+.nfo-item{background:var(--bg3);border:1px solid var(--b1);border-radius:7px;padding:11px 13px;margin-bottom:10px;}
+.nfo-item-name{font-size:12px;font-weight:500;color:var(--t1);margin-bottom:4px;line-height:1.4;}
+.nfo-item-cat{display:inline-block;background:var(--bg4);border-radius:4px;padding:2px 7px;font-size:10px;color:var(--t2);margin-bottom:5px;}
+.nfo-item-dates{font-size:10px;color:var(--t3);margin-top:3px;}
+.nfo-item-dates strong{color:var(--t2);}
+.nfo-item-min{font-size:10px;color:var(--t3);margin-top:3px;}
+.no-nfos{font-size:12px;color:var(--t3);padding:1rem 0;text-align:center;}
+.side-link{font-size:10px;color:var(--t3);margin-bottom:10px;}
+.side-link a{color:var(--or);text-decoration:none;}
+.side-divider{height:1px;background:var(--b1);margin:14px 0;}
 </style>
 </head>
 <body>
 <div class="page">
 
-  <!-- ── MAIN ── -->
+  <!-- MAIN -->
   <div class="main-col">
+    <div class="ph-title">IPO Research Engine</div>
+    <div class="ph-sub-orange">by Vikram Bhatia</div>
+    <div class="ph-sub">AI-powered analysis using live data, quantitative scoring and qualitative assessment</div>
 
-    <div class="page-header">
-      <div class="ph-row">
-        <div>
-          <div class="ph-title" style="color:var(--or);">IPO Research Engine</div>
-          <div class="ph-sub" style="color:var(--or);font-size:12px;">by Vikram Bhatia</div>
-          <div class="ph-sub" style="margin-top:2px;">AI-powered analysis using live data, quantitative scoring and qualitative assessment</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Config — hidden, URL hardcoded -->
-    <div id="cfgStrip" style="display:none;"></div>
-
-    <!-- Search -->
     <div class="search-row">
-      <input type="text" id="ipoInput" placeholder="Enter IPO name, e.g. SBI Funds Management, Zepto…" onkeydown="if(event.key==='Enter')analyse()"/>
+      <input type="text" id="ipoInput" placeholder="Enter IPO name, e.g. Nitin Castings, Ardee Industries…" onkeydown="if(event.key==='Enter')analyse()"/>
       <button class="btn-go" id="goBtn" onclick="analyse()">Analyse ↗</button>
     </div>
 
     <div class="err" id="errBox"></div>
-
-    <!-- Loading -->
     <div class="loader" id="loader">
       <div class="loader-track"><div class="loader-fill"></div></div>
       <div class="loader-msg" id="loaderMsg">Fetching live IPO data…</div>
-      <div class="activity-feed" id="actFeed">
-        <div class="af-title">Engine Activity</div>
-        <div id="afItems"></div>
-      </div>
     </div>
 
-    <!-- Skeleton -->
-    <div class="skeleton" id="skeleton">
-      <div class="skel-pulse skel-hero"></div>
-      <div class="skel-grid">
-        <div class="skel-pulse skel-card"></div>
-        <div class="skel-pulse skel-card"></div>
-        <div class="skel-pulse skel-card"></div>
-        <div class="skel-pulse skel-card"></div>
-      </div>
-      <div class="skel-pulse skel-line w70"></div>
-      <div class="skel-pulse skel-line w50"></div>
-    </div>
-
-    <!-- Results -->
-    <div id="results" style="display:none;">
-
-      <!-- HERO -->
-      <div class="hero" id="heroCard">
-        <div class="hero-score-wrap">
-          <div class="hero-score" id="heroScore">—</div>
-          <div class="hero-score-lbl">out of 100</div>
-        </div>
-        <div class="hero-center">
-          <div class="hero-badge" id="heroBadge"></div>
-          <div class="hero-rationale" id="heroRationale"></div>
-        </div>
-        <div class="hero-right" id="heroRight"></div>
-      </div>
-
-      <!-- KEY METRICS -->
-      <div class="slabel">Key metrics</div>
-      <div class="metrics" id="metricsEl"></div>
-
-      <!-- CATEGORY SCORES -->
-      <div class="slabel">Score by category</div>
-      <div class="cat-bars" id="catBarsEl"></div>
-
-      <div class="div"></div>
-
-      <!-- KEY POSITIVES & RISKS -->
-      <div class="slabel">Key positives &amp; risks</div>
-      <div class="pos-risk-grid" id="posRiskEl"></div>
-
-      <div class="div"></div>
-
-      <!-- EXPERT BROKER CONSENSUS -->
-      <div id="brokerSection" style="display:none;">
-        <div class="slabel">Market Expert Recommendations</div>
-        <div class="broker-box" id="brokerEl"></div>
-        <div class="div"></div>
-      </div>
-
-      <!-- INVESTMENT RECOMMENDATION -->
-      <div id="investSection" style="display:none;">
-        <div class="slabel">Investment recommendation</div>
-        <div class="inv-card" id="invCardEl"></div>
-        <div class="div"></div>
-      </div>
-
-      <!-- AI ANALYSIS -->
-      <div class="slabel">AI Analysis</div>
-      <div class="ai-box" id="aiEl"></div>
-
-      <div class="div"></div>
-
-      <!-- 22-FACTOR BREAKDOWN -->
-      <div class="slabel">Scoring Parameters</div>
-      <div id="factorGrid" class="factor-grid"></div>
-
-      <div class="div"></div>
-
-      <!-- FETCHED DATA -->
-      <div class="slabel">Other IPO Details</div>
-      <table class="dtable" id="dtable"></table>
-
-      <div class="disclaimer">
-        <strong>Disclaimer:</strong> This IPO analysis is generated by an AI-powered quantitative and qualitative assessment model developed by Vikram Bhatia and is provided solely for informational and educational purposes.
-        Nothing on this platform constitutes financial, investment, legal, or tax advice, or a recommendation to apply for, buy, sell, or hold any IPO or security. All scores, ratings, projections, and analysis are based on publicly available information and AI-driven methodologies and should be used only as a starting point for independent research. They do not guarantee listing gains or future performance.
-        IPO investments involve market risks, including the risk of capital loss. Investors should carefully read the Draft Red Herring Prospectus (DRHP), Red Herring Prospectus (RHP), Prospectus, and other offer documents, and consult a SEBI-registered investment advisor before making any investment decision.
-        The creators, operators, and contributors of this platform disclaim all liability for any loss or damage arising from the use of or reliance on this analysis.
-      </div>
-
-    </div>
-
+    <div id="results"></div>
   </div>
 
-
+  <!-- SIDEBAR -->
   <div class="side-col">
     <div class="side-header">
       <div class="side-title">Open &amp; Upcoming IPOs</div>
-      <button onclick="loadOpenIpos(); this.textContent='Loading...'; this.disabled=true; setTimeout(()=>{this.textContent='Refresh';this.disabled=false;},8000);" class="refresh-btn" id="refreshBtn">Refresh</button>
+      <button class="refresh-btn" id="refreshBtn" onclick="loadOpenIpos(true)">Refresh</button>
     </div>
-    <div style="font-size:11px;color:#555;margin-bottom:12px;">AI search + manual cache. <a href="https://www.icicidirect.com/ipo" target="_blank" style="color:var(--or);text-decoration:none;">ICICIdirect &#8599;</a></div>
+    <div class="side-link">AI search + manual cache. <a href="https://www.icicidirect.com/ipo" target="_blank">ICICIdirect ↗</a></div>
     <div id="openIpoList"><div class="no-nfos">Loading…</div></div>
 
-    <div style="height:1px;background:var(--border);margin:16px 0;"></div>
-
-    <div class="side-header" style="margin-bottom:10px;border-bottom:none;padding-bottom:0;">
-      <div class="side-title" style="font-size:11px;">Analysed IPOs</div>
+    <div class="side-divider"></div>
+    <div class="side-header" style="border-bottom:none;padding-bottom:0;margin-bottom:10px;">
+      <div class="side-title">Analysed IPOs</div>
     </div>
     <div id="analysedIpoList"><div class="no-nfos">No analyses yet.</div></div>
   </div>
@@ -431,435 +224,249 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 </div>
 
 <script>
-// ── CONFIG ──────────────────────────────────────────────────
-let AS_URL = localStorage.getItem('ipo_as_url') || 'https://script.google.com/macros/s/AKfycbzac1Ps3bd4xnRK9-E8ehygibjimRDKzGF2FWpd2A4772tTMdyw6erU6lPB3r0Vm9Q/exec';
-// Save it immediately if not already saved
-if(!localStorage.getItem('ipo_as_url')) localStorage.setItem('ipo_as_url', AS_URL);
-const AF_MSGS = [
-  {t:0,    msg:"Searching live IPO data via web…"},
-  {t:8000, msg:"Extracting financials, subscription & GMP…"},
-  {t:16000,msg:"Scoring 22 quantitative factors…"},
-  {t:24000,msg:"Fetching expert broker recommendations…"},
-  {t:32000,msg:"Running Claude AI qualitative analysis…"},
-  {t:40000,msg:"Generating price projections…"},
-  {t:48000,msg:"Saving analysis to Google Sheet…"},
+const AS_URL = 'https://script.google.com/macros/s/AKfycbzac1Ps3bd4xnRK9-E8ehygibjimRDKzGF2FWpd2A4772tTMdyw6erU6lPB3r0Vm9Q/exec';
+
+const LOAD_MSGS = [
+  'Fetching live IPO data via web search…',
+  'Extracting financials, GMP and subscription data…',
+  'Scoring 22 quantitative parameters…',
+  'Running Claude AI qualitative analysis…',
+  'Generating price projections…',
+  'Saving analysis to Google Sheet…',
 ];
-const CAT_COLORS = {Market:'#3b82f6',Financials:'#22c55e',Valuation:'#f59e0b',Governance:'#a855f7',Strategic:'#f97316',Returns:'#ec4899'};
 
-function saveConfig() {
-  const v = document.getElementById('asUrl').value.trim();
-  if(!v) return;
-  AS_URL = v; localStorage.setItem('ipo_as_url', v);
-  document.getElementById('cfgStrip').innerHTML = `<span class="cfg-saved">✓ URL saved — <a href="#" onclick="showCfg(event)" style="color:var(--or);text-decoration:none;font-size:11px;">edit</a></span>`;
-}
-function showCfg(e) {
-  e.preventDefault();
-  document.getElementById('cfgStrip').innerHTML = `<label>Apps Script URL</label><input type="text" id="asUrl" value="${AS_URL}" style="flex:1;background:var(--bg4);border:1px solid var(--b2);color:var(--t2);padding:5px 10px;border-radius:5px;font-size:12px;font-family:'DM Mono',monospace;min-width:0;"/><button class="btn-sm" onclick="saveConfig()">Save</button>`;
-}
-window.addEventListener('load', () => {
-  if(AS_URL) {
-    // Auto-collapse config strip since URL is already saved
-    document.getElementById('cfgStrip').innerHTML = `<span class="cfg-saved">✓ URL saved — <a href="#" onclick="showCfg(event)" style="color:var(--or);text-decoration:none;font-size:11px;">edit</a></span>`;
-  }
-  loadOpenIpos();
-  loadHistory();
-});
+const CAT_TIPS = {
+  Market:     'GMP, QIB/HNI/Retail subscription, anchor quality, expert broker consensus.',
+  Financials: 'Revenue CAGR, PAT CAGR, Return on Equity, RoCE, Debt-to-Equity.',
+  Valuation:  'P/E ratio vs industry peers and issue size reasonableness.',
+  Governance: 'Promoter holding, fresh vs OFS split, lead manager reputation, management track record.',
+  Strategic:  'Industry tailwinds and competitive moat.',
+  Returns:    'Listing gain potential, use of proceeds quality, post-listing supply risk.'
+};
 
-// ── ANALYSE ─────────────────────────────────────────────────
+const FACTOR_TIPS = {
+  gmp:           'Grey Market Premium: Unofficial pre-listing premium. Positive = strong demand.',
+  subQIB:        'QIB Subscription: Qualified Institutional Buyers multiple. Most predictive factor.',
+  subHNI:        'HNI Subscription: High Net Worth Individual multiple. High leverage money.',
+  subRetail:     'Retail Subscription: Broad public demand indicator.',
+  anchorQuality: 'Anchor Investor Quality: Tier of institutions who subscribed before opening.',
+  brokerConsensus:'Expert Broker Consensus: Aggregated view from leading brokers.',
+  revGrowth:     'Revenue Growth CAGR: 3-year compound revenue growth rate.',
+  patGrowth:     'PAT Growth CAGR: 3-year profit after tax growth rate.',
+  roe:           'Return on Equity: Net profit as % of shareholder equity.',
+  roce:          'RoCE: Return on Capital Employed — operating efficiency.',
+  dte:           'Debt-to-Equity: Balance sheet leverage. Lower = stronger.',
+  peVsPeers:     'P/E vs Peers: Issue price-to-earnings vs listed peers. Discount = better value.',
+  issueSize:     'Issue Size: Total IPO size. Smaller = easier to absorb.',
+  promoterHold:  'Promoter Holding Post-IPO: Skin in the game. Higher = better alignment.',
+  freshVsOFS:    'Fresh vs OFS: Fresh issue brings money to company. OFS = promoter exit.',
+  leadMgr:       'Lead Manager Reputation: Quality of investment banks managing the IPO.',
+  mgmtQuality:   'Management Track Record: History of execution and governance.',
+  tailwinds:     'Industry Tailwinds: Macro and policy support for the sector.',
+  moat:          'Competitive Moat: Patents, brand, network effects, niche dominance.',
+  listingGain:   'Listing Gain Potential: Expected first-day listing premium.',
+  useProceeds:   'Use of Proceeds: Growth capex scores higher than debt repayment.',
+  lockIn:        'Post-listing Supply Risk: Short lock-ins and large OFS = supply pressure.'
+};
+
+// ── ANALYSE ──────────────────────────────────────────────
 async function analyse() {
   const name = document.getElementById('ipoInput').value.trim();
   if(!name) return;
-  if(!AS_URL) { showErr('Please paste your Apps Script URL above and click Save.'); return; }
 
   const btn = document.getElementById('goBtn');
   btn.disabled=true; btn.textContent='Analysing…';
   document.getElementById('loader').style.display='block';
-  document.getElementById('skeleton').style.display='none';
-  document.getElementById('results').style.display='none';
-  document.getElementById('results').innerHTML = '';  // clear previous result
+  document.getElementById('results').innerHTML = '';
   document.getElementById('errBox').style.display='none';
 
-  // Activity feed
-  const afEl = document.getElementById('afItems');
-  afEl.innerHTML='';
-  document.getElementById('actFeed').style.display='block';
-  const afTimers = AF_MSGS.map((m,i) => setTimeout(()=>{
-    const dot = i < AF_MSGS.length-1 ? 'af-dot' : 'af-dot';
-    afEl.innerHTML += `<div class="af-item"><div class="${dot}"></div><span>${m.msg}</span></div>`;
-    if(i>0) {
-      const prev = afEl.querySelectorAll('.af-dot');
-      if(prev[i-1]) prev[i-1].classList.add('done');
-    }
-  }, m.t));
-
-  // Show skeleton after 4s
-  const skelTimer = setTimeout(()=>{ document.getElementById('skeleton').style.display='block'; }, 4000);
+  let mi=0;
+  const lmEl = document.getElementById('loaderMsg');
+  lmEl.textContent = LOAD_MSGS[0];
+  const iv = setInterval(()=>{ if(mi<LOAD_MSGS.length-1) lmEl.textContent=LOAD_MSGS[++mi]; }, 9000);
 
   try {
-    const res = await fetch(AS_URL+'?action=analyse&ipo='+encodeURIComponent(name)+(window._forceRefresh?'&refresh=1':''));
+    const forceRefresh = window._forceRefresh || false;
     window._forceRefresh = false;
+    const url = AS_URL+'?action=analyse&ipo='+encodeURIComponent(name)+(forceRefresh?'&refresh=1':'');
+    const res  = await fetch(url);
     const data = await res.json();
+
     if(data.error === 'insufficient_data') {
-      document.getElementById('results').style.display='block';
-      document.getElementById('results').innerHTML = `
-        <div style="background:#1a0e00;border:1px solid #92400e;border-radius:10px;padding:28px;text-align:center;">
-          <div style="font-size:28px;margin-bottom:10px;">🔍</div>
-          <div style="font-size:16px;font-weight:600;color:var(--amber);margin-bottom:8px;">Data Not Found</div>
-          <div style="font-size:13px;color:var(--t2);margin-bottom:8px;">${esc(data.ipoName)}</div>
-          <div style="font-size:12px;color:var(--t3);line-height:1.8;">${esc(data.message)}</div>
-          <div style="margin-top:14px;font-size:12px;color:var(--t3);">
-            This engine is designed for mainboard and SME IPOs only.<br>
-            Delisting offers, buybacks, rights issues and bond offers are not supported.
-          </div>
-          <a href="https://www.icicidirect.com/ipo" target="_blank" 
-             style="display:inline-block;margin-top:14px;padding:7px 18px;background:var(--or);color:#fff;border-radius:6px;font-size:12px;text-decoration:none;">
-            View open IPOs on ICICIdirect ↗
-          </a>
-        </div>`;
+      showInfoBox('notfound','🔍','Data Not Found', data.ipoName,
+        data.message + '\n\nThis engine supports mainboard and SME IPOs only. Delisting offers, buybacks, rights issues and bond offers are not supported.',
+        'View open IPOs on ICICIdirect ↗', 'https://www.icicidirect.com/ipo');
       return;
     }
     if(data.error) throw new Error(data.error);
-    document.getElementById('results').style.display='block';
-    try {
-      render(data);
-    } catch(renderErr) {
-      console.error('Render error:', renderErr);
-      document.getElementById('results').innerHTML = `
-        <div style="background:#1a0505;border:1px solid #7f1d1d;border-radius:10px;padding:20px;text-align:center;">
-          <div style="font-size:16px;font-weight:600;color:var(--red);margin-bottom:8px;">Display Error</div>
-          <div style="font-size:12px;color:var(--t3);">Analysis completed but could not display results.<br>Error: ${renderErr.message}</div>
-          <div style="font-size:12px;color:var(--t3);margin-top:8px;">Try clicking Analyse again — the data is cached and will load instantly.</div>
-        </div>`;
+
+    // Only show closed message for fresh analyses (not cache)
+    if(data.isIpoClosed && !data.fromCache) {
+      showInfoBox('closed','🔒','This IPO is closed for subscription', data.ipoName,
+        'Subscription closed on '+(data.closeDate||'N/A')+'. Analysis is only available for open IPOs.');
+      return;
+    }
+
+    try { render(data); } catch(re) {
+      console.error('Render error:', re);
+      showInfoBox('error','⚠','Display Error', data.ipoName,
+        'Analysis completed but could not display results. Error: '+re.message+'\nTry clicking Analyse again — the data is cached.');
     }
     loadHistory();
   } catch(err) {
-    showErr('Error: '+err.message+'. Check your Apps Script URL and that the deployment is published.');
+    showErr('Error: '+err.message);
   } finally {
-    afTimers.forEach(clearTimeout);
-    clearTimeout(skelTimer);
+    clearInterval(iv);
     document.getElementById('loader').style.display='none';
-    document.getElementById('skeleton').style.display='none';
     btn.disabled=false; btn.textContent='Analyse ↗';
   }
 }
 
-// ── RENDER ──────────────────────────────────────────────────
-function render(d) {
-  // Closed IPO
-  // Only show closed message if server explicitly says it's closed (not for cached results)
-  if(d.isIpoClosed && !d.fromCache) {
-    document.getElementById('results').style.display='block';
-    document.getElementById('results').innerHTML = `
-      <div class="closed-box">
-        <div class="closed-icon">🔒</div>
-        <div class="closed-title">This IPO is closed for subscription</div>
-        <div class="closed-sub">${esc(d.ipoName)} · Subscription closed on ${d.closeDate||'N/A'}</div>
-        <div class="closed-sub" style="margin-top:6px;">Analysis is only available for open IPOs.</div>
-      </div>`;
-    return;
-  }
-
-  const sc=d.scores||{}, fd=d.fetchedData||{}, cl=d.claudeAnalysis||{}, vrd=d.verdict||{label:'N/A',color:'amber',alloc:'—',horizon:'—',icon:'?'};
-  // Override verdict color based on Claude's actual verdict text
-  if(cl.verdict) {
-    const v = cl.verdict.toLowerCase();
-    if(v.includes('strong subscribe')) vrd.color='green';
-    else if(v.includes('subscribe with caution') || v.includes('caution')) vrd.color='amber';
-    else if(v==='subscribe') vrd.color='green';
-    else if(v.includes('avoid')) vrd.color='red';
-  }
-
-  // Hero card
-  const heroCard = document.getElementById('heroCard');
-  if(!heroCard) { console.error('heroCard not found'); return; }
-  heroCard.className = 'hero '+(vrd.color||'amber');
-  document.getElementById('heroScore').textContent = sc.composite;
-  // Show cache indicator if result is from sheet cache
-  if(d.fromCache) {
-    const cacheNote = document.createElement('div');
-    cacheNote.style.cssText = 'font-size:10px;color:var(--t3);margin-top:6px;text-align:center;';
-    cacheNote.innerHTML = '⚡ Loaded from cache · <a href="#" onclick="forceRefresh(event)" style="color:var(--or);text-decoration:none;">Refresh</a>';
-    document.getElementById('heroScore').parentNode.appendChild(cacheNote);
-  }
-  document.getElementById('heroBadge').innerHTML = `<span class="hero-badge-icon">${vrd.icon}</span>${esc(cl.verdict||vrd.label)}`;
-  document.getElementById('heroRationale').textContent = cl.oneLineRationale||'';
-  // Calculate expected listing premium
-  function calcListingPremium(fd) {
-    const gmp = fd.gmp;
-    const qib = fd.subscriptionQIB;
-    const hni = fd.subscriptionHNI;
-    const retail = fd.subscriptionRetail;
-    const anchor = fd.anchorInvestorQuality;
-
-    // Convert each signal to an estimated listing premium %
-    let gmpSignal = 0;
-    if (gmp !== null && gmp !== undefined) gmpSignal = gmp; // direct %
-
-    let qibSignal = 0;
-    if (qib !== null && qib !== undefined) {
-      if (qib >= 100) qibSignal = 25;
-      else if (qib >= 50) qibSignal = 18;
-      else if (qib >= 20) qibSignal = 12;
-      else if (qib >= 10) qibSignal = 8;
-      else if (qib >= 3) qibSignal = 3;
-      else qibSignal = -5;
-    }
-
-    let demandSignal = 0;
-    const hniVal = hni || 0;
-    const retailVal = retail || 0;
-    const totalSub = (hniVal + retailVal) / 2;
-    if (totalSub >= 50) demandSignal = 20;
-    else if (totalSub >= 20) demandSignal = 12;
-    else if (totalSub >= 10) demandSignal = 8;
-    else if (totalSub >= 3) demandSignal = 4;
-    else demandSignal = 0;
-
-    let anchorSignal = 0;
-    if (anchor !== null && anchor !== undefined) {
-      anchorSignal = (anchor / 5) * 15; // max 15% contribution
-    }
-
-    // Only calculate if we have at least GMP or QIB data
-    if (gmp === null && qib === null) return null;
-
-    const hasGMP = gmp !== null && gmp !== undefined;
-    const hasQIB = qib !== null && qib !== undefined;
-    const hasDemand = (hni !== null || retail !== null);
-
-    // Weighted average
-    let weighted = 0;
-    let totalWt = 0;
-    if (hasGMP)    { weighted += gmpSignal * 0.40;    totalWt += 0.40; }
-    if (hasQIB)    { weighted += qibSignal * 0.35;    totalWt += 0.35; }
-    if (hasDemand) { weighted += demandSignal * 0.15; totalWt += 0.15; }
-    if (anchor)    { weighted += anchorSignal * 0.10; totalWt += 0.10; }
-
-    const premium = totalWt > 0 ? (weighted / totalWt) : 0;
-    return Math.round(premium * 10) / 10; // 1 decimal
-  }
-
-  // Use GMP directly as primary signal for listing premium display
-  const listingPremium = (d.expectedListingPremium !== null && d.expectedListingPremium !== undefined) 
-    ? d.expectedListingPremium 
-    : (fd.gmp !== null && fd.gmp !== undefined ? fd.gmp : calcListingPremium(fd));
-  const serverListingPrice = d.expectedListingPrice || null;
-  const issuePrice = fd.priceBandHigh || fd.priceBandLow || null;
-  const expectedListingPrice = serverListingPrice || ((listingPremium !== null && issuePrice) 
-    ? Math.round(issuePrice * (1 + listingPremium/100)) 
-    : null);
-
-  const premiumColor = listingPremium === null ? 'var(--t3)' 
-    : listingPremium >= 20 ? 'var(--green)' 
-    : listingPremium >= 10 ? 'var(--amber)' 
-    : listingPremium >= 0  ? 'var(--t2)' 
-    : 'var(--red)';
-
-  const premiumDisplay = listingPremium !== null 
-    ? (listingPremium >= 0 ? '+' : '') + listingPremium + '%'
-    : '—';
-
-  const listingPriceDisplay = expectedListingPrice 
-    ? '₹' + expectedListingPrice 
-    : '—';
-
-  const listingExtra = expectedListingPrice ? ' &nbsp;·&nbsp; ₹' + expectedListingPrice : '';
-  document.getElementById('heroRight').innerHTML =
-    '<div class="hero-pill">Horizon <span>' + esc(cl.investmentHorizon||vrd.horizon||'—') + '</span></div>' +
-    '<div class="hero-pill">Allocation <span>' + esc((cl.suggestedAmount||vrd.alloc||'—').replace(/Rs\./g,'₹').replace(/Rs /g,'₹')) + '</span></div>' +
-    '<div class="hero-pill listing-pill">Expected listing <span style="color:' + premiumColor + ';font-weight:600;">' + premiumDisplay + '</span>' + listingExtra + '</div>';
-
-  // Metrics — only populated
-  const mDefs = [
-    {l:'Sector',           v:fd.sector},
-    {l:'Issue Size',       v:fd.issueSize?'₹'+fd.issueSize+' Cr':null},
-    {l:'Price Band',       v:fd.priceBandHigh?'₹'+fd.priceBandLow+' – ₹'+fd.priceBandHigh:null},
-    {l:'GMP',              v:fd.gmp!==null&&fd.gmp!==undefined?fd.gmp+'%':null},
-    {l:'QIB Sub',          v:fd.subscriptionQIB?fd.subscriptionQIB+'×':null},
-    {l:'HNI Sub',          v:fd.subscriptionHNI?fd.subscriptionHNI+'×':null},
-    {l:'Retail Sub',       v:fd.subscriptionRetail?fd.subscriptionRetail+'×':null},
-    {l:'Revenue CAGR',     v:fd.revenueGrowthCAGR?fd.revenueGrowthCAGR+'%':null},
-    {l:'PAT CAGR',         v:fd.patGrowthCAGR?fd.patGrowthCAGR+'%':null},
-    {l:'RoE',              v:fd.roe?fd.roe+'%':null},
-    {l:'RoCE',             v:fd.roce?fd.roce+'%':null},
-    {l:'D/E',              v:fd.debtToEquity!==null&&fd.debtToEquity!==undefined?fd.debtToEquity:null},
-    {l:'Promoter Post-IPO',v:fd.promoterHoldingPostIPO?fd.promoterHoldingPostIPO+'%':null},
-    {l:'Lot Size',         v:fd.lotSize?fd.lotSize+' shares':null},
-    {l:'Min Investment',   v:fd.minInvestment?'₹'+Number(fd.minInvestment).toLocaleString('en-IN'):null},
-  ];
-  // Add expected listing premium as first metric card if available
-  const listingMetricHTML = listingPremium !== null ? `
-    <div class="mc" style="border-color:${premiumColor};background:var(--bg3);">
-      <div class="mc-lbl">Expected listing premium</div>
-      <div class="mc-val" style="color:${premiumColor};">${premiumDisplay}</div>
-      ${expectedListingPrice ? `<div style="font-size:11px;color:var(--t3);margin-top:3px;">Est. price ₹${expectedListingPrice}</div>` : ''}
-    </div>` : '';
-
-  document.getElementById('metricsEl').innerHTML = listingMetricHTML + mDefs
-    .filter(m=>m.v!==null&&m.v!==undefined&&m.v!=='')
-    .map(m=>`<div class="mc"><div class="mc-lbl">${m.l}</div><div class="mc-val">${esc(String(m.v))}</div></div>`)
-    .join('');
-
-  // Category bars
-  const cats = ['Market','Financials','Valuation','Governance','Strategic','Returns'];
-  const catTooltips = {
-    Market:     'GMP, QIB/HNI/Retail subscription, anchor quality, and expert broker consensus — measures overall market appetite for the IPO.',
-    Financials: 'Revenue CAGR, PAT CAGR, Return on Equity, RoCE, and Debt-to-Equity — measures the company\u2019s financial health and growth trajectory.',
-    Valuation:  'P/E ratio vs industry peers and issue size reasonableness — measures whether the IPO is attractively priced relative to the market.',
-    Governance: 'Promoter holding, fresh issue vs OFS split, lead manager reputation, and management track record — measures quality of governance and alignment with retail investors.',
-    Strategic:  'Industry tailwinds and competitive moat — measures the long-term strategic positioning of the business.',
-    Returns:    'Listing gain potential, use of proceeds quality, and post-listing supply risk — measures near-term and medium-term return potential.'
-  };
-  document.getElementById('catBarsEl').innerHTML = cats.map(cat => {
-    const s = (sc.catScores||{})[cat];
-    if(s===null||s===undefined) return '';
-    const barClr = s>=65?'var(--green)':s>=45?'var(--amber)':'var(--red)';
-    const tip = catTooltips[cat]||'';
-    return `<div class="cat-bar-row">
-      <div class="cat-bar-name">${cat} <span class="info-i" title="${tip}">ⓘ</span></div>
-      <div class="cat-bar-track"><div class="cat-bar-fill" style="width:${s}%;background:${barClr};"></div></div>
-      <div class="cat-bar-val" style="color:${barClr};">${s}%</div>
+function showInfoBox(type, icon, title, name, msg, linkTxt, linkUrl) {
+  const linkHtml = linkTxt ? `<a href="${linkUrl}" target="_blank" style="display:inline-block;margin-top:14px;padding:7px 18px;background:var(--or);color:#fff;border-radius:6px;font-size:12px;text-decoration:none;">${linkTxt}</a>` : '';
+  document.getElementById('results').innerHTML = `
+    <div class="info-box ${type}">
+      <div class="info-icon">${icon}</div>
+      <div class="info-title">${esc(title)}</div>
+      ${name?`<div style="font-size:13px;color:var(--t2);margin-bottom:8px;">${esc(name)}</div>`:''}
+      <div class="info-sub">${esc(msg)}</div>
+      ${linkHtml}
     </div>`;
+}
+
+// ── RENDER ────────────────────────────────────────────────
+function render(d) {
+  const sc=d.scores||{}, fd=d.fetchedData||{}, cl=d.claudeAnalysis||{}, vrd=d.verdict||{};
+
+  // Determine verdict colour from Claude text
+  const vText = (cl.verdict||'').toLowerCase();
+  let vColor = vrd.color||'amber';
+  if(vText.includes('strong subscribe')) vColor='green';
+  else if(vText==='subscribe') vColor='green';
+  else if(vText.includes('caution')) vColor='amber';
+  else if(vText.includes('avoid')) vColor='red';
+
+  // Listing premium
+  const lp = d.expectedListingPremium !== null && d.expectedListingPremium !== undefined
+    ? d.expectedListingPremium
+    : (fd.gmp !== null && fd.gmp !== undefined ? fd.gmp : null);
+  const ip = fd.priceBandHigh || fd.priceBandLow || null;
+  const elp = d.expectedListingPrice || (lp!==null&&ip ? Math.round(ip*(1+lp/100)) : null);
+  const lpClr = lp===null?'var(--t3)':lp>=20?'var(--green)':lp>=10?'var(--amber)':lp>=0?'var(--t2)':'var(--red)';
+  const lpTxt = lp!==null ? (lp>=0?'+':'')+lp+'%' : '—';
+
+  const displayAmount = (cl.suggestedAmount||'').replace(/Rs\./g,'₹').replace(/Rs /g,'₹');
+
+  // Cache badge
+  const cacheBadge = d.fromCache ? `<div style="font-size:10px;color:var(--t3);margin-top:4px;">⚡ From cache · <a href="#" onclick="forceRefresh(event)" style="color:var(--or);text-decoration:none;">Refresh</a></div>` : '';
+
+  let html = `
+  <div class="hero ${vColor}" id="heroCard">
+    <div>
+      <div class="hero-score">${sc.composite||'—'}</div>
+      <div class="hero-score-lbl">out of 100</div>
+      ${cacheBadge}
+    </div>
+    <div class="hero-center">
+      <div class="hero-badge">${vrd.icon||''} ${esc(cl.verdict||vrd.label||'—')}</div>
+      <div class="hero-rationale">${esc(cl.oneLineRationale||'')}</div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-pill">Horizon <strong>${esc(cl.investmentHorizon||vrd.horizon||'—')}</strong></div>
+      <div class="hero-pill">Allocation <strong>${esc(displayAmount||vrd.alloc||'—')}</strong></div>
+      <div class="hero-pill" style="border-color:${lpClr};">Est. listing <strong style="color:${lpClr};">${lpTxt}${elp?' · ₹'+elp:''}</strong></div>
+    </div>
+  </div>`;
+
+  // Key metrics — only populated
+  const mDefs = [
+    {l:'Sector',v:fd.sector},{l:'Issue Size',v:fd.issueSize?'₹'+fd.issueSize+' Cr':null},
+    {l:'Price Band',v:fd.priceBandHigh?'₹'+fd.priceBandLow+' – ₹'+fd.priceBandHigh:null},
+    {l:'GMP',v:fd.gmp!==null&&fd.gmp!==undefined?fd.gmp+'%':null},
+    {l:'QIB Sub',v:fd.subscriptionQIB?fd.subscriptionQIB+'×':null},
+    {l:'HNI Sub',v:fd.subscriptionHNI?fd.subscriptionHNI+'×':null},
+    {l:'Retail Sub',v:fd.subscriptionRetail?fd.subscriptionRetail+'×':null},
+    {l:'Revenue CAGR',v:fd.revenueGrowthCAGR?fd.revenueGrowthCAGR+'%':null},
+    {l:'PAT CAGR',v:fd.patGrowthCAGR?fd.patGrowthCAGR+'%':null},
+    {l:'RoE',v:fd.roe?fd.roe+'%':null},{l:'RoCE',v:fd.roce?fd.roce+'%':null},
+    {l:'D/E',v:fd.debtToEquity!==null&&fd.debtToEquity!==undefined?fd.debtToEquity:null},
+    {l:'Promoter Post-IPO',v:fd.promoterHoldingPostIPO?fd.promoterHoldingPostIPO+'%':null},
+    {l:'Lot Size',v:fd.lotSize?fd.lotSize+' shares':null},
+    {l:'Min Investment',v:fd.minInvestment?'₹'+Number(fd.minInvestment).toLocaleString('en-IN'):null},
+  ];
+  // Add expected listing as first highlighted card
+  const lpMetric = lp!==null ? `<div class="mc" style="border-color:${lpClr};"><div class="mc-lbl">Expected Listing Premium</div><div class="mc-val" style="color:${lpClr};">${lpTxt}</div>${elp?`<div style="font-size:10px;color:var(--t3);margin-top:2px;">Est. ₹${elp}</div>`:''}</div>` : '';
+  const metricsHtml = lpMetric + mDefs.filter(m=>m.v!==null&&m.v!==undefined&&m.v!=='').map(m=>`<div class="mc"><div class="mc-lbl">${m.l}</div><div class="mc-val">${esc(String(m.v))}</div></div>`).join('');
+
+  // Category scores
+  const cats=['Market','Financials','Valuation','Governance','Strategic','Returns'];
+  const catBars = cats.map(cat=>{
+    const s=(sc.catScores||{})[cat];
+    if(s===null||s===undefined) return '';
+    const clr=s>=65?'var(--green)':s>=45?'var(--amber)':'var(--red)';
+    return `<div class="cat-bar-row"><div class="cat-bar-name">${cat} <span class="info-i" title="${CAT_TIPS[cat]||''}">ⓘ</span></div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:${s}%;background:${clr};"></div></div><div class="cat-bar-val" style="color:${clr};">${s}%</div></div>`;
   }).join('');
 
   // Key positives & risks
-  const pos = cl.keyPositives||[];
-  const risks = cl.keyRisks||[];
-  document.getElementById('posRiskEl').innerHTML = `
-    <div class="pos-box">
-      <div class="pr-title">✓ Key positives</div>
-      ${pos.length?pos.map(p=>`<div class="pr-item"><div class="pr-dot"></div><span>${esc(p)}</span></div>`).join(''):'<div class="pr-item"><div class="pr-dot"></div><span>No data available.</span></div>'}
-    </div>
-    <div class="risk-box">
-      <div class="pr-title">✕ Key risks</div>
-      ${risks.length?risks.map(r=>`<div class="pr-item"><div class="pr-dot"></div><span>${esc(r)}</span></div>`).join(''):'<div class="pr-item"><div class="pr-dot"></div><span>No data available.</span></div>'}
-    </div>`;
+  const pos=cl.keyPositives||[], risks=cl.keyRisks||[];
+  const prHtml = `
+  <div class="pos-box"><div class="pr-title">✓ Key Positives</div>${pos.length?pos.map(p=>`<div class="pr-item"><div class="pr-dot"></div><span>${esc(p)}</span></div>`).join(''):'<div class="pr-item"><div class="pr-dot"></div><span>No data available.</span></div>'}</div>
+  <div class="risk-box"><div class="pr-title">✕ Key Risks</div>${risks.length?risks.map(r=>`<div class="pr-item"><div class="pr-dot"></div><span>${esc(r)}</span></div>`).join(''):'<div class="pr-item"><div class="pr-dot"></div><span>No data available.</span></div>'}</div>`;
 
   // Expert broker consensus
-  const brokerSec = document.getElementById('brokerSection');
-  if(fd.brokerRecommendations) {
-    // Show only recommendation types, not broker names
-    const pairs = fd.brokerRecommendations.split(',').map(s=>s.trim()).filter(Boolean);
-    const recCounts = {};
-    pairs.forEach(pair => {
-      const parts = pair.split(':');
-      if(parts.length<2) return;
-      const rec = parts.slice(1).join(':').trim();
-      recCounts[rec] = (recCounts[rec]||0)+1;
-    });
-    const pills = Object.entries(recCounts).map(([rec,count]) => {
-      const r = rec.toLowerCase();
-      const cls = r.includes('avoid')||r.includes('skip') ? 'bp-avoid' : r.includes('neutral')||r.includes('not rated') ? 'bp-neutral' : 'bp-sub';
-      return `<span class="broker-pill ${cls}">${esc(rec)}${count>1?' ('+count+')':''}</span>`;
-    }).join('');
-
-    const consensus = fd.expertConsensus||'';
-    const consClr = consensus.toLowerCase().includes('subscribe') ? 'var(--green)' : consensus.toLowerCase().includes('avoid') ? 'var(--red)' : 'var(--amber)';
-    document.getElementById('brokerEl').innerHTML = `
-      <div class="broker-consensus-badge" style="color:${consClr};">
-        <span style="font-size:16px;">${consensus.toLowerCase().includes('subscribe')?'✓':'✕'}</span>
-        Market Expert Consensus: <strong>${esc(consensus)}</strong>
-      </div>`;
-    brokerSec.style.display='block';
-  } else {
-    brokerSec.style.display='none';
+  let brokerHtml = '';
+  if(fd.expertConsensus) {
+    const cons = fd.expertConsensus;
+    const consClr = cons.toLowerCase().includes('subscribe')?'var(--green)':cons.toLowerCase().includes('avoid')?'var(--red)':'var(--amber)';
+    brokerHtml = `<div class="slabel">Market Expert Recommendations</div>
+    <div class="broker-box"><div class="broker-consensus-badge" style="color:${consClr};"><span style="font-size:16px;">${cons.toLowerCase().includes('subscribe')?'✓':'✕'}</span> Market Expert Consensus: <strong>${esc(cons)}</strong></div></div>`;
   }
 
-  // Investment card — only for positive verdicts
-  const positiveVerdicts = ['Strong Subscribe','Subscribe','Caution','Subscribe with Caution'];
-  const investSec = document.getElementById('investSection');
+  // Investment card
+  let invHtml = '';
+  const positiveVerdicts=['Strong Subscribe','Subscribe','Subscribe with Caution','Caution'];
   if(cl.verdict && positiveVerdicts.some(v=>cl.verdict.includes(v)) && cl.suggestedAmount) {
-    const ip = fd.priceBandHigh||fd.priceBandLow||0;
     function projCell(label,price) {
       if(!price||!ip) return `<div class="proj-cell"><div class="proj-lbl">${label}</div><div class="proj-val" style="color:var(--t3);">—</div></div>`;
-      const chg = ((price-ip)/ip*100).toFixed(1);
-      const clr = chg>=0?'var(--green)':'var(--red)';
-      return `<div class="proj-cell">
-        <div class="proj-lbl">${label}</div>
-        <div class="proj-val" style="color:${clr};">₹${Number(price).toLocaleString('en-IN')}</div>
-        <div class="proj-chg" style="color:${clr};">${chg>=0?'+':''}${chg}%</div>
-      </div>`;
+      const chg=((price-ip)/ip*100).toFixed(1);
+      const clr=chg>=0?'var(--green)':'var(--red)';
+      return `<div class="proj-cell"><div class="proj-lbl">${label}</div><div class="proj-val" style="color:${clr};">₹${Number(price).toLocaleString('en-IN')}</div><div class="proj-chg" style="color:${clr};">${chg>=0?'+':''}${chg}%</div></div>`;
     }
-    // Fix suggested amount display
-  const displayAmount = (cl.suggestedAmount||'').replace(/Rs\./g,'₹').replace(/Rs /g,'₹');
-  // Validate projected prices are logical (ascending trend expected)
-  const p3v  = cl.projectedPrice3M  || null;
-  const p6v  = cl.projectedPrice6M  || null;
-  const p9v  = cl.projectedPrice9M  || null;
-  const p12v = cl.projectedPrice12M || null;
-
-  document.getElementById('invCardEl').innerHTML = `
+    invHtml = `<div class="slabel">Investment Recommendation</div>
+    <div class="inv-card">
       <div class="inv-top">
         <div class="inv-cell"><div class="inv-lbl">Suggested Investment</div><div class="inv-val">${esc(displayAmount||'—')}</div></div>
         <div class="inv-cell"><div class="inv-lbl">Investment Horizon</div><div class="inv-val">${esc(cl.investmentHorizon||'—')}</div></div>
         <div class="inv-cell"><div class="inv-lbl">Expected Annual Return</div><div class="inv-val green">${cl.expectedAnnualReturn?cl.expectedAnnualReturn+'%':'—'}</div></div>
         <div class="inv-cell"><div class="inv-lbl">Issue Price</div><div class="inv-val">₹${ip||'—'}</div></div>
       </div>
-      <div class="slabel" style="margin-top:4px;margin-bottom:8px;">Projected share price</div>
+      <div class="slabel" style="margin-top:4px;margin-bottom:8px;">Projected Share Price</div>
       <div class="proj-grid">
         ${projCell('3 Months',cl.projectedPrice3M)}
         ${projCell('6 Months',cl.projectedPrice6M)}
         ${projCell('9 Months',cl.projectedPrice9M)}
         ${projCell('12 Months',cl.projectedPrice12M)}
       </div>
-`;
-    investSec.style.display='block';
-  } else {
-    investSec.style.display='none';
+    </div>`;
   }
 
-  // AI Analysis
-  const ai = document.getElementById('aiEl');
-  let html = ``;
-  if(cl.listingOutlook)    html+=`<div class="ai-block"><div class="ai-tag">Listing day</div><div class="ai-text">${esc(cl.listingOutlook)}</div></div>`;
-  if(cl.mediumTermOutlook) html+=`<div class="ai-block"><div class="ai-tag">6–12 months</div><div class="ai-text">${esc(cl.mediumTermOutlook)}</div></div>`;
-  if(cl.allocationAdvice)  html+=`<div class="ai-block"><div class="ai-tag">Allocation</div><div class="ai-text">${esc(cl.allocationAdvice)}</div></div>`;
-  if(cl.comparablePeers)   html+=`<div class="ai-block"><div class="ai-tag">Comparable peers</div><div class="ai-text">${esc(cl.comparablePeers)}</div></div>`;
-  if(cl.analystNote)       html+=`<div class="ai-block"><div class="ai-tag">Analyst note</div><div class="ai-text">${esc(cl.analystNote)}</div></div>`;
-  ai.innerHTML = html;
+  // AI analysis
+  let aiHtml = `<div class="slabel">AI Analysis</div><div class="ai-box">`;
+  if(cl.listingOutlook)    aiHtml+=`<div class="ai-block"><div class="ai-tag">Listing day</div><div class="ai-text">${esc(cl.listingOutlook)}</div></div>`;
+  if(cl.mediumTermOutlook) aiHtml+=`<div class="ai-block"><div class="ai-tag">6–12 months</div><div class="ai-text">${esc(cl.mediumTermOutlook)}</div></div>`;
+  if(cl.allocationAdvice)  aiHtml+=`<div class="ai-block"><div class="ai-tag">Allocation</div><div class="ai-text">${esc(cl.allocationAdvice)}</div></div>`;
+  if(cl.comparablePeers)   aiHtml+=`<div class="ai-block"><div class="ai-tag">Comparable peers</div><div class="ai-text">${esc(cl.comparablePeers)}</div></div>`;
+  if(cl.analystNote)       aiHtml+=`<div class="ai-block"><div class="ai-tag">Analyst note</div><div class="ai-text">${esc(cl.analystNote)}</div></div>`;
+  aiHtml += '</div>';
 
-  // Factor grid — horizontal card layout
-  const catColors2 = {Market:'#3b82f6',Financials:'#22c55e',Valuation:'#f59e0b',Governance:'#a855f7',Strategic:'#f97316',Returns:'#ec4899'};
-  const factorTooltips = {
-    gmp:           'Grey Market Premium: Unofficial pre-listing premium indicating market sentiment. Higher = stronger demand.',
-    subQIB:        'QIB Subscription: Qualified Institutional Buyers subscription multiple. Smart money signal — most predictive factor.',
-    subHNI:        'HNI Subscription: High Net Worth Individual subscription multiple. High leverage money, strong sentiment signal.',
-    subRetail:     'Retail Subscription: Retail investor subscription multiple. Reflects broad public demand.',
-    anchorQuality: 'Anchor Investor Quality: Tier of institutional investors who subscribed before the IPO opened. Tier-1 FIIs/MFs = stronger signal.',
-    brokerConsensus:'Expert Broker Consensus: Aggregated recommendation from leading brokers including Motilal Oswal, ICICI, Geojit, Axis, and others.',
-    revGrowth:     'Revenue Growth CAGR: 3-year compound annual growth rate of revenue. Measures business expansion pace.',
-    patGrowth:     'PAT Growth CAGR: 3-year profit after tax growth rate. Measures profitability trajectory.',
-    roe:           'Return on Equity: Net profit as % of shareholder equity. Measures how efficiently management uses investor capital.',
-    roce:          'Return on Capital Employed: Operating profit as % of capital employed. Measures overall capital efficiency.',
-    dte:           'Debt-to-Equity Ratio: Total debt divided by equity. Lower = stronger balance sheet and less financial risk.',
-    peVsPeers:     'P/E vs Industry Peers: Issue price-to-earnings ratio compared to listed peers. Discount = better value.',
-    issueSize:     'Issue Size Reasonableness: Total IPO size in ₹ Cr. Smaller issues are easier to absorb and often list better.',
-    promoterHold:  'Promoter Holding Post-IPO: % held by promoters after listing. Higher = stronger skin in the game.',
-    freshVsOFS:    'Fresh Issue vs OFS Split: % of IPO that is fresh capital vs promoter exit. Higher fresh % = money goes to company.',
-    leadMgr:       'Lead Manager Reputation: Quality of investment banks managing the IPO. Top-tier bankers = better pricing and institutional reach.',
-    mgmtQuality:   'Management Track Record: History of execution, governance, and transparency. Critical for long-term value creation.',
-    tailwinds:     'Industry Tailwinds: Macro and policy support for the sector. Strong tailwinds = sustainable growth runway.',
-    moat:          'Competitive Moat: Strength of business advantages — patents, brand, network effects, or niche dominance.',
-    listingGain:   'Listing Gain Potential: Estimated probability and magnitude of first-day listing premium based on all signals.',
-    useProceeds:   'Use of Proceeds Quality: How the IPO funds will be deployed. Growth capex scores higher than debt repayment or OFS.',
-    lockIn:        'Post-listing Supply Risk: Lock-in periods and OFS overhang. Short lock-ins with large OFS = supply pressure after listing.'
-  };
-  document.getElementById('factorGrid').innerHTML = (sc.factors||[]).map(f=>{
+  // Factor grid
+  const factorGrid = (sc.factors||[]).map(f=>{
     const s=f.score;
     const fc=s===null?'#444':s>=4?'#22c55e':s>=3?'#f59e0b':'#ef4444';
     const pct=s!==null?(s/5*100):0;
-    const scoreClass=s===null?'sn':s>=4?'sg':s>=3?'sa':'sr';
-    const tip=factorTooltips[f.id]||f.label;
-    return `<div class="fg-card">
-      <div class="fg-cat">${f.cat}</div>
-      <div class="fg-name">${esc(f.label)} <span class="info-i" title="${tip}">ⓘ</span></div>
-      <div class="fg-bottom">
-        <div class="fg-bar-wrap">
-          <div class="fg-bar"><div class="fg-bar-fill" style="width:${pct}%;background:${fc};"></div></div>
-        </div>
-        <span class="fg-score ${scoreClass}">${s!==null?s+'/5':'—'}</span>
-      </div>
-    </div>`;
+    const sc2=s===null?'sn':s>=4?'sg':s>=3?'sa':'sr';
+    const tip=FACTOR_TIPS[f.id]||f.label;
+    return `<div class="fg-card"><div class="fg-cat">${f.cat}</div><div class="fg-name">${esc(f.label)} <span class="info-i" title="${tip}">ⓘ</span></div><div class="fg-bottom"><div class="fg-bar"><div class="fg-bar-fill" style="width:${pct}%;background:${fc};"></div></div><span class="fg-score ${sc2}">${s!==null?s+'/5':'—'}</span></div></div>`;
   }).join('');
 
   // Data table
@@ -871,137 +478,117 @@ function render(d) {
     ['OFS',fd.ofsPercent?fd.ofsPercent+'%':null],
     ['Lock-in',fd.lockInPeriod],['Recent News',fd.recentNews],
   ];
-  document.getElementById('dtable').innerHTML = dRows
-    .filter(r=>r[1]!==null&&r[1]!==undefined&&r[1]!=='')
-    .map(r=>`<tr><td>${r[0]}</td><td>${esc(String(r[1]))}</td></tr>`)
-    .join('');
+  const dtable = dRows.filter(r=>r[1]!==null&&r[1]!==undefined&&r[1]!=='').map(r=>`<tr><td>${r[0]}</td><td>${esc(String(r[1]))}</td></tr>`).join('');
 
-  document.getElementById('results').style.display='block';
-  window.scrollTo({top:0,behavior:'smooth'});
+  document.getElementById('results').innerHTML = html + `
+    <div class="slabel">Key Metrics</div><div class="metrics">${metricsHtml}</div>
+    <div class="slabel">Score by Category</div><div class="cat-bars">${catBars}</div>
+    <div class="div"></div>
+    <div class="slabel">Key Positives &amp; Risks</div><div class="pos-risk-grid">${prHtml}</div>
+    <div class="div"></div>
+    ${brokerHtml}
+    ${brokerHtml?'<div class="div"></div>':''}
+    ${invHtml}
+    ${invHtml?'<div class="div"></div>':''}
+    ${aiHtml}
+    <div class="div"></div>
+    <div class="slabel">Scoring Parameters</div>
+    <div class="factor-grid">${factorGrid}</div>
+    <div class="div"></div>
+    <div class="slabel">Other IPO Details</div>
+    <table class="dtable">${dtable}</table>
+    <div class="disclaimer">
+      <strong>Disclaimer:</strong> This IPO analysis is generated by an AI-powered quantitative and qualitative assessment model developed by Vikram Bhatia and is provided solely for informational and educational purposes.
+      Nothing on this platform constitutes financial, investment, legal, or tax advice, or a recommendation to apply for, buy, sell, or hold any IPO or security. All scores, ratings, projections, and analysis are based on publicly available information and AI-driven methodologies and should be used only as a starting point for independent research. They do not guarantee listing gains or future performance.
+      IPO investments involve market risks, including the risk of capital loss. Investors should carefully read the DRHP, RHP, Prospectus, and other offer documents, and consult a SEBI-registered investment advisor before making any investment decision.
+      The creators, operators, and contributors of this platform disclaim all liability for any loss or damage arising from the use of or reliance on this analysis.
+    </div>`;
 }
 
-// ── SIDEBAR: OPEN IPOs ──────────────────────────────────────
-async function loadOpenIpos() {
-  if(!AS_URL) return;
+// ── SIDEBAR: OPEN IPOs ────────────────────────────────────
+async function loadOpenIpos(showLoading) {
   const el = document.getElementById('openIpoList');
-  el.innerHTML = '<div class="no-nfos">Loading…</div>';
+  if(showLoading) el.innerHTML='<div class="no-nfos">Loading…</div>';
   const btn = document.getElementById('refreshBtn');
+  if(btn) { btn.textContent='Loading…'; btn.disabled=true; }
   try {
+    const today = new Date().toISOString().split('T')[0];
     const res  = await fetch(AS_URL+'?action=openipos&v='+Date.now());
     const data = await res.json();
-    if(!Array.isArray(data)||!data.length) {
-      el.innerHTML='<div class="no-nfos">No open or upcoming IPOs found.</div>';
-      return;
-    }
-    const todayStr = new Date().toISOString().split('T')[0];
-    // Filter: only show IPOs that haven't closed yet
-    const filtered = data.filter(ipo => !ipo.closeDate || ipo.closeDate >= todayStr);
-    if(!filtered.length) {
-      el.innerHTML='<div class="no-nfos">No open or upcoming IPOs today.</div>';
-      return;
-    }
-    el.innerHTML = filtered.map(ipo => {
+    // Filter: only show IPOs not yet closed (closeDate >= today)
+    const active = Array.isArray(data) ? data.filter(ipo=>!ipo.closeDate||ipo.closeDate>=today) : [];
+    if(!active.length) { el.innerHTML='<div class="no-nfos">No open or upcoming IPOs today.</div>'; return; }
+    el.innerHTML = active.map(ipo=>{
       const isDelisting = ipo.status && ipo.status.toLowerCase().includes('delist');
-      const isOpen = !isDelisting && (ipo.status === 'Open' || (!ipo.status && ipo.closeDate >= todayStr));
-      const statusClr = isDelisting ? 'var(--t3)' : isOpen ? 'var(--green)' : 'var(--amber)';
-      const statusTxt = isDelisting ? '○ Delisting' : isOpen ? '● Open now' : '◈ Opening soon';
-      const pb = (ipo.priceBandLow && ipo.priceBandHigh)
-        ? '₹'+ipo.priceBandLow+' – ₹'+ipo.priceBandHigh
-        : (ipo.priceBandHigh ? '₹'+ipo.priceBandHigh : null);
+      const isOpen = !isDelisting && (ipo.status==='Open' || !ipo.status);
+      const statusClr = isDelisting?'var(--t3)':isOpen?'var(--green)':'var(--amber)';
+      const statusTxt = isDelisting?'○ Delisting':isOpen?'● Open now':'◈ Opening soon';
+      const pb = (ipo.priceBandLow&&ipo.priceBandHigh) ? '₹'+ipo.priceBandLow+' – ₹'+ipo.priceBandHigh : (ipo.priceBandHigh?'₹'+ipo.priceBandHigh:null);
       const gmp = ipo.gmp;
-      const gmpTxt = gmp !== null && gmp !== undefined
-        ? (gmp > 0 ? '+'+gmp+'%' : gmp+'%') : null;
-      const gmpClr = gmp > 0 ? 'var(--green)' : 'var(--red)';
-
+      const gmpTxt = gmp!==null&&gmp!==undefined ? (gmp>0?'+'+gmp+'%':gmp+'%') : null;
+      const gmpClr = gmp>0?'var(--green)':'var(--red)';
       return `<div class="nfo-item">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;margin-bottom:4px;">
           <div class="nfo-item-name">${esc(ipo.name)}</div>
           <div style="font-size:10px;font-weight:600;color:${statusClr};white-space:nowrap;flex-shrink:0;">${statusTxt}</div>
         </div>
         <div class="nfo-item-cat">${esc(ipo.sector||'—')}${ipo.exchange?' · '+esc(ipo.exchange):''}</div>
-        <div class="nfo-item-dates">
-          ${ipo.openDate?'<strong>Open:</strong> '+esc(ipo.openDate):''}
-          ${ipo.closeDate?' &nbsp;·&nbsp; <strong>Close:</strong> '+esc(ipo.closeDate):''}
-        </div>
+        <div class="nfo-item-dates">${ipo.openDate?'<strong>Open:</strong> '+esc(ipo.openDate):''}${ipo.closeDate?' &nbsp;·&nbsp; <strong>Close:</strong> '+esc(ipo.closeDate):''}</div>
         ${pb?`<div class="nfo-item-min"><strong>Price:</strong> ${esc(pb)}${ipo.lotSize?' &nbsp;·&nbsp; Lot: '+ipo.lotSize:''}</div>`:''}
         ${gmpTxt?`<div class="nfo-item-min" style="color:${gmpClr};">GMP: ${gmpTxt}</div>`:''}
         ${ipo.subscriptionTotal?`<div class="nfo-item-min" style="color:var(--amber);">${ipo.subscriptionTotal}× subscribed</div>`:''}
       </div>`;
     }).join('');
   } catch(e) {
-    el.innerHTML='<div class="no-nfos">Could not load. <a href="https://www.icicidirect.com/ipo" target="_blank" style="color:var(--or);">Check ICICIdirect ↗</a></div>';
+    el.innerHTML='<div class="no-nfos">Could not load. <a href="https://www.icicidirect.com/ipo" target="_blank" style="color:var(--or);">ICICIdirect ↗</a></div>';
+  } finally {
+    if(btn) { btn.textContent='Refresh'; btn.disabled=false; }
   }
-  if(btn){ btn.textContent='Refresh'; btn.disabled=false; }
 }
 
-// ── SIDEBAR: ANALYSED IPOs ─────────────────────────────────
+// ── SIDEBAR: ANALYSED IPOs ────────────────────────────────
 async function loadHistory() {
-  if(!AS_URL) return;
   const el = document.getElementById('analysedIpoList');
   if(!el) return;
   try {
     const res  = await fetch(AS_URL+'?action=ipolist&v='+Date.now());
     const data = await res.json();
-    if(!Array.isArray(data)||!data.length) {
-      el.innerHTML='<div class="no-nfos">No analyses yet.</div>';
-      return;
-    }
-    el.innerHTML = data.map(item => {
-      const s = parseInt(item.score) || 0;
-      const v = (item.verdict||'').toLowerCase();
-      const scoreClr = s>=65?'var(--green)':s>=50?'var(--amber)':'var(--red)';
-      const verdictShort = v.includes('strong subscribe') ? 'Strong Subscribe'
-        : v.includes('caution')   ? 'Caution'
-        : v==='subscribe'         ? 'Subscribe'
-        : v.includes('strong avoid') ? 'Strong Avoid'
-        : v.includes('avoid')     ? 'Avoid'
-        : item.verdict||'—';
-      const verdictClr = v.includes('strong subscribe')||v==='subscribe' ? 'var(--green)'
-        : v.includes('caution') ? 'var(--amber)' : 'var(--red)';
-
-      const gmp = item.gmp;
-      const gmpTxt = gmp !== null && gmp !== undefined
-        ? (gmp > 0 ? '+'+gmp+'%' : gmp+'%') : null;
-      const gmpClr = gmp > 0 ? 'var(--green)' : gmp < 0 ? 'var(--red)' : 'var(--t3)';
-
-      const lp = item.listingPremium;
-      const lpTxt = lp !== null && lp !== undefined
-        ? (lp > 0 ? '+'+lp+'%' : lp+'%') : null;
-      const lpClr = lp > 0 ? 'var(--green)' : lp < 0 ? 'var(--red)' : 'var(--t3)';
-
-      const lpPrice = item.listingPrice ? '₹'+Number(item.listingPrice).toLocaleString('en-IN') : null;
-
-      return `<div class="nfo-item" onclick="loadIpo('${esc(item.name)}')" style="cursor:pointer;margin-bottom:12px;">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;margin-bottom:2px;">
+    if(!Array.isArray(data)||!data.length) { el.innerHTML='<div class="no-nfos">No analyses yet.</div>'; return; }
+    el.innerHTML = data.map(item=>{
+      const s=parseInt(item.score)||0;
+      const v=(item.verdict||'').toLowerCase();
+      const scoreClr=s>=65?'var(--green)':s>=50?'var(--amber)':'var(--red)';
+      const verdictShort=v.includes('strong subscribe')?'Strong Subscribe':v.includes('caution')?'Caution':v==='subscribe'?'Subscribe':v.includes('strong avoid')?'Strong Avoid':v.includes('avoid')?'Avoid':item.verdict||'—';
+      const verdictClr=(v.includes('strong subscribe')||v==='subscribe')?'var(--green)':v.includes('caution')?'var(--amber)':'var(--red)';
+      const gmp=item.gmp;
+      const gmpTxt=gmp!==null&&gmp!==undefined?(gmp>0?'+'+gmp+'%':gmp+'%'):null;
+      const gmpClr=gmp>0?'var(--green)':gmp<0?'var(--red)':'var(--t3)';
+      const lp=item.listingPremium;
+      const lpTxt=lp!==null&&lp!==undefined?(lp>0?'+'+lp+'%':lp+'%'):null;
+      const lpClr=lp>0?'var(--green)':lp<0?'var(--red)':'var(--t3)';
+      const lpPrice=item.listingPrice?'₹'+Number(item.listingPrice).toLocaleString('en-IN'):null;
+      return `<div class="nfo-item" onclick="loadIpo('${esc(item.name)}')" style="cursor:pointer;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;margin-bottom:3px;">
           <div class="nfo-item-name">${esc(item.name)}</div>
           ${s?`<span style="font-size:12px;font-weight:600;color:${scoreClr};flex-shrink:0;">${s}</span>`:''}
         </div>
         <div class="nfo-item-cat">${esc(item.sector||'—')}</div>
-        ${verdictShort?`<div style="font-size:11px;color:${verdictClr};margin-top:3px;font-weight:500;">${verdictShort}</div>`:''}
-        <div style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;">
+        <div style="font-size:11px;color:${verdictClr};margin-top:3px;font-weight:500;">${verdictShort}</div>
+        <div style="display:flex;gap:10px;margin-top:5px;flex-wrap:wrap;">
           <div style="font-size:11px;"><span style="color:var(--t3);">GMP </span><span style="color:${gmpTxt?gmpClr:'var(--t3)'};font-weight:500;">${gmpTxt||'N/A'}</span></div>
           <div style="font-size:11px;"><span style="color:var(--t3);">Est. listing </span><span style="color:${lpTxt?lpClr:'var(--t3)'};font-weight:500;">${lpTxt?lpTxt+(lpPrice?' · '+lpPrice:''):'N/A'}</span></div>
         </div>
       </div>`;
     }).join('');
-  } catch(e) {
-    el.innerHTML='<div class="no-nfos">Could not load.</div>';
-  }
+  } catch(e) { el.innerHTML='<div class="no-nfos">Could not load.</div>'; }
 }
 
 function loadIpo(name) { document.getElementById('ipoInput').value=name; analyse(); }
+function forceRefresh(e) { e.preventDefault(); window._forceRefresh=true; analyse(); }
 function showErr(msg) { const e=document.getElementById('errBox'); e.textContent=msg; e.style.display='block'; }
-function forceRefresh(e) {
-  e.preventDefault();
-  // Force re-analysis by temporarily appending a space
-  const input = document.getElementById('ipoInput');
-  const name = input.value.trim();
-  // We need a way to bypass cache — add a refresh param
-  window._forceRefresh = true;
-  analyse();
-}
-
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+window.addEventListener('load', ()=>{ loadOpenIpos(false); loadHistory(); });
 </script>
 </body>
 </html>
