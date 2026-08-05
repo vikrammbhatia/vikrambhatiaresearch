@@ -575,7 +575,9 @@ async function loadHistory() {
       const lp=item.listingPremium;
       const lpTxt=lp!==null&&lp!==undefined?(lp>0?'+'+lp+'%':lp+'%'):null;
       const lpClr=lp>0?'var(--green)':lp<0?'var(--red)':'var(--t3)';
-      const lpPrice=item.listingPrice?'₹'+Number(item.listingPrice).toLocaleString('en-IN'):null;
+      // Compute listing price if missing but LP and price band available
+      const rawLPR = item.listingPrice || (lp&&item.priceBandHigh ? Math.round(item.priceBandHigh*(1+lp/100)) : null);
+      const lpPrice=rawLPR?'₹'+Number(rawLPR).toLocaleString('en-IN'):null;
       return `<div class="nfo-item" onclick="loadIpo('${esc(item.name)}')" style="cursor:pointer;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;margin-bottom:3px;">
           <div class="nfo-item-name">${esc(item.name)}</div>
