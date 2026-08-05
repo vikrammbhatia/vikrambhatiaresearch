@@ -554,7 +554,16 @@ async function loadHistory() {
     const res  = await fetch(AS_URL+'?action=ipolist&v='+Date.now());
     const data = await res.json();
     if(!Array.isArray(data)||!data.length) { el.innerHTML='<div class="no-nfos">No analyses yet.</div>'; return; }
-    el.innerHTML = data.map(item=>{
+    // Deduplicate by name — keep highest score per company
+    const seen = new Map();
+    data.forEach(item => {
+      const key = item.name.toLowerCase().trim();
+      const existing = seen.get(key);
+      if(!existing || parseInt(item.score) > parseInt(existing.score)) seen.set(key, item);
+    });
+    const deduped = Array.from(seen.values());
+
+    el.innerHTML = deduped.map(item=>{
       const s=parseInt(item.score)||0;
       const v=(item.verdict||'').toLowerCase();
       const scoreClr=s>=65?'var(--green)':s>=50?'var(--amber)':'var(--red)';
@@ -575,8 +584,8 @@ async function loadHistory() {
         <div class="nfo-item-cat">${esc(item.sector||'—')}</div>
         <div style="font-size:11px;color:${verdictClr};margin-top:3px;font-weight:500;">${verdictShort}</div>
         <div style="display:flex;gap:10px;margin-top:5px;flex-wrap:wrap;">
-          <div style="font-size:11px;"><span style="color:var(--t3);">GMP </span><span style="color:${gmpTxt?gmpClr:'var(--t3)'};font-weight:500;">${gmpTxt||'N/A'}</span></div>
-          <div style="font-size:11px;"><span style="color:var(--t3);">Est. listing </span><span style="color:${lpTxt?lpClr:'var(--t3)'};font-weight:500;">${lpTxt?lpTxt+(lpPrice?' · '+lpPrice:''):'N/A'}</span></div>
+          <div style="font-size:11px;"><span style="color:var(--t3);">GMP </span><span style="color:${(gmp!==null&&gmp!==undefined)?gmpClr:'var(--t3)'};font-weight:500;">${(gmp!==null&&gmp!==undefined)?gmpTxt:'N/A'}</span></div>
+          <div style="font-size:11px;"><span style="color:var(--t3);">Est. listing </span><span style="color:${(lp!==null&&lp!==undefined)?lpClr:'var(--t3)'};font-weight:500;">${(lp!==null&&lp!==undefined)?(lpTxt+(lpPrice?' · '+lpPrice:'')):'N/A'}</span></div>
         </div>
       </div>`;
     }).join('');
