@@ -339,7 +339,7 @@ function render(d) {
   const sc=d.scores||{}, fd=d.fetchedData||{}, cl=d.claudeAnalysis||{}, vrd=d.verdict||{};
 
   // Determine verdict colour from Claude text
-  const vText = (cl.verdict||'').toLowerCase();
+  const vText = StringString(cl.verdict||'').toLowerCase();
   let vColor = vrd.color||'amber';
   if(vText.includes('strong subscribe')) vColor='green';
   else if(vText==='subscribe') vColor='green';
@@ -422,15 +422,15 @@ function render(d) {
   let brokerHtml = '';
   if(fd.expertConsensus) {
     const cons = fd.expertConsensus;
-    const consClr = cons.toLowerCase().includes('subscribe')?'var(--green)':cons.toLowerCase().includes('avoid')?'var(--red)':'var(--amber)';
+    const consClr = String(cons).toLowerCase().includes('subscribe')?'var(--green)':String(cons).toLowerCase().includes('avoid')?'var(--red)':'var(--amber)';
     brokerHtml = `<div class="slabel">Market Expert Recommendations</div>
-    <div class="broker-box"><div class="broker-consensus-badge" style="color:${consClr};"><span style="font-size:16px;">${cons.toLowerCase().includes('subscribe')?'✓':'✕'}</span> Market Expert Consensus: <strong>${esc(cons)}</strong></div></div>`;
+    <div class="broker-box"><div class="broker-consensus-badge" style="color:${consClr};"><span style="font-size:16px;">${String(cons).toLowerCase().includes('subscribe')?'✓':'✕'}</span> Market Expert Consensus: <strong>${esc(cons)}</strong></div></div>`;
   }
 
   // Investment card
   let invHtml = '';
   const positiveVerdicts=['Strong Subscribe','Subscribe','Subscribe with Caution','Caution'];
-  if(cl.verdict && positiveVerdicts.some(v=>cl.verdict.includes(v)) && cl.suggestedAmount) {
+  if(cl.verdict && positiveVerdicts.some(v=>String(cl.verdict).includes(v)) && cl.suggestedAmount) {
     function projCell(label,price) {
       if(!price||!ip) return `<div class="proj-cell"><div class="proj-lbl">${label}</div><div class="proj-val" style="color:var(--t3);">—</div></div>`;
       const chg=((price-ip)/ip*100).toFixed(1);
