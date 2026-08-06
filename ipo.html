@@ -339,10 +339,11 @@ function render(d) {
   const sc=d.scores||{}, fd=d.fetchedData||{}, cl=d.claudeAnalysis||{}, vrd=d.verdict||{};
 
   // Determine verdict colour from Claude text
-  const vText = StringString(cl.verdict||'').toLowerCase();
+  const vText = String(cl.verdict||'').toLowerCase();
   let vColor = vrd.color||'amber';
   if(vText.includes('strong subscribe')) vColor='green';
   else if(vText==='subscribe') vColor='green';
+  else if(vText.includes('subscribe')) vColor='green';
   else if(vText.includes('caution')) vColor='amber';
   else if(vText.includes('avoid')) vColor='red';
 
