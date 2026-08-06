@@ -628,7 +628,7 @@ async function loadHistory() {
 
     el.innerHTML = deduped.map(item=>{
       const s=parseInt(item.score)||0;
-      const v=(item.verdict||'').toLowerCase();
+      const v=String(item.verdict||'').toLowerCase();
       const scoreClr=s>=65?'var(--green)':s>=50?'var(--amber)':'var(--red)';
       const verdictShort=v.includes('strong subscribe')?'Strong Subscribe':v.includes('caution')?'Caution':v==='subscribe'?'Subscribe':v.includes('strong avoid')?'Strong Avoid':v.includes('avoid')?'Avoid':item.verdict||'—';
       const verdictClr=(v.includes('strong subscribe')||v==='subscribe')?'var(--green)':v.includes('caution')?'var(--amber)':'var(--red)';
