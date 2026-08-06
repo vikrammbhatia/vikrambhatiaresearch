@@ -563,8 +563,11 @@ async function loadOpenIpos(showLoading) {
   if(btn) { btn.textContent='Loading…'; btn.disabled=true; }
   try {
     const today = new Date().toISOString().split('T')[0];
+    console.log('Fetching open IPOs from:', AS_URL+'?action=openipos');
     const res  = await fetch(AS_URL+'?action=openipos&v='+Date.now());
+    if(!res.ok) throw new Error('HTTP '+res.status);
     const data = await res.json();
+    console.log('Open IPOs received:', Array.isArray(data) ? data.length : typeof data, data);
     // Filter: only show IPOs not yet closed (closeDate >= today)
     const active = Array.isArray(data) ? data.filter(ipo=>!ipo.closeDate||ipo.closeDate>=today) : [];
     if(!active.length) { el.innerHTML='<div class="no-nfos">No open or upcoming IPOs today.</div>'; return; }
@@ -590,7 +593,8 @@ async function loadOpenIpos(showLoading) {
       </div>`;
     }).join('');
   } catch(e) {
-    el.innerHTML='<div class="no-nfos">Could not load. <a href="https://www.icicidirect.com/ipo" target="_blank" style="color:var(--or);">ICICIdirect ↗</a></div>';
+    console.error('Open IPOs error:', e);
+    el.innerHTML='<div class="no-nfos">Could not load open IPOs.<br><span style="font-size:10px;">'+ e.message +'</span></div>';
   } finally {
     if(btn) { btn.textContent='Refresh'; btn.disabled=false; }
   }
@@ -601,8 +605,11 @@ async function loadHistory() {
   const el = document.getElementById('analysedIpoList');
   if(!el) return;
   try {
+    console.log('Fetching analysed IPOs from:', AS_URL+'?action=ipolist');
     const res  = await fetch(AS_URL+'?action=ipolist&v='+Date.now());
+    if(!res.ok) throw new Error('HTTP '+res.status);
     const data = await res.json();
+    console.log('Analysed IPOs received:', Array.isArray(data) ? data.length : typeof data);
     if(!Array.isArray(data)||!data.length) { el.innerHTML='<div class="no-nfos">No analyses yet.</div>'; return; }
     // Deduplicate by name — keep highest score per company
     // Also filter out closed IPOs from sidebar
@@ -650,7 +657,7 @@ async function loadHistory() {
         </div>
       </div>`;
     }).join('');
-  } catch(e) { el.innerHTML='<div class="no-nfos">Could not load.</div>'; }
+  } catch(e) { console.error('History error:', e); el.innerHTML='<div class="no-nfos">Could not load.<br><span style="font-size:10px;">'+e.message+'</span></div>'; }
 }
 
 function loadIpo(name) { document.getElementById('ipoInput').value=name; analyse(); }
@@ -658,7 +665,7 @@ function forceRefresh(e) { e.preventDefault(); window._forceRefresh=true; analys
 function showErr(msg) { const e=document.getElementById('errBox'); e.textContent=msg; e.style.display='block'; }
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-window.addEventListener('load', ()=>{ loadOpenIpos(false); loadHistory(); });
+window.addEventListener('load', ()=>{ loadOpenIpos(true); loadHistory(); });
 </script>
 </body>
 </html>
