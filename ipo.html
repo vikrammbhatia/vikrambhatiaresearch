@@ -359,6 +359,10 @@ function render(d) {
 
   // Cache badge
   const cacheBadge = d.fromCache ? `<div style="font-size:10px;color:var(--t3);margin-top:4px;">⚡ From cache · <a href="#" onclick="forceRefresh(event)" style="color:var(--or);text-decoration:none;">Refresh</a></div>` : '';
+  const phase = sc.phase || (sc.pendingFactors && sc.pendingFactors.length > 0 ? 1 : 2);
+  const phaseBadge = phase === 1
+    ? `<div style="font-size:10px;background:#1a1000;border:1px solid #854d0e;color:var(--amber);padding:2px 8px;border-radius:4px;margin-top:4px;display:inline-block;">Phase 1 · Pre-subscription · ${sc.totalActiveWeight||93}/134 pts active</div>`
+    : `<div style="font-size:10px;background:var(--green-bg);border:1px solid var(--green-bd);color:var(--green);padding:2px 8px;border-radius:4px;margin-top:4px;display:inline-block;">Phase 2 · Full subscription data · All 134 pts active</div>`;
 
   let html = `
   <div class="hero ${vColor}" id="heroCard">
@@ -366,6 +370,7 @@ function render(d) {
       <div class="hero-score">${sc.composite||'—'}</div>
       <div class="hero-score-lbl">out of 100</div>
       ${cacheBadge}
+      ${phaseBadge}
     </div>
     <div class="hero-center">
       <div class="hero-badge">${vrd.icon||''} ${esc(cl.verdict||vrd.label||'—')}</div>
@@ -459,6 +464,9 @@ function render(d) {
   if(cl.analystNote)       aiHtml+=`<div class="ai-block"><div class="ai-tag">Analyst note</div><div class="ai-text">${esc(cl.analystNote)}</div></div>`;
   aiHtml += '</div>';
 
+  // Pending factors (Phase 1 — not yet scored)
+  const pendingIds = new Set((sc.pendingFactors||[]).map(f=>f.id));
+
   // Map factor IDs to raw data fields to detect penalty scores
   const rawDataMap = {
     gmp: fd.gmp, subQIB: fd.subscriptionQIB, subHNI: fd.subscriptionHNI,
@@ -476,19 +484,31 @@ function render(d) {
   const factorGrid = (sc.factors||[]).map(f=>{
     const s=f.score;
     const rawVal = rawDataMap[f.id];
-    const isPenalty = (s===2||s===3) && (rawVal===null||rawVal===undefined||rawVal==='');
-    const fc=s>=4?'#22c55e':s>=3?'#f59e0b':'#ef4444';
-    const pct=s!==null?(s/5*100):0;
-    const sc2=s>=4?'sg':s>=3?'sa':'sr';
-    const tip=FACTOR_TIPS[f.id]||f.label;
-    const penaltyNote = isPenalty ? ' title="Data not available — penalty score applied"' : '';
-    const penaltyIcon = isPenalty ? '<span style="font-size:9px;color:var(--t3);margin-left:2px;">⚠</span>' : '';
+    const isPending = pendingIds.has(f.id);
+    const isPenalty = !isPending && (s===2||s===3) && (rawVal===null||rawVal===undefined||rawVal==='');
+    const fc = s>=4?'#22c55e':s>=3?'#f59e0b':'#ef4444';
+    const pct = isPending ? 0 : (s!==null?(s/5*100):0);
+    const sc2 = s>=4?'sg':s>=3?'sa':'sr';
+    const tip = FACTOR_TIPS[f.id]||f.label;
+
+    if(isPending) {
+      return `<div class="fg-card" style="border-color:var(--b2);opacity:0.6;">
+        <div class="fg-cat">${f.cat}</div>
+        <div class="fg-name" style="color:var(--t3);">${esc(f.label)} <span class="info-i" title="${tip} — Awaiting subscription data (Phase 2)">ⓘ</span></div>
+        <div class="fg-bottom">
+          <div class="fg-bar"><div class="fg-bar-fill" style="width:0%;background:#333;"></div></div>
+          <span class="fg-score sn" title="Pending — subscription data not yet available">Pending</span>
+        </div>
+      </div>`;
+    }
+
+    const penaltyIcon = isPenalty ? '<span style="font-size:9px;color:var(--t3);margin-left:2px;" title="Data not available — penalty score 2/5 applied">⚠</span>' : '';
     return `<div class="fg-card"${isPenalty?` style="border-color:var(--b3);"`:''}>
       <div class="fg-cat">${f.cat}</div>
       <div class="fg-name">${esc(f.label)} <span class="info-i" title="${tip}">ⓘ</span>${penaltyIcon}</div>
       <div class="fg-bottom">
-        <div class="fg-bar"><div class="fg-bar-fill" style="width:${pct}%;background:${isPenalty?'#444':fc};${isPenalty?'opacity:0.5;':''}"></div></div>
-        <span class="fg-score ${isPenalty?'sn':sc2}"${penaltyNote}>${s!==null?s+'/5':'—'}${isPenalty?'*':''}</span>
+        <div class="fg-bar"><div class="fg-bar-fill" style="width:${pct}%;background:${isPenalty?'#555':fc};${isPenalty?'opacity:0.6;':''}"></div></div>
+        <span class="fg-score ${isPenalty?'sn':sc2}">${s!==null?s+'/5':'—'}${isPenalty?'*':''}</span>
       </div>
     </div>`;
   }).join('');
@@ -519,8 +539,11 @@ function render(d) {
     <div class="slabel">Scoring Parameters</div>
     <div class="factor-grid">${factorGrid}</div>
     <div class="div"></div>
-    <div style="font-size:11px;color:var(--t3);margin-top:8px;margin-bottom:1.5rem;">
-      * Score marked with ⚠ indicates data was not available. A penalty score of 2/5 has been applied to ensure the composite score accurately reflects disclosure quality. All 22 factors carry their full weight in the calculation.
+    <div style="font-size:11px;color:var(--t3);margin-top:8px;margin-bottom:1.5rem;line-height:1.7;">
+      <strong style="color:var(--t2);">Scoring methodology:</strong><br>
+      • <strong style="color:var(--amber);">Phase 1</strong> (pre-subscription): 15 factors scored using DRHP data. Category B factors (GMP, subscriptions, anchor, broker consensus, listing gain) shown as <em>Pending</em> with zero weight until live data is available.<br>
+      • <strong style="color:var(--green);">Phase 2</strong> (subscription data available): All 22 factors scored at full weight.<br>
+      • ⚠ indicates data not disclosed — penalty score of 2/5 applied. Missing mandatory DRHP data is treated as a red flag.
     </div>
     <div class="slabel">Other IPO Details</div>
     <table class="dtable">${dtable}</table>
