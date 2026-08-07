@@ -106,13 +106,13 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .broker-consensus-badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;}
 
 /* INVESTMENT CARD */
-.inv-card{background:var(--bg3);border:1px solid var(--b1);border-radius:8px;padding:16px 18px;}
-.inv-top{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:14px;}
+.inv-card{background:var(--bg3);border:1px solid var(--b1);border-radius:8px;padding:16px 18px;width:100%;}
+.inv-top{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px;width:100%;}
 .inv-cell{background:var(--bg4);border:1px solid var(--b2);border-radius:6px;padding:10px 12px;}
 .inv-lbl{font-size:9px;color:var(--t3);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.06em;}
 .inv-val{font-size:15px;font-weight:600;color:var(--t1);}
 .inv-val.green{color:var(--green);}
-.proj-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.proj-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
 @media(max-width:600px){.proj-grid{grid-template-columns:repeat(2,1fr);}}
 .proj-cell{background:var(--bg4);border:1px solid var(--b2);border-radius:6px;padding:10px 12px;text-align:center;}
 .proj-lbl{font-size:9px;color:var(--t3);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.04em;}
@@ -121,9 +121,10 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 
 /* AI */
 .ai-box{background:var(--bg3);border:1px solid var(--b1);border-radius:8px;padding:16px 18px;}
-.ai-block{margin-bottom:10px;}
+.ai-block{margin-bottom:10px;display:flex;align-items:flex-start;gap:0;}
+.ai-lbl{font-size:12px;font-weight:600;color:var(--or);white-space:nowrap;flex-shrink:0;}
 .ai-block:last-child{margin-bottom:0;}
-.ai-tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--t3);background:var(--bg4);border:1px solid var(--b2);padding:2px 8px;border-radius:4px;margin-bottom:5px;}
+/* ai-tag removed */
 .ai-text{font-size:12px;color:var(--t2);line-height:1.6;}
 
 /* FACTOR GRID */
@@ -307,7 +308,7 @@ async function analyse() {
   try {
     const forceRefresh = window._forceRefresh || false;
     window._forceRefresh = false;
-    const url = AS_URL+'?t='+T+'&action=analyse&ipo='+encodeURIComponent(name)+(forceRefresh?'&refresh=1':'');
+    const url = AS_URL+'?t='+T+'&action=analyse&ipo='+encodeURIComponent(name)+(forceRefresh?'&refresh=1&nocache='+Date.now():'');
     const res  = await fetch(url);
     const data = await res.json();
 
@@ -378,7 +379,7 @@ function render(d) {
   const displayAmount = (cl.suggestedAmount||'').replace(/Rs\./g,'₹').replace(/Rs /g,'₹');
 
   // Cache badge
-  const cacheBadge = d.fromCache ? `<div style="font-size:10px;color:var(--t3);margin-top:4px;">⚡ From cache · <a href="#" onclick="forceRefresh(event)" style="color:var(--or);text-decoration:none;">Refresh</a></div>` : '';
+  const cacheBadge = d.fromCache ? `<div style="font-size:10px;color:var(--t3);margin-top:4px;">⚡ Loaded from cache · <a href="#" onclick="forceRefresh(event)" style="color:var(--or);text-decoration:none;font-weight:500;">Force fresh analysis ↗</a></div>` : '';
   const phase = sc.phase || (sc.pendingFactors && sc.pendingFactors.length > 0 ? 1 : 2);
   const phaseBadge = phase === 1
     ? `<div style="font-size:10px;background:#1a1000;border:1px solid #854d0e;color:var(--amber);padding:2px 8px;border-radius:4px;margin-top:4px;display:inline-block;">Phase 1 · Pre-subscription · ${sc.totalActiveWeight||93}/134 pts active</div>`
@@ -477,11 +478,11 @@ function render(d) {
 
   // AI analysis
   let aiHtml = `<div class="slabel">AI Analysis</div><div class="ai-box">`;
-  if(cl.listingOutlook)    aiHtml+=`<div class="ai-block"><div class="ai-tag">Listing day</div><div class="ai-text">${esc(cl.listingOutlook)}</div></div>`;
-  if(cl.mediumTermOutlook) aiHtml+=`<div class="ai-block"><div class="ai-tag">6–12 months</div><div class="ai-text">${esc(cl.mediumTermOutlook)}</div></div>`;
-  if(cl.allocationAdvice)  aiHtml+=`<div class="ai-block"><div class="ai-tag">Allocation</div><div class="ai-text">${esc(cl.allocationAdvice)}</div></div>`;
-  if(cl.comparablePeers)   aiHtml+=`<div class="ai-block"><div class="ai-tag">Comparable peers</div><div class="ai-text">${esc(cl.comparablePeers)}</div></div>`;
-  if(cl.analystNote)       aiHtml+=`<div class="ai-block"><div class="ai-tag">Analyst note</div><div class="ai-text">${esc(cl.analystNote)}</div></div>`;
+  if(cl.listingOutlook)    aiHtml+=`<div class="ai-block"><span class="ai-lbl">Listing day &nbsp;</span><span class="ai-text">${esc(cl.listingOutlook)}</span></div>`;
+  if(cl.mediumTermOutlook) aiHtml+=`<div class="ai-block"><span class="ai-lbl">6–12 months &nbsp;</span><span class="ai-text">${esc(cl.mediumTermOutlook)}</span></div>`;
+  if(cl.allocationAdvice)  aiHtml+=`<div class="ai-block"><span class="ai-lbl">Allocation &nbsp;</span><span class="ai-text">${esc(cl.allocationAdvice)}</span></div>`;
+  if(cl.comparablePeers)   aiHtml+=`<div class="ai-block"><span class="ai-lbl">Comparable peers &nbsp;</span><span class="ai-text">${esc(cl.comparablePeers)}</span></div>`;
+  if(cl.analystNote)       aiHtml+=`<div class="ai-block"><span class="ai-lbl">Analyst note &nbsp;</span><span class="ai-text">${esc(cl.analystNote)}</span></div>`;
   aiHtml += '</div>';
 
   // Pending factors (Phase 1 — not yet scored)
