@@ -151,6 +151,23 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .disclaimer{font-size:11px;color:var(--t3);line-height:1.7;margin-top:1.5rem;padding:14px 16px;background:var(--bg2);border-radius:8px;border:1px solid var(--b1);}
 .disclaimer strong{color:var(--t2);}
 
+/* CUSTOM TOOLTIP */
+.tooltip-wrap{position:relative;display:inline-block;}
+.tooltip-wrap .tooltip-box{
+  display:none;position:absolute;z-index:999;
+  background:#1c1c1c;color:var(--t2);font-size:11px;line-height:1.6;
+  border:1px solid var(--b2);border-radius:6px;padding:8px 10px;
+  width:240px;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);
+  pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,0.4);
+}
+.tooltip-wrap .tooltip-box::after{
+  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:5px solid transparent;border-top-color:#1c1c1c;
+}
+.tooltip-wrap:hover .tooltip-box{display:block;}
+.info-i{font-size:11px;color:var(--t3);cursor:help;display:inline-block;}
+.info-i:hover{color:var(--or);}
+
 /* CLOSED / NOT FOUND */
 .info-box{border-radius:10px;padding:28px;text-align:center;margin-top:1rem;}
 .info-box.closed{background:#1a0a00;border:1px solid #92400e;}
@@ -411,7 +428,7 @@ function render(d) {
     const s=(sc.catScores||{})[cat];
     if(s===null||s===undefined) return '';
     const clr=s>=65?'var(--green)':s>=45?'var(--amber)':'var(--red)';
-    return `<div class="cat-bar-row"><div class="cat-bar-name">${cat} <span class="info-i" title="${CAT_TIPS[cat]||''}">ⓘ</span></div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:${s}%;background:${clr};"></div></div><div class="cat-bar-val" style="color:${clr};">${s}%</div></div>`;
+    return `<div class="cat-bar-row"><div class="cat-bar-name">${cat} <span class="tooltip-wrap"><span class="info-i">ⓘ</span><span class="tooltip-box">${CAT_TIPS[cat]||''}</span></span></div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:${s}%;background:${clr};"></div></div><div class="cat-bar-val" style="color:${clr};">${s}%</div></div>`;
   }).join('');
 
   // Key positives & risks
@@ -496,7 +513,7 @@ function render(d) {
     if(isPending) {
       return `<div class="fg-card" style="border-color:var(--b2);opacity:0.6;">
         <div class="fg-cat">${f.cat}</div>
-        <div class="fg-name" style="color:var(--t3);">${esc(f.label)} <span class="info-i" title="${tip} — Awaiting subscription data (Phase 2)">ⓘ</span></div>
+        <div class="fg-name" style="color:var(--t3);">${esc(f.label)} <span class="tooltip-wrap"><span class="info-i">ⓘ</span><span class="tooltip-box">${tip} — Awaiting subscription data (Phase 2)</span></span></div>
         <div class="fg-bottom">
           <div class="fg-bar"><div class="fg-bar-fill" style="width:0%;background:#333;"></div></div>
           <span class="fg-score sn" title="Pending — subscription data not yet available">Pending</span>
@@ -504,10 +521,10 @@ function render(d) {
       </div>`;
     }
 
-    const penaltyIcon = isPenalty ? '<span style="font-size:9px;color:var(--t3);margin-left:2px;" title="Data not available — penalty score 2/5 applied">⚠</span>' : '';
+    const penaltyIcon = isPenalty ? '<span class="tooltip-wrap"><span style="font-size:9px;color:var(--t3);margin-left:2px;cursor:help;">⚠</span><span class="tooltip-box">Data not available — penalty score 2/5 applied to maintain full weight in composite calculation.</span></span>' : '';
     return `<div class="fg-card"${isPenalty?` style="border-color:var(--b3);"`:''}>
       <div class="fg-cat">${f.cat}</div>
-      <div class="fg-name">${esc(f.label)} <span class="info-i" title="${tip}">ⓘ</span>${penaltyIcon}</div>
+      <div class="fg-name">${esc(f.label)} <span class="tooltip-wrap"><span class="info-i">ⓘ</span><span class="tooltip-box">${tip}</span></span>${penaltyIcon}</div>
       <div class="fg-bottom">
         <div class="fg-bar"><div class="fg-bar-fill" style="width:${pct}%;background:${isPenalty?'#555':fc};${isPenalty?'opacity:0.6;':''}"></div></div>
         <span class="fg-score ${isPenalty?'sn':sc2}">${s!==null?s+'/5':'—'}${isPenalty?'*':''}</span>
