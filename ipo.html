@@ -243,6 +243,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 
 <script>
 const AS_URL = 'https://script.google.com/macros/s/AKfycbzac1Ps3bd4xnRK9-E8ehygibjimRDKzGF2FWpd2A4772tTMdyw6erU6lPB3r0Vm9Q/exec';
+const T = 'VB2026IPO'; // access token
 
 const LOAD_MSGS = [
   'Fetching live IPO data via web search…',
@@ -306,7 +307,7 @@ async function analyse() {
   try {
     const forceRefresh = window._forceRefresh || false;
     window._forceRefresh = false;
-    const url = AS_URL+'?action=analyse&ipo='+encodeURIComponent(name)+(forceRefresh?'&refresh=1':'');
+    const url = AS_URL+'?t='+T+'&action=analyse&ipo='+encodeURIComponent(name)+(forceRefresh?'&refresh=1':'');
     const res  = await fetch(url);
     const data = await res.json();
 
@@ -583,7 +584,7 @@ async function loadOpenIpos(showLoading) {
   try {
     const today = new Date().toISOString().split('T')[0];
     console.log('Fetching open IPOs from:', AS_URL+'?action=openipos');
-    const res  = await fetch(AS_URL+'?action=openipos&v='+Date.now());
+    const res  = await fetch(AS_URL+'?t='+T+'&action=openipos&v='+Date.now());
     if(!res.ok) throw new Error('HTTP '+res.status);
     const data = await res.json();
     console.log('Open IPOs received:', Array.isArray(data) ? data.length : typeof data, data);
@@ -625,7 +626,7 @@ async function loadHistory() {
   if(!el) return;
   try {
     console.log('Fetching analysed IPOs from:', AS_URL+'?action=ipolist');
-    const res  = await fetch(AS_URL+'?action=ipolist&v='+Date.now());
+    const res  = await fetch(AS_URL+'?t='+T+'&action=ipolist&v='+Date.now());
     if(!res.ok) throw new Error('HTTP '+res.status);
     const data = await res.json();
     console.log('Analysed IPOs received:', Array.isArray(data) ? data.length : typeof data);
