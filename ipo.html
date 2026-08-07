@@ -549,14 +549,6 @@ function render(d) {
     <div class="slabel">Key Metrics</div><div class="metrics">${metricsHtml}</div>
     <div class="slabel">Score by Category</div><div class="cat-bars">${catBars}</div>
     <div class="div"></div>
-    <div class="slabel">Key Positives &amp; Risks</div><div class="pos-risk-grid">${prHtml}</div>
-    <div class="div"></div>
-    ${brokerHtml}
-    ${brokerHtml?'<div class="div"></div>':''}
-    ${invHtml}
-    ${invHtml?'<div class="div"></div>':''}
-    ${aiHtml}
-    <div class="div"></div>
     <div class="slabel">Scoring Parameters</div>
     <div class="factor-grid">${factorGrid}</div>
     <div class="div"></div>
@@ -566,6 +558,15 @@ function render(d) {
       • <strong style="color:var(--green);">Phase 2</strong> (subscription data available): All 22 factors scored at full weight.<br>
       • ⚠ indicates data not disclosed — penalty score of 2/5 applied. Missing mandatory DRHP data is treated as a red flag.
     </div>
+    <div class="div"></div>
+    <div class="slabel">Key Positives &amp; Risks</div><div class="pos-risk-grid">${prHtml}</div>
+    <div class="div"></div>
+    ${brokerHtml}
+    ${brokerHtml?'<div class="div"></div>':''}
+    ${invHtml}
+    ${invHtml?'<div class="div"></div>':''}
+    ${aiHtml}
+    <div class="div"></div>
     <div class="slabel">Other IPO Details</div>
     <table class="dtable">${dtable}</table>
     <div class="disclaimer">
