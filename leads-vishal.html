@@ -1,26 +1,404 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0;url=https://script.google.com/macros/s/AKfycbz0yXspCRsZ2anArtc-yDaIsHXL7V41odd1SsBmaVrbkLncthBSK3-2AqMZhTscOBA/exec">
-  <title>Industrial Lead Finder</title>
-  <style>
-    body { font-family: Google Sans, Roboto, sans-serif; background: #f0f4f8; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-    .box { text-align: center; color: #1F4E79; }
-    .box h2 { font-size: 20px; font-weight: 500; margin-bottom: 8px; }
-    .box p { font-size: 13px; color: #5f6368; }
-    .spinner { width: 32px; height: 32px; border: 3px solid #e8f0fe; border-top-color: #1F4E79; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-  </style>
-  <script>
-    window.location.href = "https://script.google.com/macros/s/AKfycbz0yXspCRsZ2anArtc-yDaIsHXL7V41odd1SsBmaVrbkLncthBSK3-2AqMZhTscOBA/exec";
-  </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Industrial Lead Finder</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Google Sans, Roboto, sans-serif; background: #f0f4f8; color: #1a1a2e; min-height: 100vh; }
+.header { background: linear-gradient(135deg, #1F4E79, #2874a6); color: #fff; padding: 20px 32px; }
+.header h1 { font-size: 22px; font-weight: 500; }
+.header p { font-size: 13px; opacity: .8; margin-top: 4px; }
+.badge { background: rgba(255,255,255,.2); font-size: 11px; padding: 3px 10px; border-radius: 12px; margin-left: 10px; }
+.container { max-width: 960px; margin: 24px auto; padding: 0 20px; }
+.card { background: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+.card-title { font-size: 12px; font-weight: 600; color: #5f6368; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 14px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+label { font-size: 12px; color: #5f6368; display: block; margin-bottom: 4px; }
+select, input { width: 100%; padding: 8px 10px; border: 1px solid #dadce0; border-radius: 8px; font-size: 13px; color: #1a1a2e; outline: none; background: #fff; }
+select:focus, input:focus { border-color: #1F4E79; }
+.toggle-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.toggle { padding: 6px 14px; border-radius: 20px; border: 1px solid #dadce0; font-size: 12px; cursor: pointer; background: #fff; color: #5f6368; transition: all .15s; user-select: none; }
+.toggle.on { background: #e8f0fe; color: #1F4E79; border-color: #1F4E79; font-weight: 500; }
+.mode-row { display: flex; gap: 10px; margin-bottom: 16px; }
+.mode-btn { flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all .15s; }
+.mode-btn.active { background: #1F4E79; color: #fff; border: 2px solid #1F4E79; }
+.mode-btn.inactive { background: #fff; color: #5f6368; border: 2px solid #dadce0; }
+.btn-run { width: 100%; padding: 12px; background: #1F4E79; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 0; transition: opacity .15s; }
+.btn-run:hover { opacity: .88; }
+.btn-run:disabled { opacity: .5; cursor: not-allowed; }
+.progress-wrap { display: none; margin-top: 16px; }
+.prog-row { display: flex; justify-content: space-between; font-size: 12px; color: #5f6368; margin-bottom: 5px; }
+.progress-bar { height: 4px; background: #e8f0fe; border-radius: 2px; overflow: hidden; margin-bottom: 10px; }
+.progress-fill { height: 100%; background: #1F4E79; border-radius: 2px; transition: width .4s; }
+.log-box { background: #f8f9fa; border-radius: 8px; padding: 10px 14px; font-size: 12px; font-family: monospace; color: #5f6368; min-height: 60px; max-height: 130px; overflow-y: auto; line-height: 1.7; }
+.log-box .ok   { color: #137333; }
+.log-box .warn { color: #b06000; }
+.log-box .info { color: #1F4E79; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+.stat { background: #f8f9fa; border-radius: 10px; padding: 14px; text-align: center; }
+.stat .num { font-size: 28px; font-weight: 600; color: #1F4E79; }
+.stat .lbl { font-size: 12px; color: #5f6368; margin-top: 2px; }
+.toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.res-count { font-size: 13px; color: #5f6368; }
+.btn-export { padding: 7px 16px; background: #fff; border: 1px solid #dadce0; border-radius: 8px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; color: #1F4E79; }
+.btn-export:hover { background: #e8f0fe; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+th { text-align: left; padding: 8px 10px; border-bottom: 2px solid #e8eaed; font-weight: 600; color: #5f6368; font-size: 11px; text-transform: uppercase; white-space: nowrap; }
+td { padding: 9px 10px; border-bottom: 1px solid #f1f3f4; vertical-align: top; }
+tr:hover td { background: #f8f9fa; }
+.name-cell  { font-weight: 500; color: #1a1a2e; }
+.title-cell { color: #1F4E79; }
+.email-cell { color: #1F4E79; }
+.addr-cell  { font-size: 11px; color: #5f6368; max-width: 180px; }
+.phone-cell { font-family: monospace; font-size: 11px; white-space: nowrap; }
+.conf { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+.conf.high   { background: #c6efce; color: #137333; }
+.conf.medium { background: #ffeb9c; color: #7d5a00; }
+.conf.low    { background: #fce4ec; color: #c62828; }
+a { color: #1F4E79; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.empty { text-align: center; padding: 40px; color: #9aa0a6; }
+.empty i { font-size: 32px; display: block; margin-bottom: 10px; opacity: .4; }
+#results-section { display: none; margin-top: 20px; }
+@media (max-width: 600px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .stats  { grid-template-columns: 1fr 1fr; }
+  .header { padding: 16px; }
+  .mode-row { flex-direction: column; }
+  .csearch-grid { grid-template-columns: 1fr !important; }
+}
+</style>
 </head>
 <body>
-  <div class="box">
-    <div class="spinner"></div>
-    <h2>Industrial Lead Finder</h2>
-    <p>Loading...</p>
+
+<div class="header">
+  <h1><i class="fa-solid fa-industry"></i> Industrial Lead Finder <span class="badge">B2B only</span></h1>
+  <p>Find Maintenance, Production &amp; Engineering Managers in Indian industrial zones</p>
+</div>
+
+<div class="container">
+
+  <div class="mode-row">
+    <button id="btn-mode-area" class="mode-btn active" onclick="switchMode('area')">
+      <i class="fa-solid fa-map-location-dot"></i> Search by area
+    </button>
+    <button id="btn-mode-company" class="mode-btn inactive" onclick="switchMode('company')">
+      <i class="fa-solid fa-building"></i> Search by company
+    </button>
   </div>
+
+  <div id="company-card" class="card" style="display:none;">
+    <div class="card-title">Company search</div>
+    <div class="csearch-grid" style="display:grid; grid-template-columns:1fr 1fr auto; gap:10px; align-items:flex-end;">
+      <div>
+        <label>Company name</label>
+        <input type="text" id="inp-company" placeholder="e.g. Bharat Forge, Kirloskar..."
+          onkeydown="if(event.key==='Enter') startCompanySearch()" />
+      </div>
+      <div>
+        <label>Location <span style="color:#9aa0a6">(optional)</span></label>
+        <input type="text" id="inp-company-location" placeholder="e.g. Pune, MIDC Nashik..."
+          onkeydown="if(event.key==='Enter') startCompanySearch()" />
+      </div>
+      <button onclick="startCompanySearch()"
+        style="padding:9px 20px; background:#1F4E79; color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; white-space:nowrap;">
+        <i class="fa-solid fa-magnifying-glass"></i> Search
+      </button>
+    </div>
+  </div>
+
+  <div id="area-card" class="card">
+    <div class="card-title">Location &amp; filters</div>
+    <div class="grid-2">
+      <div>
+        <label>State</label>
+        <select id="sel-state" onchange="loadAreas()">
+          <option value="">Select state...</option>
+          <option>Maharashtra</option><option>Gujarat</option><option>Karnataka</option>
+          <option>Tamil Nadu</option><option>Rajasthan</option><option>Haryana</option>
+          <option>Punjab</option><option>Uttar Pradesh</option><option>Andhra Pradesh</option>
+          <option>Telangana</option><option>Madhya Pradesh</option><option>West Bengal</option>
+        </select>
+      </div>
+      <div>
+        <label>Industrial area <span style="color:#9aa0a6">(optional)</span></label>
+        <select id="sel-area"><option value="">All areas in state</option></select>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div>
+        <label>Industry sector</label>
+        <select id="sel-industry">
+          <option value="">All sectors</option>
+          <option>Auto &amp; Components</option><option>Chemicals &amp; Pharma</option>
+          <option>Engineering &amp; Fabrication</option><option>Food Processing</option>
+          <option>Textiles</option><option>Plastics &amp; Rubber</option>
+          <option>Steel &amp; Metals</option><option>Electronics</option>
+        </select>
+      </div>
+      <div>
+        <label>Max results per role</label>
+        <select id="sel-max">
+          <option value="10">10 per role</option>
+          <option value="20" selected>20 per role</option>
+          <option value="30">30 per role</option>
+          <option value="50">50 per role</option>
+        </select>
+      </div>
+    </div>
+    <div class="card-title" style="margin-top:6px;">Target roles</div>
+    <div class="toggle-row">
+      <div class="toggle on" data-role="Maintenance Manager" onclick="toggleRole(this)"><i class="fa-solid fa-wrench"></i> Maintenance manager</div>
+      <div class="toggle on" data-role="Production Manager" onclick="toggleRole(this)"><i class="fa-solid fa-gears"></i> Production manager</div>
+      <div class="toggle on" data-role="Engineering Manager" onclick="toggleRole(this)"><i class="fa-solid fa-helmet-safety"></i> Engineering manager</div>
+      <div class="toggle" data-role="Plant Manager" onclick="toggleRole(this)"><i class="fa-solid fa-building-columns"></i> Plant manager</div>
+      <div class="toggle" data-role="Operations Manager" onclick="toggleRole(this)"><i class="fa-solid fa-chart-line"></i> Operations manager</div>
+      <div class="toggle" data-role="Quality Manager" onclick="toggleRole(this)"><i class="fa-solid fa-clipboard-check"></i> Quality manager</div>
+    </div>
+  </div>
+
+  <button class="btn-run" id="btn-run" onclick="startSearch()">
+    <i class="fa-solid fa-magnifying-glass"></i> Find leads
+  </button>
+
+  <div class="progress-wrap" id="progress-wrap">
+    <div class="prog-row">
+      <span id="prog-label">Initialising...</span>
+      <span id="prog-pct">0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="log-box" id="log-box"></div>
+  </div>
+
+  <div id="results-section">
+    <div class="stats">
+      <div class="stat"><div class="num" id="s-total">0</div><div class="lbl">Total leads</div></div>
+      <div class="stat"><div class="num" id="s-email">0</div><div class="lbl">With email</div></div>
+      <div class="stat"><div class="num" id="s-phone">0</div><div class="lbl">With phone</div></div>
+    </div>
+    <div class="card">
+      <div class="toolbar">
+        <span class="res-count" id="res-count">0 leads found</span>
+        <button class="btn-export" onclick="exportCSV()"><i class="fa-solid fa-download"></i> Export CSV</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th><th>Title</th><th>Company</th><th>Address</th>
+              <th>Email</th><th>Phone</th><th>Confidence</th><th>Profile</th>
+            </tr>
+          </thead>
+          <tbody id="leads-tbody">
+            <tr><td colspan="8" class="empty"><i class="fa-solid fa-database"></i> Run a search to see leads here</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  var SCRIPT_URL  = "https://script.google.com/macros/s/AKfycbz0yXspCRsZ2anArtc-yDaIsHXL7V41odd1SsBmaVrbkLncthBSK3-2AqMZhTscOBA/exec";
+  var allLeads    = [];
+  var currentMode = 'area';
+
+  function switchMode(mode) {
+    currentMode = mode;
+    var isArea = mode === 'area';
+    document.getElementById('company-card').style.display = isArea ? 'none'  : 'block';
+    document.getElementById('area-card').style.display    = isArea ? 'block' : 'none';
+    document.getElementById('btn-run').style.display      = isArea ? 'flex'  : 'none';
+    document.getElementById('btn-mode-area').className    = 'mode-btn ' + (isArea ? 'active' : 'inactive');
+    document.getElementById('btn-mode-company').className = 'mode-btn ' + (isArea ? 'inactive' : 'active');
+    document.getElementById('results-section').style.display = 'none';
+    document.getElementById('progress-wrap').style.display   = 'none';
+  }
+
+  function loadAreas() {
+    var state = document.getElementById("sel-state").value;
+    var sel   = document.getElementById("sel-area");
+    sel.innerHTML = '<option value="">All areas in state</option>';
+    if (!state) return;
+    var areas = {
+      "Maharashtra"    : ["MIDC Andheri (Mumbai)","MIDC Pune (Pimpri-Chinchwad)","MIDC Nashik","MIDC Aurangabad","MIDC Nagpur (Butibori)","MIDC Thane (Wagle Estate)","MIDC Satara","MIDC Kolhapur","MIDC Solapur","MIDC Chakan","MIDC Talegaon","MIDC Ranjangaon","MIDC Patalganga","MIDC Taloja"],
+      "Gujarat"        : ["GIDC Ahmedabad (Naroda)","GIDC Surat (Sachin)","GIDC Vadodara (Makarpura)","GIDC Rajkot","GIDC Ankleshwar","GIDC Vapi","GIDC Gandhinagar","GIDC Bharuch (Panoli)","GIDC Morbi","GIDC Sanand"],
+      "Karnataka"      : ["KIADB Bengaluru Electronic City","KIADB Peenya Industrial Area","KIADB Tumkur Road","KIADB Hubli-Dharwad","KIADB Mysuru","KIADB Doddaballapur","KIADB Harohalli"],
+      "Tamil Nadu"     : ["SIPCOT Chennai (Ambattur)","SIPCOT Coimbatore","SIPCOT Madurai","SIPCOT Hosur","SIPCOT Tiruchirappalli","SIPCOT Salem","SIPCOT Ranipet"],
+      "Rajasthan"      : ["RIICO Jaipur (Sitapura)","RIICO Jodhpur","RIICO Udaipur","RIICO Kota","RIICO Bhiwadi","RIICO Neemrana (Japanese Zone)"],
+      "Haryana"        : ["IMT Manesar","IMT Bawal","HSIIDC Faridabad","HSIIDC Panipat","HSIIDC Sonipat","HSIIDC Kundli"],
+      "Punjab"         : ["Focal Point Ludhiana","PSIEC Amritsar","PSIEC Jalandhar","SAS Nagar (Mohali)"],
+      "Uttar Pradesh"  : ["UPSIDA Noida","UPSIDA Greater Noida","UPSIDA Agra","UPSIDA Lucknow","UPSIDA Kanpur","UPSIDA Ghaziabad"],
+      "Andhra Pradesh" : ["APIIC Visakhapatnam","APIIC Tirupati","APIIC Vijayawada","APIIC Guntur","APIIC Sri City (Chittoor)"],
+      "Telangana"      : ["TSIIC Hyderabad (Patancheru)","TSIIC Hyderabad (Nacharam)","TSIIC Hyderabad (Jeedimetla)","TSIIC Warangal"],
+      "Madhya Pradesh" : ["MPIDC Indore (Pithampur)","MPIDC Bhopal (Mandideep)","MPIDC Jabalpur","MPIDC Dewas"],
+      "West Bengal"    : ["Durgapur Industrial Area","Kalyani Industrial Area","Haldia Industrial Area","Salt Lake Electronics Complex"]
+    };
+    var list = areas[state] || [];
+    list.forEach(function(a) {
+      var o = document.createElement("option");
+      o.value = a; o.textContent = a;
+      sel.appendChild(o);
+    });
+  }
+
+  function toggleRole(el) { el.classList.toggle("on"); }
+
+  function getRoles() {
+    var roles = [];
+    document.querySelectorAll(".toggle.on").forEach(function(el) { roles.push(el.dataset.role); });
+    return roles;
+  }
+
+  function log(msg, type) {
+    var box  = document.getElementById("log-box");
+    var line = document.createElement("div");
+    if (type) line.className = type;
+    line.textContent = "> " + msg;
+    box.appendChild(line);
+    box.scrollTop = box.scrollHeight;
+  }
+
+  function setProgress(pct, label) {
+    document.getElementById("prog-fill").style.width  = pct + "%";
+    document.getElementById("prog-pct").textContent   = pct + "%";
+    document.getElementById("prog-label").textContent = label;
+  }
+
+  function startSearch() {
+    var state = document.getElementById("sel-state").value;
+    if (!state) { alert("Please select a state first."); return; }
+    var roles = getRoles();
+    if (!roles.length) { alert("Select at least one role."); return; }
+
+    var area     = document.getElementById("sel-area").value;
+    var industry = document.getElementById("sel-industry").value;
+    var maxPer   = document.getElementById("sel-max").value;
+
+    document.getElementById("btn-run").disabled = true;
+    document.getElementById("progress-wrap").style.display = "block";
+    document.getElementById("log-box").innerHTML = "";
+    document.getElementById("results-section").style.display = "none";
+
+    setProgress(5, "Connecting to Google Maps...");
+    log("Searching: " + state + (area ? " / " + area : "") + (industry ? " / " + industry : ""), "info");
+    log("Target roles: " + roles.join(", "), "info");
+
+    var steps = [[20,"Scanning industrial zone companies..."],[40,"Enriching contacts via Hunter.io..."],[70,"Deduplicating results..."],[85,"Saving to Google Sheet..."]];
+    var si = 0;
+    var iv = setInterval(function() {
+      if (si < steps.length) { setProgress(steps[si][0], steps[si][1]); log(steps[si][1]); si++; }
+    }, 6000);
+
+    var url = SCRIPT_URL
+      + "?action=search"
+      + "&state="        + encodeURIComponent(state)
+      + "&area="         + encodeURIComponent(area)
+      + "&industry="     + encodeURIComponent(industry)
+      + "&roles="        + encodeURIComponent(roles.join(","))
+      + "&max_per_role=" + maxPer;
+
+    fetch(url)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        clearInterval(iv);
+        if (!data.success) { log("Error: " + (data.error || "Unknown error"), "warn"); setProgress(0, "Failed"); document.getElementById("btn-run").disabled = false; return; }
+        setProgress(100, "Complete");
+        if (data.errors && data.errors.length) data.errors.forEach(function(e) { log(e, "warn"); });
+        log("Found " + data.total + " leads — saved to Google Sheet", "ok");
+        allLeads = data.leads || [];
+        renderResults(allLeads);
+        document.getElementById("btn-run").disabled = false;
+      })
+      .catch(function(err) {
+        clearInterval(iv);
+        log("Network error: " + err.message, "warn");
+        setProgress(0, "Failed");
+        document.getElementById("btn-run").disabled = false;
+      });
+  }
+
+  function startCompanySearch() {
+    var company  = document.getElementById('inp-company').value.trim();
+    var location = document.getElementById('inp-company-location').value.trim();
+    if (!company) { alert('Please enter a company name.'); return; }
+
+    document.getElementById('progress-wrap').style.display   = 'block';
+    document.getElementById('results-section').style.display = 'none';
+    document.getElementById('log-box').innerHTML = '';
+    setProgress(10, 'Searching for ' + company + (location ? ' in ' + location : '') + '...');
+    log('Looking up: ' + company + (location ? ' — ' + location : ''), 'info');
+
+    var url = SCRIPT_URL
+      + '?action=searchCompany'
+      + '&company='  + encodeURIComponent(company)
+      + '&location=' + encodeURIComponent(location);
+
+    fetch(url)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.errors && data.errors.length) data.errors.forEach(function(e) { log(e, 'warn'); });
+        if (!data.success) { log('Error: ' + (data.error || 'Unknown error'), 'warn'); setProgress(0, 'Failed'); return; }
+        setProgress(100, 'Complete');
+        log('Found ' + data.total + ' contacts — saved to Google Sheet', 'ok');
+        allLeads = data.leads || [];
+        renderResults(allLeads);
+      })
+      .catch(function(err) {
+        log('Network error: ' + err.message, 'warn');
+        setProgress(0, 'Failed');
+      });
+  }
+
+  function renderResults(leads) {
+    document.getElementById("results-section").style.display = "block";
+    document.getElementById("s-total").textContent = leads.length;
+    document.getElementById("s-email").textContent = leads.filter(function(l) { return l.email; }).length;
+    document.getElementById("s-phone").textContent = leads.filter(function(l) { return l.phone; }).length;
+    document.getElementById("res-count").textContent = leads.length + " leads found";
+    var tbody = document.getElementById("leads-tbody");
+    tbody.innerHTML = "";
+    if (!leads.length) {
+      tbody.innerHTML = '<tr><td colspan="8" class="empty"><i class="fa-solid fa-database"></i> No leads found — try a broader search</td></tr>';
+      return;
+    }
+    leads.forEach(function(l) {
+      var tr        = document.createElement("tr");
+      var emailCell = l.email ? '<a href="mailto:' + esc(l.email) + '">' + esc(l.email) + '</a>' : '<span style="color:#ccc">—</span>';
+      var liCell    = l.linkedin_url ? '<a href="' + esc(l.linkedin_url) + '" target="_blank"><i class="fa-brands fa-linkedin" style="font-size:16px"></i></a>' : '<span style="color:#ccc">—</span>';
+      tr.innerHTML =
+        '<td class="name-cell">'  + esc(l.name)    + '</td>' +
+        '<td class="title-cell">' + esc(l.title)   + '</td>' +
+        '<td>'                    + esc(l.company)  + '</td>' +
+        '<td class="addr-cell">'  + esc(l.address)  + '</td>' +
+        '<td class="email-cell">' + emailCell        + '</td>' +
+        '<td class="phone-cell">' + esc(l.phone || "—") + '</td>' +
+        '<td><span class="conf ' + esc(l.confidence) + '">' + esc(l.confidence) + '</span></td>' +
+        '<td>' + liCell + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function esc(s) { var d = document.createElement("div"); d.textContent = s || ""; return d.innerHTML; }
+
+  function exportCSV() {
+    if (!allLeads.length) return;
+    var hdr  = ["Name","Title","Company","Address","Email","Phone","LinkedIn","Confidence"];
+    var rows = allLeads.map(function(l) {
+      return [l.name, l.title, l.company, l.address, l.email||"", l.phone||"", l.linkedin_url||"", l.confidence]
+        .map(function(v) { return '"' + String(v).replace(/"/g,'""') + '"'; }).join(",");
+    });
+    var csv  = [hdr.join(",")].concat(rows).join("\n");
+    var blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    var a    = document.createElement("a");
+    a.href   = URL.createObjectURL(blob);
+    a.download = "industrial_leads.csv";
+    a.click();
+  }
+</script>
 </body>
 </html>
