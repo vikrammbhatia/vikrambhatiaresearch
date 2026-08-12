@@ -290,9 +290,12 @@ const FACTOR_TIPS = {
 };
 
 // ── ANALYSE ──────────────────────────────────────────────
+let _analysing = false;
 async function analyse() {
+  if(_analysing) return; // prevent concurrent calls
   const name = document.getElementById('ipoInput').value.trim();
   if(!name) return;
+  _analysing = true;
 
   const btn = document.getElementById('goBtn');
   btn.disabled=true; btn.textContent='Analysing…';
@@ -339,6 +342,7 @@ async function analyse() {
     clearInterval(iv);
     document.getElementById('loader').style.display='none';
     btn.disabled=false; btn.textContent='Analyse ↗';
+    _analysing = false;
   }
 }
 
@@ -678,7 +682,7 @@ async function loadHistory() {
           ${(item.closeDate && item.closeDate < todayIST)?'<span style="font-size:9px;color:var(--t3);background:var(--bg4);padding:1px 5px;border-radius:3px;">Closed</span>':''}
         </div>
         <div style="display:flex;gap:10px;margin-top:5px;flex-wrap:wrap;">
-          <div style="font-size:11px;"><span style="color:var(--t3);">GMP </span><span style="color:${(gmp!==null&&gmp!==undefined)?gmpClr:'var(--t3)'};font-weight:500;">${(gmp!==null&&gmp!==undefined)?gmpTxt:'N/A'}</span></div>
+          <div style="font-size:11px;"><span style="color:var(--t3);">GMP (live) </span><span style="color:${(gmp!==null&&gmp!==undefined)?gmpClr:'var(--t3)'};font-weight:500;">${(gmp!==null&&gmp!==undefined)?gmpTxt:'N/A'}</span></div>
           <div style="font-size:11px;"><span style="color:var(--t3);">Est. listing </span><span style="color:${(lp!==null&&lp!==undefined)?lpClr:'var(--t3)'};font-weight:500;">${(lp!==null&&lp!==undefined)?(lpTxt+(lpPrice?' · '+lpPrice:'')):'N/A'}</span></div>
         </div>
       </div>`;
