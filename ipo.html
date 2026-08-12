@@ -593,8 +593,8 @@ async function loadOpenIpos(showLoading) {
   if(btn) { btn.textContent='Loading…'; btn.disabled=true; }
   try {
     const today = new Date().toISOString().split('T')[0];
-    console.log('Fetching open IPOs from:', AS_URL+'?action=openipos');
-    const res  = await fetch(AS_URL+'?t='+T+'&action=openipos&v='+Date.now());
+    console.log('Fetching open IPOs...');
+    const res  = await fetch(AS_URL+'?action=openipos&v='+Date.now());
     if(!res.ok) throw new Error('HTTP '+res.status);
     const data = await res.json();
     console.log('Open IPOs received:', Array.isArray(data) ? data.length : typeof data, data);
@@ -635,8 +635,8 @@ async function loadHistory() {
   const el = document.getElementById('analysedIpoList');
   if(!el) return;
   try {
-    console.log('Fetching analysed IPOs from:', AS_URL+'?action=ipolist');
-    const res  = await fetch(AS_URL+'?t='+T+'&action=ipolist&v='+Date.now());
+    console.log('Fetching analysed IPOs...');
+    const res  = await fetch(AS_URL+'?action=ipolist&v='+Date.now());
     if(!res.ok) throw new Error('HTTP '+res.status);
     const data = await res.json();
     console.log('Analysed IPOs received:', Array.isArray(data) ? data.length : typeof data);
