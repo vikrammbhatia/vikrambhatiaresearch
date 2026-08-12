@@ -413,6 +413,7 @@ function render(d) {
     {l:'Sector',v:fd.sector},{l:'Issue Size',v:fd.issueSize?'₹'+fd.issueSize+' Cr':null},
     {l:'Price Band',v:fd.priceBandHigh?'₹'+fd.priceBandLow+' – ₹'+fd.priceBandHigh:null},
     {l:'GMP',v:fd.gmp!==null&&fd.gmp!==undefined?fd.gmp+'%'+(fd.gmpTrend?' ('+fd.gmpTrend+')':''):null},
+    {l:'Total Subscription',v:fd.subscriptionTotal?fd.subscriptionTotal+'×':null},
     {l:'QIB Sub',v:fd.subscriptionQIB?fd.subscriptionQIB+'×':null},
     {l:'HNI Sub',v:fd.subscriptionHNI?fd.subscriptionHNI+'×':null},
     {l:'bNII Sub',v:fd.subscriptionBNII?fd.subscriptionBNII+'×':null},
@@ -430,7 +431,15 @@ function render(d) {
   ];
   // Add expected listing as first highlighted card
   const lpMetric = lp!==null ? `<div class="mc" style="border-color:${lpClr};"><div class="mc-lbl">Expected Listing Premium</div><div class="mc-val" style="color:${lpClr};">${lpTxt}</div>${elp?`<div style="font-size:10px;color:var(--t3);margin-top:2px;">Est. ₹${elp}</div>`:''}</div>` : '';
-  const metricsHtml = lpMetric + mDefs.filter(m=>m.v!==null&&m.v!==undefined&&m.v!=='').map(m=>`<div class="mc"><div class="mc-lbl">${m.l}</div><div class="mc-val">${esc(String(m.v))}</div></div>`).join('');
+  const metricsHtml = lpMetric + mDefs.filter(m=>m.v!==null&&m.v!==undefined&&m.v!=='').map(m=>{
+    // Highlight total subscription prominently
+    const isTotal = m.l === 'Total Subscription';
+    const subVal = isTotal ? parseFloat(m.v) : 0;
+    const subClr = subVal >= 100 ? 'var(--green)' : subVal >= 10 ? 'var(--amber)' : 'var(--t1)';
+    const cardStyle = isTotal ? `border-color:${subClr};` : '';
+    const valStyle = isTotal ? `color:${subClr};font-size:16px;font-weight:600;` : '';
+    return `<div class="mc" style="${cardStyle}"><div class="mc-lbl">${m.l}</div><div class="mc-val" style="${valStyle}">${esc(String(m.v))}</div></div>`;
+  }).join('');
 
   // Category scores
   const cats=['Market','Financials','Valuation','Governance','Strategic','Returns'];
