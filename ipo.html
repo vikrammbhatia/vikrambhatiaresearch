@@ -682,7 +682,7 @@ async function loadHistory() {
           ${(item.closeDate && item.closeDate < todayIST)?'<span style="font-size:9px;color:var(--t3);background:var(--bg4);padding:1px 5px;border-radius:3px;">Closed</span>':''}
         </div>
         <div style="display:flex;gap:10px;margin-top:5px;flex-wrap:wrap;">
-          <div style="font-size:11px;"><span style="color:var(--t3);">GMP (live) </span><span style="color:${(gmp!==null&&gmp!==undefined)?gmpClr:'var(--t3)'};font-weight:500;">${(gmp!==null&&gmp!==undefined)?gmpTxt:'N/A'}</span></div>
+          <div style="font-size:11px;"><span style="color:var(--t3);">GMP ${item.analysedOn?'('+item.analysedOn+')':'(at analysis)'} </span><span style="color:${(gmp!==null&&gmp!==undefined)?gmpClr:'var(--t3)'};font-weight:500;">${(gmp!==null&&gmp!==undefined)?gmpTxt:'N/A'}</span></div>
           <div style="font-size:11px;"><span style="color:var(--t3);">Est. listing </span><span style="color:${(lp!==null&&lp!==undefined)?lpClr:'var(--t3)'};font-weight:500;">${(lp!==null&&lp!==undefined)?(lpTxt+(lpPrice?' · '+lpPrice:'')):'N/A'}</span></div>
         </div>
       </div>`;
