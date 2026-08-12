@@ -312,7 +312,7 @@ async function analyse() {
     const forceRefresh = window._forceRefresh || false;
     window._forceRefresh = false;
     const url = AS_URL+'?t='+T+'&action=analyse&ipo='+encodeURIComponent(name)+(forceRefresh?'&refresh=1&nocache='+Date.now():'');
-    const res  = await fetch(url);
+    const res  = await fetch(url, {redirect:'follow'});
     const data = await res.json();
 
     if(data.error === 'insufficient_data') {
@@ -594,7 +594,7 @@ async function loadOpenIpos(showLoading) {
   try {
     const today = new Date().toISOString().split('T')[0];
     console.log('Fetching open IPOs...');
-    const res  = await fetch(AS_URL+'?action=openipos&v='+Date.now());
+    const res  = await fetch(AS_URL+'?action=openipos&v='+Date.now(), {redirect:'follow'});
     if(!res.ok) throw new Error('HTTP '+res.status);
     const data = await res.json();
     console.log('Open IPOs received:', Array.isArray(data) ? data.length : typeof data, data);
@@ -636,7 +636,7 @@ async function loadHistory() {
   if(!el) return;
   try {
     console.log('Fetching analysed IPOs...');
-    const res  = await fetch(AS_URL+'?action=ipolist&v='+Date.now());
+    const res  = await fetch(AS_URL+'?action=ipolist&v='+Date.now(), {redirect:'follow'});
     if(!res.ok) throw new Error('HTTP '+res.status);
     const data = await res.json();
     console.log('Analysed IPOs received:', Array.isArray(data) ? data.length : typeof data);
