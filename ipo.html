@@ -365,11 +365,13 @@ function render(d) {
   // Determine verdict colour from Claude text
   const vText = String(cl.verdict||'').toLowerCase();
   let vColor = vrd.color||'amber';
-  if(vText.includes('strong subscribe')) vColor='green';
-  else if(vText==='subscribe') vColor='green';
-  else if(vText.includes('subscribe')) vColor='green';
-  else if(vText.includes('caution')) vColor='amber';
-  else if(vText.includes('avoid')) vColor='red';
+  // Order matters — check caution BEFORE subscribe to avoid false green
+  if(vText.includes('caution'))          vColor='amber';
+  else if(vText.includes('strong avoid') || vText==='avoid') vColor='red';
+  else if(vText.includes('avoid'))       vColor='red';
+  else if(vText.includes('strong subscribe')) vColor='green';
+  else if(vText.includes('subscribe'))   vColor='green';
+  else if(vText.includes('neutral'))     vColor='amber';
 
   // Listing premium
   const lp = d.expectedListingPremium !== null && d.expectedListingPremium !== undefined
@@ -669,8 +671,8 @@ async function loadHistory() {
       const s=parseInt(item.score)||0;
       const v=String(item.verdict||'').toLowerCase();
       const scoreClr=s>=65?'var(--green)':s>=50?'var(--amber)':'var(--red)';
-      const verdictShort=v.includes('strong subscribe')?'Strong Subscribe':v.includes('caution')?'Caution':v==='subscribe'?'Subscribe':v.includes('strong avoid')?'Strong Avoid':v.includes('avoid')?'Avoid':item.verdict||'—';
-      const verdictClr=(v.includes('strong subscribe')||v==='subscribe')?'var(--green)':v.includes('caution')?'var(--amber)':'var(--red)';
+      const verdictShort=v.includes('strong subscribe')?'Strong Subscribe':v.includes('caution')?'Caution':v.includes('strong avoid')?'Strong Avoid':v.includes('avoid')?'Avoid':v==='subscribe'||v.includes('subscribe')?'Subscribe':item.verdict||'—';
+      const verdictClr=v.includes('caution')?'var(--amber)':v.includes('avoid')?'var(--red)':(v.includes('subscribe'))?'var(--green)':'var(--amber)';
       const gmp=item.gmp;
       const gmpTxt=gmp!==null&&gmp!==undefined?(gmp>0?'+'+gmp+'%':gmp+'%'):null;
       const gmpClr=gmp>0?'var(--green)':gmp<0?'var(--red)':'var(--t3)';
