@@ -307,9 +307,14 @@ a:hover { text-decoration: underline; }
       .then(function(r) { return r.json(); })
       .then(function(data) {
         clearInterval(iv);
-        if (!data.success) { log("Error: " + (data.error || "Unknown error"), "warn"); setProgress(0, "Failed"); document.getElementById("btn-run").disabled = false; return; }
+        if (!data.success) {
+          log(friendlyError(data.error), "warn");
+          setProgress(0, "Failed");
+          document.getElementById("btn-run").disabled = false;
+          return;
+        }
         setProgress(100, "Complete");
-        if (data.errors && data.errors.length) data.errors.forEach(function(e) { log(e, "warn"); });
+        if (data.errors && data.errors.length) data.errors.forEach(function(e) { log(friendlyError(e), "warn"); });
         log("Found " + data.total + " leads — saved to Google Sheet", "ok");
         allLeads = data.leads || [];
         renderResults(allLeads);
@@ -317,7 +322,7 @@ a:hover { text-decoration: underline; }
       })
       .catch(function(err) {
         clearInterval(iv);
-        log("Network error: " + err.message, "warn");
+        log(friendlyError(err.message), "warn");
         setProgress(0, "Failed");
         document.getElementById("btn-run").disabled = false;
       });
@@ -342,15 +347,15 @@ a:hover { text-decoration: underline; }
     fetch(url)
       .then(function(r) { return r.json(); })
       .then(function(data) {
-        if (data.errors && data.errors.length) data.errors.forEach(function(e) { log(e, 'warn'); });
-        if (!data.success) { log('Error: ' + (data.error || 'Unknown error'), 'warn'); setProgress(0, 'Failed'); return; }
+        if (data.errors && data.errors.length) data.errors.forEach(function(e) { log(friendlyError(e), 'warn'); });
+        if (!data.success) { log(friendlyError(data.error), 'warn'); setProgress(0, 'Failed'); return; }
         setProgress(100, 'Complete');
         log('Found ' + data.total + ' contacts — saved to Google Sheet', 'ok');
         allLeads = data.leads || [];
         renderResults(allLeads);
       })
       .catch(function(err) {
-        log('Network error: ' + err.message, 'warn');
+        log(friendlyError(err.message), 'warn');
         setProgress(0, 'Failed');
       });
   }
@@ -385,6 +390,23 @@ a:hover { text-decoration: underline; }
   }
 
   function esc(s) { var d = document.createElement("div"); d.textContent = s || ""; return d.innerHTML; }
+
+  function friendlyError(msg) {
+    msg = (msg || "").toLowerCase();
+    if (msg.indexOf("unauthori") !== -1)
+      return "Access denied — invalid token. Contact the administrator.";
+    if (msg.indexOf("quota") !== -1 || msg.indexOf("limit") !== -1 || msg.indexOf("429") !== -1)
+      return "Hunter.io monthly quota exhausted (50/month on free plan). Results will show company + phone only. Resets next billing cycle.";
+    if (msg.indexOf("timeout") !== -1 || msg.indexOf("deadline") !== -1)
+      return "Search timed out — try fewer roles or a smaller max results number.";
+    if (msg.indexOf("no companies found") !== -1)
+      return "No companies found in this area — try selecting a broader region or removing the industry filter.";
+    if (msg.indexOf("network") !== -1 || msg.indexOf("failed to fetch") !== -1)
+      return "Network error — check your internet connection and try again.";
+    if (msg.indexOf("script") !== -1 || msg.indexOf("500") !== -1)
+      return "Backend error — try again in a few seconds. If it persists, redeploy the Apps Script.";
+    return "Something went wrong: " + (msg || "unknown error");
+  }
 
   function exportCSV() {
     if (!allLeads.length) return;
