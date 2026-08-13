@@ -624,14 +624,14 @@ async function loadOpenIpos(showLoading) {
   const btn = document.getElementById('refreshBtn');
   if(btn) { btn.textContent='Loading…'; btn.disabled=true; }
   try {
-    const today = new Date().toISOString().split('T')[0];
+    const todayStr = new Date().toLocaleDateString('en-CA', {timeZone:'Asia/Kolkata'});
     console.log('Fetching open IPOs...');
     const res  = await fetch(AS_URL+'?action=openipos&v='+Date.now(), {redirect:'follow'});
     if(!res.ok) throw new Error('HTTP '+res.status);
     const data = await res.json();
     console.log('Open IPOs received:', Array.isArray(data) ? data.length : typeof data, data);
     // Filter: only show IPOs not yet closed (closeDate >= today)
-    const active = Array.isArray(data) ? data.filter(ipo=>!ipo.closeDate||ipo.closeDate>=today) : [];
+    const active = Array.isArray(data) ? data.filter(ipo=>!ipo.closeDate||ipo.closeDate>=todayStr) : [];
     if(!active.length) { el.innerHTML='<div class="no-nfos">No open or upcoming IPOs today.</div>'; return; }
     el.innerHTML = active.map(ipo=>{
       const isDelisting = ipo.status && ipo.status.toLowerCase().includes('delist');
