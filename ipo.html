@@ -184,6 +184,16 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 /* DIVIDER */
 .div{height:1px;background:var(--b1);margin:1.5rem 0;}
 
+/* URGENT PULSE ANIMATION */
+@keyframes pulse-red{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.6);}50%{box-shadow:0 0 0 8px rgba(239,68,68,0);}}
+@keyframes pulse-amber{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0.6);}50%{box-shadow:0 0 0 8px rgba(245,158,11,0);}}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.urgent-close{animation:pulse-red 1.5s infinite;border-color:#ef4444 !important;}
+.urgent-list{animation:pulse-amber 1.5s infinite;border-color:#f59e0b !important;}
+.urgent-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;animation:blink 1s infinite;}
+.urgent-dot.red{background:#ef4444;}
+.urgent-dot.amber{background:#f59e0b;}
+
 /* SIDEBAR */
 .side-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--b1);}
 .side-title{font-size:11px;font-weight:600;color:var(--or);text-transform:uppercase;letter-spacing:0.08em;}
@@ -386,6 +396,14 @@ function render(d) {
 
   // Cache badge
   const cacheBadge = d.fromCache ? `<div style="font-size:10px;color:var(--t3);margin-top:4px;">⚡ Loaded from cache · <a href="#" onclick="forceRefresh(event)" style="color:var(--or);text-decoration:none;font-weight:500;">Force fresh analysis ↗</a></div>` : '';
+  const todayHero = new Date().toLocaleDateString('en-CA', {timeZone:'Asia/Kolkata'});
+  const heroClosingToday = fd.closeDate === todayHero;
+  const heroListingToday = fd.listingDate === todayHero;
+  const heroBanner = heroClosingToday
+    ? `<div style="background:#7f1d1d;border:1px solid #ef4444;color:#fca5a5;font-size:12px;font-weight:600;padding:8px 16px;border-radius:6px;margin-bottom:12px;display:flex;align-items:center;gap:8px;animation:blink 1s infinite;"><span style="font-size:16px;">⚠</span> LAST DAY TO APPLY — Subscription closes today!</div>`
+    : heroListingToday
+    ? `<div style="background:#78350f;border:1px solid #f59e0b;color:#fde68a;font-size:12px;font-weight:600;padding:8px 16px;border-radius:6px;margin-bottom:12px;display:flex;align-items:center;gap:8px;animation:blink 1.5s infinite;"><span style="font-size:16px;">🔔</span> LISTING TODAY — Check allotment and monitor price</div>`
+    : '';
   const phase = sc.phase || (sc.pendingFactors && sc.pendingFactors.length > 0 ? 1 : 2);
   const phaseBadge = phase === 1
     ? `<div style="font-size:10px;background:#1a1000;border:1px solid #854d0e;color:var(--amber);padding:2px 8px;border-radius:4px;margin-top:4px;display:inline-block;">Phase 1 · Pre-subscription · ${sc.totalActiveWeight||93}/134 pts active</div>`
@@ -567,7 +585,7 @@ function render(d) {
   ];
   const dtable = dRows.filter(r=>r[1]!==null&&r[1]!==undefined&&r[1]!=='').map(r=>`<tr><td>${r[0]}</td><td>${esc(String(r[1]))}</td></tr>`).join('');
 
-  document.getElementById('results').innerHTML = html + `
+  document.getElementById('results').innerHTML = heroBanner + html + `
     <div class="slabel">Key Metrics</div><div class="metrics">${metricsHtml}</div>
     <div class="slabel">Score by Category</div><div class="cat-bars">${catBars}</div>
     <div class="div"></div>
@@ -620,11 +638,20 @@ async function loadOpenIpos(showLoading) {
       const isOpen = !isDelisting && (ipo.status==='Open' || !ipo.status);
       const statusClr = isDelisting?'var(--t3)':isOpen?'var(--green)':'var(--amber)';
       const statusTxt = isDelisting?'○ Delisting':isOpen?'● Open now':'◈ Opening soon';
+      const closingToday = ipo.closeDate === todayStr;
+      const listingToday = ipo.listingDate === todayStr;
+      const urgentClass = closingToday?'urgent-close':listingToday?'urgent-list':'';
+      const urgentBanner = closingToday
+        ? `<div style="background:#7f1d1d;color:#fca5a5;font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;margin-bottom:6px;display:flex;align-items:center;"><span class="urgent-dot red"></span>LAST DAY — Closes Today!</div>`
+        : listingToday
+        ? `<div style="background:#78350f;color:#fde68a;font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;margin-bottom:6px;display:flex;align-items:center;"><span class="urgent-dot amber"></span>LISTING TODAY</div>`
+        : '';
       const pb = (ipo.priceBandLow&&ipo.priceBandHigh) ? '₹'+ipo.priceBandLow+' – ₹'+ipo.priceBandHigh : (ipo.priceBandHigh?'₹'+ipo.priceBandHigh:null);
       const gmp = ipo.gmp;
       const gmpTxt = gmp!==null&&gmp!==undefined ? (gmp>0?'+'+gmp+'%':gmp+'%') : null;
       const gmpClr = gmp>0?'var(--green)':'var(--red)';
-      return `<div class="nfo-item">
+      return `<div class="nfo-item ${urgentClass}">
+        ${urgentBanner}
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;margin-bottom:4px;">
           <div class="nfo-item-name">${esc(ipo.name)}</div>
           <div style="font-size:10px;font-weight:600;color:${statusClr};white-space:nowrap;flex-shrink:0;">${statusTxt}</div>
@@ -648,6 +675,7 @@ async function loadOpenIpos(showLoading) {
 async function loadHistory() {
   const el = document.getElementById('analysedIpoList');
   if(!el) return;
+  const todayIST = new Date().toLocaleDateString('en-CA', {timeZone:'Asia/Kolkata'});
   try {
     console.log('Fetching analysed IPOs...');
     const res  = await fetch(AS_URL+'?action=ipolist&v='+Date.now(), {redirect:'follow'});
@@ -685,7 +713,16 @@ async function loadHistory() {
       // Compute listing price if missing but LP and price band available
       const rawLPR = item.listingPrice || (lp&&item.priceBandHigh ? Math.round(item.priceBandHigh*(1+lp/100)) : null);
       const lpPrice=rawLPR?'₹'+Number(rawLPR).toLocaleString('en-IN'):null;
-      return `<div class="nfo-item" onclick="loadIpo('${esc(item.name)}')" style="cursor:pointer;">
+      const hClosingToday = item.closeDate === todayIST;
+      const hListingToday = item.listingDate === todayIST;
+      const hUrgentClass = hClosingToday ? 'urgent-close' : hListingToday ? 'urgent-list' : '';
+      const hUrgentBanner = hClosingToday
+        ? `<div style="background:#7f1d1d;color:#fca5a5;font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;margin-bottom:6px;display:flex;align-items:center;"><span class="urgent-dot red"></span>CLOSES TODAY</div>`
+        : hListingToday
+        ? `<div style="background:#78350f;color:#fde68a;font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;margin-bottom:6px;display:flex;align-items:center;"><span class="urgent-dot amber"></span>LISTING TODAY</div>`
+        : '';
+      return `<div class="nfo-item ${hUrgentClass}" onclick="loadIpo('${esc(item.name)}')" style="cursor:pointer;">
+        ${hUrgentBanner}
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;margin-bottom:3px;">
           <div class="nfo-item-name">${esc(item.name)}</div>
           ${s?`<span style="font-size:12px;font-weight:600;color:${scoreClr};flex-shrink:0;">${s}</span>`:''}
