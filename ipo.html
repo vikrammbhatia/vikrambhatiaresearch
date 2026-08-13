@@ -433,9 +433,9 @@ function render(d) {
     {l:'Sector',v:fd.sector},{l:'Issue Size',v:fd.issueSize?'₹'+fd.issueSize+' Cr':null},
     {l:'Price Band',v:fd.priceBandHigh?'₹'+fd.priceBandLow+' – ₹'+fd.priceBandHigh:null},
     {l:'GMP',v:fd.gmp!==null&&fd.gmp!==undefined?fd.gmp+'%'+(fd.gmpTrend?' ('+fd.gmpTrend+')':''):null},
-    {l:'Open Date',v:fd.openDate||null},
-    {l:'Close Date',v:fd.closeDate||null},
-    {l:'Listing Date',v:fd.listingDate||null},
+    {l:'Open Date',v:fd.openDate||'—'},
+    {l:'Close Date',v:fd.closeDate||'—'},
+    {l:'Listing Date',v:fd.listingDate||'—'},
     {l:'Total Subscription',v:fd.subscriptionTotal?fd.subscriptionTotal+'×':null},
     {l:'QIB Sub',v:fd.subscriptionQIB?fd.subscriptionQIB+'×':null},
     {l:'HNI Sub',v:fd.subscriptionHNI?fd.subscriptionHNI+'×':null},
@@ -731,6 +731,11 @@ async function loadHistory() {
         <div style="display:flex;align-items:center;gap:6px;margin-top:3px;">
           <div style="font-size:11px;color:${verdictClr};font-weight:500;">${verdictShort}</div>
           ${(item.closeDate && item.closeDate < todayIST)?'<span style="font-size:9px;color:var(--t3);background:var(--bg4);padding:1px 5px;border-radius:3px;">Closed</span>':''}
+        </div>
+        <div style="font-size:10px;color:var(--t3);margin-top:4px;">
+          ${item.openDate?'<strong style=\"color:var(--t2)\">Open:</strong> '+item.openDate:''}
+          ${item.closeDate?' &nbsp;·&nbsp; <strong style=\"color:var(--t2)\">Close:</strong> '+item.closeDate:''}
+          ${item.listingDate?' &nbsp;·&nbsp; <strong style=\"color:var(--t2)\">Listing:</strong> '+item.listingDate:''}
         </div>
         <div style="display:flex;gap:10px;margin-top:5px;flex-wrap:wrap;">
           <div style="font-size:11px;"><span style="color:var(--t3);">GMP ${item.analysedOn?'('+item.analysedOn+')':'(at analysis)'} </span><span style="color:${(gmp!==null&&gmp!==undefined)?gmpClr:'var(--t3)'};font-weight:500;">${(gmp!==null&&gmp!==undefined)?gmpTxt:'N/A'}</span></div>
