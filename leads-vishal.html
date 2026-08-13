@@ -296,7 +296,7 @@ a:hover { text-decoration: underline; }
     }, 6000);
 
     var url = SCRIPT_URL
-      + "?action=search"
+      + "&action=search"
       + "&state="        + encodeURIComponent(state)
       + "&area="         + encodeURIComponent(area)
       + "&industry="     + encodeURIComponent(industry)
@@ -335,7 +335,7 @@ a:hover { text-decoration: underline; }
     log('Looking up: ' + company + (location ? ' — ' + location : ''), 'info');
 
     var url = SCRIPT_URL
-      + '?action=searchCompany'
+      + '&action=searchCompany'
       + '&company='  + encodeURIComponent(company)
       + '&location=' + encodeURIComponent(location);
 
