@@ -209,6 +209,15 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .side-link{font-size:10px;color:var(--t3);margin-bottom:10px;}
 .side-link a{color:var(--or);text-decoration:none;}
 .side-divider{height:1px;background:var(--b1);margin:14px 0;}
+
+/* ── MOBILE ELEMENTS — hidden by default on desktop ── */
+.mob-sidebar-btn{display:none;position:fixed;bottom:20px;right:20px;z-index:100;background:var(--or);color:#fff;border:none;border-radius:50%;width:52px;height:52px;font-size:20px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.4);}
+.mob-drawer{display:none;position:fixed;top:0;right:0;bottom:0;width:300px;background:var(--bg2);border-left:1px solid var(--b1);z-index:200;overflow-y:auto;padding:1.5rem;}
+.mob-drawer.open{display:block;}
+.mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:199;}
+.mob-overlay.open{display:block;}
+.mob-close{float:right;background:none;border:none;color:var(--t2);font-size:20px;cursor:pointer;padding:0;line-height:1;}
+@media(max-width:900px){.mob-sidebar-btn{display:flex;align-items:center;justify-content:center;}}
 </style>
 </head>
 <body>
