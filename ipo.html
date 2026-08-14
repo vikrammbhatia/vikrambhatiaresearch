@@ -735,7 +735,7 @@ async function loadHistory() {
         : hListingToday
         ? `<div style="background:#78350f;color:#fde68a;font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;margin-bottom:6px;display:flex;align-items:center;"><span class="urgent-dot amber"></span>LISTING TODAY</div>`
         : '';
-      return `<div class="nfo-item ${hUrgentClass}" onclick="loadIpo('${esc(item.name)}')" style="cursor:pointer;">
+      return `<div class="nfo-item ${hUrgentClass}">
         ${hUrgentBanner}
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;margin-bottom:3px;">
           <div class="nfo-item-name">${esc(item.name)}</div>
