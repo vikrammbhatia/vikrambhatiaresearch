@@ -237,15 +237,8 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
   <!-- SIDEBAR -->
   <div class="side-col">
     <div class="side-header">
-      <div class="side-title">Open &amp; Upcoming IPOs</div>
-      <button class="refresh-btn" id="refreshBtn" onclick="loadOpenIpos(true)">Refresh</button>
-    </div>
-    <div class="side-link">AI search + manual cache. <a href="https://www.icicidirect.com/ipo" target="_blank">ICICIdirect ↗</a></div>
-    <div id="openIpoList"><div class="no-nfos">Loading…</div></div>
-
-    <div class="side-divider"></div>
-    <div class="side-header" style="border-bottom:none;padding-bottom:0;margin-bottom:10px;">
       <div class="side-title">Analysed IPOs</div>
+      <button class="refresh-btn" id="refreshBtn" onclick="loadHistory()">Refresh</button>
     </div>
     <div id="analysedIpoList"><div class="no-nfos">No analyses yet.</div></div>
   </div>
@@ -258,14 +251,8 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 <div class="mob-drawer" id="mobDrawer">
   <button class="mob-close" onclick="closeMobDrawer()">✕</button>
   <div class="side-header">
-    <div class="side-title">Open &amp; Upcoming IPOs</div>
-    <button class="refresh-btn" onclick="loadOpenIpos(true)">Refresh</button>
-  </div>
-  <div class="side-link">AI search + manual cache. <a href="https://www.icicidirect.com/ipo" target="_blank" style="color:var(--or);">ICICIdirect ↗</a></div>
-  <div id="mobOpenIpoList"><div class="no-nfos">Loading…</div></div>
-  <div class="side-divider"></div>
-  <div class="side-header" style="border-bottom:none;padding-bottom:0;margin-bottom:10px;">
-    <div class="side-title" style="font-size:11px;">Analysed IPOs</div>
+    <div class="side-title">Analysed IPOs</div>
+    <button class="refresh-btn" onclick="loadHistory()">Refresh</button>
   </div>
   <div id="mobAnalysedIpoList"><div class="no-nfos">No analyses yet.</div></div>
 </div>
@@ -778,19 +765,14 @@ function closeMobDrawer() {
   document.getElementById('mobOverlay').classList.remove('open');
 }
 async function loadMobSidebar() {
-  // Copy open IPOs to mobile drawer
-  const src = document.getElementById('openIpoList');
-  const dst = document.getElementById('mobOpenIpoList');
-  if(src && dst) dst.innerHTML = src.innerHTML || '<div class="no-nfos">Loading…</div>';
-  // Copy analysed IPOs to mobile drawer
-  const src2 = document.getElementById('analysedIpoList');
-  const dst2 = document.getElementById('mobAnalysedIpoList');
-  if(src2 && dst2) dst2.innerHTML = src2.innerHTML || '<div class="no-nfos">No analyses yet.</div>';
+  const src = document.getElementById('analysedIpoList');
+  const dst = document.getElementById('mobAnalysedIpoList');
+  if(src && dst) dst.innerHTML = src.innerHTML || '<div class="no-nfos">No analyses yet.</div>';
 }
 
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-window.addEventListener('load', ()=>{ loadOpenIpos(true); loadHistory(); });
+window.addEventListener('load', ()=>{ loadHistory(); });
 </script>
 </body>
 </html>
