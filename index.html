@@ -147,6 +147,10 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .nfo-item-dates strong { color: var(--text2); }
 .nfo-item-min { font-size: 11px; color: var(--text3); margin-top: 3px; }
 .no-nfos { font-size: 13px; color: var(--text3); padding: 1rem 0; text-align: center; }
+.nfo-closing-soon { border-color: #f97316 !important; background: #1a0e00 !important; }
+.closing-soon-tag { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: #f97316; margin-bottom: 8px; }
+.closing-dot { width: 7px; height: 7px; border-radius: 50%; background: #f97316; animation: pulse-dot 1s infinite; flex-shrink: 0; }
+@keyframes pulse-dot { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.5; } }
 </style>
 </head>
 <body>
@@ -639,6 +643,29 @@ function buildNfoItem(nfo) {
   var cleanName = nfo.name.replace(/ - Direct Plan - Growth| - Direct - Growth| - Direct Plan/gi, "").trim();
   var div = document.createElement("div");
   div.className = "nfo-item";
+
+  // Check if closing within 3 days
+  var isClosingSoon = false;
+  var daysLeft = null;
+  if (nfo.closeDate && nfo.closeDate !== "—") {
+    var months = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+    var parts = String(nfo.closeDate).trim().split(/[\s\-\/]+/);
+    if (parts.length === 3) {
+      var day = parseInt(parts[0]);
+      var mon = months[parts[1].toLowerCase().substring(0,3)];
+      var yr = parseInt(parts[2]);
+      if (!isNaN(day) && mon !== undefined && !isNaN(yr)) {
+        var closeDate = new Date(yr, mon, day);
+        var today = new Date();
+        today.setHours(0,0,0,0);
+        daysLeft = Math.ceil((closeDate - today) / (1000 * 60 * 60 * 24));
+        if (daysLeft >= 0 && daysLeft <= 3) isClosingSoon = true;
+      }
+    }
+  }
+
+  if (isClosingSoon) div.classList.add("nfo-closing-soon");
+
   var scoreHtml = "";
   if (nfo.score && nfo.score > 0) {
     var rec = nfo.recommendation || "";
@@ -651,8 +678,16 @@ function buildNfoItem(nfo) {
     scoreHtml = '<span style="font-size:12px;font-weight:700;color:#f0f0f0;margin-left:6px">' + nfo.score.toFixed(1) + '</span>' +
       '<span class="badge ' + badgeClass + '" style="font-size:10px;padding:2px 7px;margin-left:4px">' + badgeIcon + ' ' + rec + '</span>';
   }
-  div.innerHTML = '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:2px;margin-bottom:6px">' +
-    '<span class="nfo-item-name" style="margin-bottom:0">' + cleanName + '</span>' +
+
+  var closingSoonHtml = "";
+  if (isClosingSoon) {
+    var urgencyText = daysLeft === 0 ? "Closes today!" : daysLeft === 1 ? "Closes tomorrow!" : "Closes in " + daysLeft + " days!";
+    closingSoonHtml = '<div class="closing-soon-tag"><span class="closing-dot"></span>' + urgencyText + '</div>';
+  }
+
+  div.innerHTML = closingSoonHtml +
+    '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:2px;margin-bottom:6px">' +
+    '<span class="nfo-item-name">' + cleanName + '</span>' +
     scoreHtml +
     '</div>' +
     '<div class="nfo-item-cat">' + (nfo.category || "—") + '</div>' +
