@@ -433,8 +433,10 @@ tr:last-child td { border-bottom: none; }
       + '&company='  + encodeURIComponent(company)
       + '&location=' + encodeURIComponent(location);
 
-    fetch(url)
-      .then(function(r) { return r.json(); })
+    var controller = new AbortController();
+    var timeoutId  = setTimeout(function() { controller.abort(); }, 120000); // 2 min timeout
+    fetch(url, { signal: controller.signal })
+      .then(function(r) { clearTimeout(timeoutId); return r.json(); })
       .then(function(data) {
         if (data.errors && data.errors.length) data.errors.forEach(function(e) { log(friendlyError(e), 'warn'); });
         if (!data.success) { log(friendlyError(data.error), 'warn'); setProgress(0, 'Failed'); return; }
@@ -444,7 +446,11 @@ tr:last-child td { border-bottom: none; }
         renderResults(allLeads);
       })
       .catch(function(err) {
-        log(friendlyError(err.message), 'warn');
+        clearTimeout(timeoutId);
+        var msg = err.name === 'AbortError'
+          ? 'Search timed out — the company has many contacts to enrich. Try again.'
+          : friendlyError(err.message);
+        log(msg, 'warn');
         setProgress(0, 'Failed');
       });
   }
