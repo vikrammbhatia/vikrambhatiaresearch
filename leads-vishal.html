@@ -100,7 +100,7 @@ a:hover { text-decoration: underline; }
           onkeydown="if(event.key==='Enter') startCompanySearch()" />
       </div>
       <div>
-        <label>Location <span style="color:#9aa0a6">(optional)</span></label>
+        <label>Location</label>
         <input type="text" id="inp-company-location" placeholder="e.g. Pune, MIDC Nashik..."
           onkeydown="if(event.key==='Enter') startCompanySearch()" />
       </div>
@@ -332,6 +332,7 @@ a:hover { text-decoration: underline; }
     var company  = document.getElementById('inp-company').value.trim();
     var location = document.getElementById('inp-company-location').value.trim();
     if (!company) { alert('Please enter a company name.'); return; }
+    if (!location) { alert('Please enter a location to narrow the search.'); return; }
 
     document.getElementById('progress-wrap').style.display   = 'block';
     document.getElementById('results-section').style.display = 'none';
