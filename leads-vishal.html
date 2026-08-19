@@ -348,7 +348,11 @@ a:hover { text-decoration: underline; }
       .then(function(r) { return r.json(); })
       .then(function(data) {
         if (data.errors && data.errors.length) data.errors.forEach(function(e) { log(friendlyError(e), 'warn'); });
-        if (!data.success) { log(friendlyError(data.error), 'warn'); setProgress(0, 'Failed'); return; }
+        if (!data.success) {
+          log(friendlyError(data.error), 'warn');
+          setProgress(0, 'Failed');
+          return;
+        }
         setProgress(100, 'Complete');
         log('Found ' + data.total + ' contacts — saved to Google Sheet', 'ok');
         allLeads = data.leads || [];
