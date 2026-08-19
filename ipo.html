@@ -698,14 +698,17 @@ async function loadHistory() {
     console.log('Analysed IPOs received:', Array.isArray(data) ? data.length : typeof data);
     if(!Array.isArray(data)||!data.length) { el.innerHTML='<div class="no-nfos">No analyses yet.</div>'; return; }
     // Deduplicate by name — keep highest score per company
-    // Also filter out closed IPOs from sidebar
-    const todayIST = new Date().toLocaleDateString('en-CA', {timeZone:'Asia/Kolkata'}); // YYYY-MM-DD in IST
+    const todayIST = new Date().toLocaleDateString('en-CA', {timeZone:'Asia/Kolkata'});
+    
+    // Calculate cutoff: remove IPOs listed more than 2 days ago
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - 2);
+    const cutoffStr = cutoffDate.toLocaleDateString('en-CA', {timeZone:'Asia/Kolkata'});
+
     const seen = new Map();
     data.forEach(item => {
-      // Skip if IPO has been closed for more than 30 days (keep recent ones for reference)
-      if(item.closeDate && item.closeDate < todayIST) {
-        // Keep in sidebar but mark as closed — don't exclude completely
-      }
+      // Remove if listing date is more than 2 days ago
+      if(item.listingDate && item.listingDate < cutoffStr) return;
       const key = item.name.toLowerCase().trim();
       const existing = seen.get(key);
       if(!existing || parseInt(item.score) > parseInt(existing.score)) seen.set(key, item);
