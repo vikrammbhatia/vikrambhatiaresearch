@@ -7,67 +7,137 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='12' fill='%23f97316'/><text x='50' y='68' font-family='Arial' font-weight='bold' font-size='42' text-anchor='middle' fill='white'>VB</text></svg>">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
+:root {
+  --or: #f97316;
+  --or2: #c2540a;
+  --bg: #080808;
+  --bg2: #0d0d0d;
+  --bg3: #141414;
+  --bg4: #1c1c1c;
+  --bg5: #222;
+  --t1: #efefef;
+  --t2: #888;
+  --t3: #555;
+  --green: #22c55e;
+  --amber: #f59e0b;
+  --red: #ef4444;
+}
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: Google Sans, Roboto, sans-serif; background: #f0f4f8; color: #1a1a2e; min-height: 100vh; }
-.header { background: linear-gradient(135deg, #1F4E79, #2874a6); color: #fff; padding: 20px 32px; }
-.header h1 { font-size: 22px; font-weight: 500; }
-.header p { font-size: 13px; opacity: .8; margin-top: 4px; }
-.badge { background: rgba(255,255,255,.2); font-size: 11px; padding: 3px 10px; border-radius: 12px; margin-left: 10px; }
-.container { max-width: 960px; margin: 24px auto; padding: 0 20px; }
-.card { background: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
-.card-title { font-size: 12px; font-weight: 600; color: #5f6368; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 14px; }
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-label { font-size: 12px; color: #5f6368; display: block; margin-bottom: 4px; }
-select, input { width: 100%; padding: 8px 10px; border: 1px solid #dadce0; border-radius: 8px; font-size: 13px; color: #1a1a2e; outline: none; background: #fff; }
-select:focus, input:focus { border-color: #1F4E79; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t1); min-height: 100vh; font-size: 14px; }
+
+.header { background: var(--bg3); border-bottom: 1px solid var(--bg4); padding: 18px 32px; display: flex; align-items: center; gap: 14px; }
+.header-logo { width: 36px; height: 36px; background: var(--or); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #fff; flex-shrink: 0; }
+.header h1 { font-size: 18px; font-weight: 600; color: var(--t1); }
+.header p { font-size: 12px; color: var(--t2); margin-top: 2px; }
+.badge { background: rgba(249,115,22,.15); color: var(--or); font-size: 10px; padding: 2px 8px; border-radius: 10px; margin-left: 8px; border: 1px solid rgba(249,115,22,.3); }
+
+.container { max-width: 980px; margin: 24px auto; padding: 0 20px; }
+
+.card { background: var(--bg3); border: 1px solid var(--bg4); border-radius: 12px; padding: 20px 24px; margin-bottom: 14px; }
+.card-title { font-size: 11px; font-weight: 600; color: var(--t2); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 14px; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+
+label { font-size: 12px; color: var(--t2); display: block; margin-bottom: 5px; }
+select, input {
+  width: 100%; padding: 8px 11px;
+  background: var(--bg4); border: 1px solid var(--bg5);
+  border-radius: 8px; font-size: 13px; color: var(--t1);
+  outline: none; transition: border-color .15s;
+}
+select:focus, input:focus { border-color: var(--or); }
+select option { background: var(--bg3); }
+
 .toggle-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
-.toggle { padding: 6px 14px; border-radius: 20px; border: 1px solid #dadce0; font-size: 12px; cursor: pointer; background: #fff; color: #5f6368; transition: all .15s; user-select: none; }
-.toggle.on { background: #e8f0fe; color: #1F4E79; border-color: #1F4E79; font-weight: 500; }
-.mode-row { display: flex; gap: 10px; margin-bottom: 16px; }
-.mode-btn { flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all .15s; }
-.mode-btn.active { background: #1F4E79; color: #fff; border: 2px solid #1F4E79; }
-.mode-btn.inactive { background: #fff; color: #5f6368; border: 2px solid #dadce0; }
-.btn-run { width: 100%; padding: 12px; background: #1F4E79; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 0; transition: opacity .15s; }
-.btn-run:hover { opacity: .88; }
+.toggle {
+  padding: 5px 13px; border-radius: 20px;
+  border: 1px solid var(--bg5); font-size: 12px;
+  cursor: pointer; background: var(--bg4); color: var(--t2);
+  transition: all .15s; user-select: none;
+}
+.toggle.on { background: rgba(249,115,22,.15); color: var(--or); border-color: rgba(249,115,22,.4); font-weight: 500; }
+
+.mode-row { display: flex; gap: 10px; margin-bottom: 14px; }
+.mode-btn {
+  flex: 1; padding: 10px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; cursor: pointer; transition: all .15s;
+}
+.mode-btn.active { background: var(--or); color: #fff; border: 1px solid var(--or); }
+.mode-btn.inactive { background: var(--bg3); color: var(--t2); border: 1px solid var(--bg4); }
+.mode-btn.inactive:hover { border-color: var(--or); color: var(--or); }
+
+.btn-run {
+  width: 100%; padding: 11px; background: var(--or); color: #fff;
+  border: none; border-radius: 10px; font-size: 14px; font-weight: 600;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  gap: 8px; transition: background .15s;
+}
+.btn-run:hover { background: var(--or2); }
 .btn-run:disabled { opacity: .5; cursor: not-allowed; }
-.progress-wrap { display: none; margin-top: 16px; }
-.prog-row { display: flex; justify-content: space-between; font-size: 12px; color: #5f6368; margin-bottom: 5px; }
-.progress-bar { height: 4px; background: #e8f0fe; border-radius: 2px; overflow: hidden; margin-bottom: 10px; }
-.progress-fill { height: 100%; background: #1F4E79; border-radius: 2px; transition: width .4s; }
-.log-box { background: #f8f9fa; border-radius: 8px; padding: 10px 14px; font-size: 12px; font-family: monospace; color: #5f6368; min-height: 60px; max-height: 130px; overflow-y: auto; line-height: 1.7; }
-.log-box .ok   { color: #137333; }
-.log-box .warn { color: #b06000; }
-.log-box .info { color: #1F4E79; }
-.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
-.stat { background: #f8f9fa; border-radius: 10px; padding: 14px; text-align: center; }
-.stat .num { font-size: 28px; font-weight: 600; color: #1F4E79; }
-.stat .lbl { font-size: 12px; color: #5f6368; margin-top: 2px; }
+
+.progress-wrap { display: none; margin-top: 14px; }
+.prog-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--t2); margin-bottom: 5px; }
+.progress-bar { height: 3px; background: var(--bg4); border-radius: 2px; overflow: hidden; margin-bottom: 10px; }
+.progress-fill { height: 100%; background: var(--or); border-radius: 2px; transition: width .4s; }
+.log-box {
+  background: var(--bg2); border: 1px solid var(--bg4); border-radius: 8px;
+  padding: 10px 14px; font-size: 12px; font-family: monospace;
+  color: var(--t2); min-height: 55px; max-height: 120px; overflow-y: auto; line-height: 1.7;
+}
+.log-box .ok   { color: var(--green); }
+.log-box .warn { color: var(--amber); }
+.log-box .info { color: var(--or); }
+
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 14px; }
+.stat { background: var(--bg3); border: 1px solid var(--bg4); border-radius: 10px; padding: 14px; text-align: center; }
+.stat .num { font-size: 28px; font-weight: 700; color: var(--or); }
+.stat .lbl { font-size: 11px; color: var(--t2); margin-top: 2px; }
+
 .toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.res-count { font-size: 13px; color: #5f6368; }
-.btn-export { padding: 7px 16px; background: #fff; border: 1px solid #dadce0; border-radius: 8px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; color: #1F4E79; }
-.btn-export:hover { background: #e8f0fe; }
+.res-count { font-size: 13px; color: var(--t2); }
+.btn-export {
+  padding: 6px 14px; background: var(--bg4); border: 1px solid var(--bg5);
+  border-radius: 8px; font-size: 12px; cursor: pointer;
+  display: flex; align-items: center; gap: 6px; color: var(--t1);
+  transition: border-color .15s;
+}
+.btn-export:hover { border-color: var(--or); color: var(--or); }
+
 table { width: 100%; border-collapse: collapse; font-size: 12px; }
-th { text-align: left; padding: 8px 10px; border-bottom: 2px solid #e8eaed; font-weight: 600; color: #5f6368; font-size: 11px; text-transform: uppercase; white-space: nowrap; }
-td { padding: 9px 10px; border-bottom: 1px solid #f1f3f4; vertical-align: top; }
-tr:hover td { background: #f8f9fa; }
-.name-cell  { font-weight: 500; color: #1a1a2e; }
-.title-cell { color: #1F4E79; }
-.email-cell { color: #1F4E79; }
-.addr-cell  { font-size: 11px; color: #5f6368; max-width: 180px; }
-.phone-cell { font-family: monospace; font-size: 11px; white-space: nowrap; }
+th {
+  text-align: left; padding: 8px 10px;
+  border-bottom: 1px solid var(--bg4);
+  font-weight: 600; color: var(--t2); font-size: 11px;
+  text-transform: uppercase; white-space: nowrap;
+}
+td { padding: 9px 10px; border-bottom: 1px solid var(--bg4); vertical-align: top; color: var(--t1); }
+tr:hover td { background: var(--bg4); }
+tr:last-child td { border-bottom: none; }
+
+.name-cell  { font-weight: 500; }
+.title-cell { color: var(--or); }
+.email-cell a { color: var(--or); text-decoration: none; }
+.email-cell a:hover { text-decoration: underline; }
+.addr-cell  { font-size: 11px; color: var(--t2); max-width: 180px; }
+.phone-cell { font-family: monospace; font-size: 11px; color: var(--t2); white-space: nowrap; }
+
 .conf { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
-.conf.high   { background: #c6efce; color: #137333; }
-.conf.medium { background: #ffeb9c; color: #7d5a00; }
-.conf.low    { background: #fce4ec; color: #c62828; }
-a { color: #1F4E79; text-decoration: none; }
-a:hover { text-decoration: underline; }
-.empty { text-align: center; padding: 40px; color: #9aa0a6; }
-.empty i { font-size: 32px; display: block; margin-bottom: 10px; opacity: .4; }
-#results-section { display: none; margin-top: 20px; }
+.conf.high   { background: rgba(34,197,94,.15);  color: var(--green); }
+.conf.medium { background: rgba(245,158,11,.15); color: var(--amber); }
+.conf.low    { background: rgba(239,68,68,.15);  color: var(--red); }
+
+.li-link { color: var(--t2); font-size: 15px; transition: color .15s; }
+.li-link:hover { color: var(--or); }
+
+.empty { text-align: center; padding: 40px; color: var(--t3); }
+.empty i { font-size: 28px; display: block; margin-bottom: 10px; opacity: .3; }
+
+#results-section { display: none; margin-top: 18px; }
+
 @media (max-width: 600px) {
   .grid-2 { grid-template-columns: 1fr; }
   .stats  { grid-template-columns: 1fr 1fr; }
-  .header { padding: 16px; }
+  .header { padding: 14px 16px; }
   .mode-row { flex-direction: column; }
   .csearch-grid { grid-template-columns: 1fr !important; }
 }
@@ -76,8 +146,11 @@ a:hover { text-decoration: underline; }
 <body>
 
 <div class="header">
-  <h1><i class="fa-solid fa-industry"></i> Industrial Lead Finder <span class="badge">B2B only</span></h1>
-  <p>Find Maintenance, Production &amp; Engineering Managers in Indian industrial zones</p>
+  <div class="header-logo">VB</div>
+  <div>
+    <h1>Industrial Lead Finder <span class="badge">B2B only</span></h1>
+    <p>Find Maintenance, Production &amp; Engineering Managers in Indian industrial zones</p>
+  </div>
 </div>
 
 <div class="container">
@@ -91,26 +164,29 @@ a:hover { text-decoration: underline; }
     </button>
   </div>
 
+  <!-- Company search card -->
   <div id="company-card" class="card" style="display:none;">
     <div class="card-title">Company search</div>
-    <div class="csearch-grid" style="display:grid; grid-template-columns:1fr 1fr auto; gap:10px; align-items:flex-end;">
+    <div class="csearch-grid" style="display:grid; grid-template-columns:1fr 1fr auto; gap:12px; align-items:flex-end;">
       <div>
         <label>Company name</label>
-        <input type="text" id="inp-company" placeholder="e.g. Bharat Forge, Kirloskar..."
+        <input type="text" id="inp-company" placeholder="e.g. Bharat Forge, Emcure..."
           onkeydown="if(event.key==='Enter') startCompanySearch()" />
       </div>
       <div>
         <label>Location</label>
-        <input type="text" id="inp-company-location" placeholder="e.g. Pune, MIDC Nashik..."
+        <input type="text" id="inp-company-location" placeholder="e.g. Pune, Mumbai, Nashik..."
           onkeydown="if(event.key==='Enter') startCompanySearch()" />
       </div>
       <button onclick="startCompanySearch()"
-        style="padding:9px 20px; background:#1F4E79; color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; white-space:nowrap;">
+        style="padding:9px 20px; background:var(--or); color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; transition:background .15s;"
+        onmouseover="this.style.background='#c2540a'" onmouseout="this.style.background='#f97316'">
         <i class="fa-solid fa-magnifying-glass"></i> Search
       </button>
     </div>
   </div>
 
+  <!-- Area search card -->
   <div id="area-card" class="card">
     <div class="card-title">Location &amp; filters</div>
     <div class="grid-2">
@@ -125,7 +201,7 @@ a:hover { text-decoration: underline; }
         </select>
       </div>
       <div>
-        <label>Industrial area <span style="color:#9aa0a6">(optional)</span></label>
+        <label>Industrial area <span style="color:var(--t3)">(optional)</span></label>
         <select id="sel-area"><option value="">All areas in state</option></select>
       </div>
     </div>
@@ -270,6 +346,23 @@ a:hover { text-decoration: underline; }
     document.getElementById("prog-label").textContent = label;
   }
 
+  function friendlyError(msg) {
+    msg = (msg || "").toLowerCase();
+    if (msg.indexOf("unauthori") !== -1)
+      return "Access denied — invalid token. Contact the administrator.";
+    if (msg.indexOf("quota") !== -1 || msg.indexOf("limit") !== -1 || msg.indexOf("429") !== -1)
+      return "Hunter.io monthly quota exhausted (50/month on free plan). Results show company + phone only. Resets next billing cycle.";
+    if (msg.indexOf("timeout") !== -1 || msg.indexOf("deadline") !== -1)
+      return "Search timed out — try fewer roles or a smaller max results number.";
+    if (msg.indexOf("no companies found") !== -1)
+      return "No companies found in this area — try a broader region or remove the industry filter.";
+    if (msg.indexOf("network") !== -1 || msg.indexOf("failed to fetch") !== -1)
+      return "Network error — check your internet connection and try again.";
+    if (msg.indexOf("script") !== -1 || msg.indexOf("500") !== -1)
+      return "Backend error — try again in a few seconds. If it persists, redeploy the Apps Script.";
+    return "Something went wrong: " + (msg || "unknown error");
+  }
+
   function startSearch() {
     var state = document.getElementById("sel-state").value;
     if (!state) { alert("Please select a state first."); return; }
@@ -307,12 +400,7 @@ a:hover { text-decoration: underline; }
       .then(function(r) { return r.json(); })
       .then(function(data) {
         clearInterval(iv);
-        if (!data.success) {
-          log(friendlyError(data.error), "warn");
-          setProgress(0, "Failed");
-          document.getElementById("btn-run").disabled = false;
-          return;
-        }
+        if (!data.success) { log(friendlyError(data.error), "warn"); setProgress(0, "Failed"); document.getElementById("btn-run").disabled = false; return; }
         setProgress(100, "Complete");
         if (data.errors && data.errors.length) data.errors.forEach(function(e) { log(friendlyError(e), "warn"); });
         log("Found " + data.total + " leads — saved to Google Sheet", "ok");
@@ -331,14 +419,14 @@ a:hover { text-decoration: underline; }
   function startCompanySearch() {
     var company  = document.getElementById('inp-company').value.trim();
     var location = document.getElementById('inp-company-location').value.trim();
-    if (!company) { alert('Please enter a company name.'); return; }
+    if (!company)  { alert('Please enter a company name.'); return; }
     if (!location) { alert('Please enter a location to narrow the search.'); return; }
 
     document.getElementById('progress-wrap').style.display   = 'block';
     document.getElementById('results-section').style.display = 'none';
     document.getElementById('log-box').innerHTML = '';
-    setProgress(10, 'Searching for ' + company + (location ? ' in ' + location : '') + '...');
-    log('Looking up: ' + company + (location ? ' — ' + location : ''), 'info');
+    setProgress(10, 'Searching for ' + company + ' in ' + location + '...');
+    log('Looking up: ' + company + ' — ' + location, 'info');
 
     var url = SCRIPT_URL
       + '&action=searchCompany'
@@ -349,11 +437,7 @@ a:hover { text-decoration: underline; }
       .then(function(r) { return r.json(); })
       .then(function(data) {
         if (data.errors && data.errors.length) data.errors.forEach(function(e) { log(friendlyError(e), 'warn'); });
-        if (!data.success) {
-          log(friendlyError(data.error), 'warn');
-          setProgress(0, 'Failed');
-          return;
-        }
+        if (!data.success) { log(friendlyError(data.error), 'warn'); setProgress(0, 'Failed'); return; }
         setProgress(100, 'Complete');
         log('Found ' + data.total + ' contacts — saved to Google Sheet', 'ok');
         allLeads = data.leads || [];
@@ -379,39 +463,26 @@ a:hover { text-decoration: underline; }
     }
     leads.forEach(function(l) {
       var tr        = document.createElement("tr");
-      var emailCell = l.email ? '<a href="mailto:' + esc(l.email) + '">' + esc(l.email) + '</a>' : '<span style="color:#ccc">—</span>';
-      var liCell    = l.linkedin_url ? '<a href="' + esc(l.linkedin_url) + '" target="_blank"><i class="fa-brands fa-linkedin" style="font-size:16px"></i></a>' : '<span style="color:#ccc">—</span>';
+      var emailCell = l.email
+        ? '<a href="mailto:' + esc(l.email) + '" class="email-cell">' + esc(l.email) + '</a>'
+        : '<span style="color:var(--t3)">—</span>';
+      var liCell = l.linkedin_url
+        ? '<a href="' + esc(l.linkedin_url) + '" target="_blank" class="li-link"><i class="fa-brands fa-linkedin"></i></a>'
+        : '<span style="color:var(--t3)">—</span>';
       tr.innerHTML =
         '<td class="name-cell">'  + esc(l.name)    + '</td>' +
         '<td class="title-cell">' + esc(l.title)   + '</td>' +
         '<td>'                    + esc(l.company)  + '</td>' +
         '<td class="addr-cell">'  + esc(l.address)  + '</td>' +
-        '<td class="email-cell">' + emailCell        + '</td>' +
+        '<td>'                    + emailCell        + '</td>' +
         '<td class="phone-cell">' + esc(l.phone || "—") + '</td>' +
         '<td><span class="conf ' + esc(l.confidence) + '">' + esc(l.confidence) + '</span></td>' +
-        '<td>' + liCell + '</td>';
+        '<td style="text-align:center">' + liCell + '</td>';
       tbody.appendChild(tr);
     });
   }
 
   function esc(s) { var d = document.createElement("div"); d.textContent = s || ""; return d.innerHTML; }
-
-  function friendlyError(msg) {
-    msg = (msg || "").toLowerCase();
-    if (msg.indexOf("unauthori") !== -1)
-      return "Access denied — invalid token. Contact the administrator.";
-    if (msg.indexOf("quota") !== -1 || msg.indexOf("limit") !== -1 || msg.indexOf("429") !== -1)
-      return "Hunter.io monthly quota exhausted (50/month on free plan). Results will show company + phone only. Resets next billing cycle.";
-    if (msg.indexOf("timeout") !== -1 || msg.indexOf("deadline") !== -1)
-      return "Search timed out — try fewer roles or a smaller max results number.";
-    if (msg.indexOf("no companies found") !== -1)
-      return "No companies found in this area — try selecting a broader region or removing the industry filter.";
-    if (msg.indexOf("network") !== -1 || msg.indexOf("failed to fetch") !== -1)
-      return "Network error — check your internet connection and try again.";
-    if (msg.indexOf("script") !== -1 || msg.indexOf("500") !== -1)
-      return "Backend error — try again in a few seconds. If it persists, redeploy the Apps Script.";
-    return "Something went wrong: " + (msg || "unknown error");
-  }
 
   function exportCSV() {
     if (!allLeads.length) return;
