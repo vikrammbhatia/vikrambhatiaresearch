@@ -34,7 +34,7 @@ select option { background: var(--bg3); }
 .mode-row { display: flex; gap: 8px; margin-bottom: 14px; }
 .mode-btn { flex: 1; padding: 10px 8px; border-radius: 10px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all .15s; }
 .mode-btn.active { background: var(--or); color: #fff; border: 1px solid var(--or); }
-.mode-btn.inactive { background: var(--bg3); color: var(--t2); border: 1px solid var(--bg4); }
+.mode-btn.inactive { background: var(--bg3); color: var(--t2); border: 1px solid var(--bg4); pointer-events: auto; cursor: pointer; }
 .mode-btn.inactive:hover { border-color: var(--or); color: var(--or); }
 .btn-run { width: 100%; padding: 11px; background: var(--or); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background .15s; }
 .btn-run:hover { background: var(--or2); }
