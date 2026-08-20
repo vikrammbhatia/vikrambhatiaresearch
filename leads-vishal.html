@@ -167,7 +167,7 @@ tr:last-child td { border-bottom: none; }
   <!-- Company search card -->
   <div id="company-card" class="card" style="display:none;">
     <div class="card-title">Company search</div>
-    <div class="csearch-grid" style="display:grid; grid-template-columns:1fr 1fr auto; gap:12px; align-items:flex-end;">
+    <div class="csearch-grid" style="display:grid; grid-template-columns:1fr 1fr auto; gap:12px; align-items:flex-end; margin-bottom:14px;">
       <div>
         <label>Company name</label>
         <input type="text" id="inp-company" placeholder="e.g. Bharat Forge, Emcure..."
@@ -183,6 +183,15 @@ tr:last-child td { border-bottom: none; }
         onmouseover="this.style.background='#c2540a'" onmouseout="this.style.background='#f97316'">
         <i class="fa-solid fa-magnifying-glass"></i> Search
       </button>
+    </div>
+    <div class="card-title" style="margin-top:4px;">Target roles</div>
+    <div class="toggle-row">
+      <div class="toggle on" data-role="Maintenance Manager" onclick="toggleRole(this)"><i class="fa-solid fa-wrench"></i> Maintenance manager</div>
+      <div class="toggle on" data-role="Production Manager" onclick="toggleRole(this)"><i class="fa-solid fa-gears"></i> Production manager</div>
+      <div class="toggle on" data-role="Engineering Manager" onclick="toggleRole(this)"><i class="fa-solid fa-helmet-safety"></i> Engineering manager</div>
+      <div class="toggle" data-role="Plant Manager" onclick="toggleRole(this)"><i class="fa-solid fa-building-columns"></i> Plant manager</div>
+      <div class="toggle" data-role="Operations Manager" onclick="toggleRole(this)"><i class="fa-solid fa-chart-line"></i> Operations manager</div>
+      <div class="toggle" data-role="Quality Manager" onclick="toggleRole(this)"><i class="fa-solid fa-clipboard-check"></i> Quality manager</div>
     </div>
   </div>
 
@@ -428,10 +437,12 @@ tr:last-child td { border-bottom: none; }
     setProgress(10, 'Searching for ' + company + ' in ' + location + '...');
     log('Looking up: ' + company + ' — ' + location, 'info');
 
+    var roles = getRoles();
     var url = SCRIPT_URL
       + '&action=searchCompany'
       + '&company='  + encodeURIComponent(company)
-      + '&location=' + encodeURIComponent(location);
+      + '&location=' + encodeURIComponent(location)
+      + '&roles='    + encodeURIComponent(roles.join(","));
 
     var controller = new AbortController();
     var timeoutId  = setTimeout(function() { controller.abort(); }, 120000); // 2 min timeout
