@@ -191,22 +191,60 @@ tr:hover td { background: var(--bg4); } tr:last-child td { border-bottom: none; 
   <!-- MIDC Directory card -->
   <div id="midc-card" class="card" style="display:none;">
     <div class="card-title">MIDC directory search</div>
-    <div class="info-banner">
-      <i class="fa-solid fa-circle-info"></i>
-      Pulls the complete verified company list directly from the MIDC industrial directory — not limited to Google's 60-result cap
-    </div>
+
     <div class="grid-2" style="margin-bottom:14px;">
       <div>
         <label>MIDC zone</label>
         <select id="sel-midc-zone">
           <option value="">Select MIDC zone...</option>
-          <optgroup label="Pune region">
+          <optgroup label="Pune region (directory available)">
             <option value="MIDC Chakan">MIDC Chakan (44 companies)</option>
             <option value="MIDC Ranjangaon">MIDC Ranjangaon (59 companies)</option>
             <option value="MIDC Bhosari">MIDC Bhosari (31 companies)</option>
             <option value="MIDC Jejuri">MIDC Jejuri (8 companies)</option>
             <option value="MIDC Phaltan">MIDC Phaltan (17 companies)</option>
             <option value="MIDC Baramati">MIDC Baramati (34 companies)</option>
+          </optgroup>
+          <optgroup label="Pune region (Google Maps)">
+            <option value="MIDC Pune (Pimpri-Chinchwad)">MIDC Pune (Pimpri-Chinchwad)</option>
+            <option value="MIDC Talegaon">MIDC Talegaon</option>
+            <option value="MIDC Hinjawadi">MIDC Hinjawadi</option>
+            <option value="MIDC Satara">MIDC Satara</option>
+            <option value="MIDC Kolhapur">MIDC Kolhapur</option>
+            <option value="MIDC Solapur">MIDC Solapur</option>
+            <option value="MIDC Ahmednagar">MIDC Ahmednagar</option>
+          </optgroup>
+          <optgroup label="Mumbai / Thane / Navi Mumbai">
+            <option value="MIDC Thane (Wagle Estate)">MIDC Thane (Wagle Estate)</option>
+            <option value="MIDC Taloja">MIDC Taloja</option>
+            <option value="MIDC Patalganga">MIDC Patalganga</option>
+            <option value="MIDC Dombivli">MIDC Dombivli</option>
+            <option value="MIDC Ambernath">MIDC Ambernath</option>
+            <option value="MIDC Tarapur">MIDC Tarapur</option>
+            <option value="MIDC Andheri (Mumbai)">MIDC Andheri (Mumbai)</option>
+          </optgroup>
+          <optgroup label="Nashik region">
+            <option value="MIDC Nashik (Ambad)">MIDC Nashik (Ambad)</option>
+            <option value="MIDC Sinnar (Nashik)">MIDC Sinnar (Nashik)</option>
+            <option value="MIDC Satpur (Nashik)">MIDC Satpur (Nashik)</option>
+          </optgroup>
+          <optgroup label="Aurangabad region">
+            <option value="MIDC Waluj (Aurangabad)">MIDC Waluj (Aurangabad)</option>
+            <option value="MIDC Chikalthana (Aurangabad)">MIDC Chikalthana (Aurangabad)</option>
+            <option value="MIDC Shendra (Aurangabad)">MIDC Shendra (Aurangabad)</option>
+            <option value="MIDC Jalna">MIDC Jalna</option>
+          </optgroup>
+          <optgroup label="Nagpur region">
+            <option value="MIDC Butibori (Nagpur)">MIDC Butibori (Nagpur)</option>
+            <option value="MIDC Hingna (Nagpur)">MIDC Hingna (Nagpur)</option>
+            <option value="MIDC Kalmeshwar (Nagpur)">MIDC Kalmeshwar (Nagpur)</option>
+          </optgroup>
+          <optgroup label="Marathwada / Vidarbha">
+            <option value="MIDC Latur">MIDC Latur</option>
+            <option value="MIDC Nanded">MIDC Nanded</option>
+            <option value="MIDC Osmanabad">MIDC Osmanabad</option>
+            <option value="MIDC Chandrapur">MIDC Chandrapur</option>
+            <option value="MIDC Yavatmal">MIDC Yavatmal</option>
           </optgroup>
         </select>
       </div>
@@ -380,7 +418,7 @@ tr:hover td { background: var(--bg4); } tr:last-child td { border-bottom: none; 
     log("Searching: " + state + (area ? " / " + area : "") + (industry ? " / " + industry : ""), "info");
     log("Target roles: " + roles.join(", "), "info");
 
-    var steps = [[20,"Scanning industrial zone companies..."],[40,"Enriching contacts via Hunter.io..."],[70,"Deduplicating results..."],[85,"Saving to Google Sheet..."]];
+    var steps = [[20,"Discovering companies in the zone..."],[50,"Finding contact details..."],[80,"Processing results..."]];
     var si = 0;
     var iv = setInterval(function() {
       if (si < steps.length) { setProgress(steps[si][0], steps[si][1]); log(steps[si][1]); si++; }
@@ -419,7 +457,7 @@ tr:hover td { background: var(--bg4); } tr:last-child td { border-bottom: none; 
     document.getElementById('progress-wrap').style.display   = 'block';
     document.getElementById('results-section').style.display = 'none';
     document.getElementById('log-box').innerHTML = '';
-    setProgress(10, 'Searching for ' + company + ' in ' + location + '...');
+    setProgress(10, 'Looking up ' + company + '...');
     log('Looking up: ' + company + ' — ' + location, 'info');
 
     var url = SCRIPT_URL + '&action=searchCompany' + '&company=' + encodeURIComponent(company) + '&location=' + encodeURIComponent(location) + '&roles=' + encodeURIComponent(roles.join(','));
@@ -451,7 +489,7 @@ tr:hover td { background: var(--bg4); } tr:last-child td { border-bottom: none; 
     log('Loading: ' + zone, 'info');
     log('Target roles: ' + roles.join(', '), 'info');
 
-    var steps = [[20,'Fetching full company list...'],[45,'Looking up addresses & phones...'],[70,'Enriching contacts via Hunter.io...'],[88,'Saving to Google Sheet...']];
+    var steps = [[20,'Loading company list...'],[50,'Finding contact details...'],[80,'Processing results...']];
     var si = 0;
     var iv = setInterval(function() {
       if (si < steps.length) { setProgress(steps[si][0], steps[si][1]); log(steps[si][1]); si++; }
@@ -497,7 +535,7 @@ tr:hover td { background: var(--bg4); } tr:last-child td { border-bottom: none; 
       var phoneCell = l.phone ? esc(l.phone) : '<span class="na-cell">N/A</span>';
       var liCell    = l.linkedin_url
         ? '<a href="' + esc(l.linkedin_url) + '" target="_blank" class="li-link"><i class="fa-brands fa-linkedin"></i></a>'
-        : '<a href="https://www.linkedin.com/search/results/people/?keywords=' + encodeURIComponent((l.company||'') + ' ' + (l.title && l.title !== 'N/A' ? l.title : 'Manager')) + '" target="_blank" style="font-size:11px;color:var(--t2);text-decoration:none;border:1px solid var(--bg5);padding:2px 7px;border-radius:4px;white-space:nowrap;" onmouseover="this.style.borderColor=\'#f97316\';this.style.color=\'#f97316\'" onmouseout="this.style.borderColor=\'var(--bg5)\';this.style.color=\'var(--t2)\'">Search ↗</a>';
+        ? '<a href="https://www.linkedin.com/search/results/people/?keywords=' + encodeURIComponent((l.company||'') + ' ' + (l.title && l.title !== 'N/A' ? l.title : 'Manager')) + '&geoUrn=%5B%22102713980%22%5D" target="_blank" style="font-size:11px;color:var(--t2);text-decoration:none;border:1px solid var(--bg5);padding:2px 7px;border-radius:4px;white-space:nowrap;" onmouseover="this.style.borderColor=\'#f97316\';this.style.color=\'#f97316\'" onmouseout="this.style.borderColor=\'var(--bg5)\';this.style.color=\'var(--t2)\'">Search ↗</a>';
       tr.innerHTML =
         '<td class="name-cell">'  + nameCell  + '</td>' +
         '<td>'                    + titleCell  + '</td>' +
