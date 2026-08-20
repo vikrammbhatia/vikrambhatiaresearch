@@ -485,7 +485,7 @@ tr:last-child td { border-bottom: none; }
         : '<span style="color:var(--t3)">—</span>';
       var liCell = l.linkedin_url
         ? '<a href="' + esc(l.linkedin_url) + '" target="_blank" class="li-link"><i class="fa-brands fa-linkedin"></i></a>'
-        : '<span style="color:var(--t3)">—</span>';
+        : '<a href="https://www.linkedin.com/search/results/people/?keywords=' + encodeURIComponent(l.company) + '&titleFreeText=' + encodeURIComponent(l.title && l.title !== '—' ? l.title : 'Manager') + '" target="_blank" style="font-size:11px; color:var(--t2); text-decoration:none; border:1px solid var(--bg5); padding:2px 7px; border-radius:4px; white-space:nowrap;" onmouseover="this.style.borderColor=\'#f97316\';this.style.color=\'#f97316\'" onmouseout="this.style.borderColor=\'var(--bg5)\';this.style.color=\'var(--t2)\'">Search ↗</a>';
       tr.innerHTML =
         '<td class="name-cell">'  + esc(l.name)    + '</td>' +
         '<td class="title-cell">' + esc(l.title)   + '</td>' +
