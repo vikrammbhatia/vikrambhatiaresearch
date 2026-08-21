@@ -535,7 +535,7 @@ tr:hover td { background: var(--bg4); } tr:last-child td { border-bottom: none; 
       var phoneCell = l.phone ? esc(l.phone) : '<span class="na-cell">N/A</span>';
       var liCell    = l.linkedin_url
         ? '<a href="' + esc(l.linkedin_url) + '" target="_blank" class="li-link"><i class="fa-brands fa-linkedin"></i></a>'
-        ? '<a href="https://www.linkedin.com/search/results/people/?keywords=' + encodeURIComponent((l.company||'') + ' ' + (l.title && l.title !== 'N/A' ? l.title : 'Manager')) + '&geoUrn=%5B%22102713980%22%5D" target="_blank" style="font-size:11px;color:var(--t2);text-decoration:none;border:1px solid var(--bg5);padding:2px 7px;border-radius:4px;white-space:nowrap;" onmouseover="this.style.borderColor=\'#f97316\';this.style.color=\'#f97316\'" onmouseout="this.style.borderColor=\'var(--bg5)\';this.style.color=\'var(--t2)\'">Search ↗</a>';
+        : '<a href="https://www.linkedin.com/search/results/people/?keywords=' + encodeURIComponent((l.company||'') + ' ' + (l.title && l.title !== 'N/A' ? l.title : 'Manager')) + '&geoUrn=%5B%22102713980%22%5D" target="_blank" style="font-size:11px;color:var(--t2);text-decoration:none;border:1px solid var(--bg5);padding:2px 7px;border-radius:4px;white-space:nowrap;" onmouseover="this.style.borderColor=\'#f97316\';this.style.color=\'#f97316\'" onmouseout="this.style.borderColor=\'var(--bg5)\';this.style.color=\'var(--t2)\'">Search ↗</a>';
       tr.innerHTML =
         '<td class="name-cell">'  + nameCell  + '</td>' +
         '<td>'                    + titleCell  + '</td>' +
