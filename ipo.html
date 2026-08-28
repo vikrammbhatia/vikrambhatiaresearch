@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
-<!-- v3.2 -->
+<!-- v3.3 -->
 <title>IPO Research Engine · Vikram Bhatia</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -54,7 +54,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .slabel{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--or);margin-bottom:12px;margin-top:1.5rem;}
 
 /* HERO */
-.hero{border-radius:10px;padding:18px 22px;margin-bottom:1.25rem;display:flex;align-items:flex-start;gap:20px;flex-wrap:nowrap;}
+.hero{border-radius:10px;padding:18px 22px;margin-bottom:1.25rem;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:20px;}
 .hero.green{background:var(--green-bg);border:1px solid var(--green-bd);}
 .hero.amber{background:var(--amber-bg);border:1px solid var(--amber-bd);}
 .hero.red{background:var(--red-bg);border:1px solid var(--red-bd);}
@@ -63,13 +63,13 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .hero.green .hero-score{color:var(--green);}
 .hero.amber .hero-score{color:var(--amber);}
 .hero.red   .hero-score{color:var(--red);}
-.hero-center{flex:1;min-width:0;overflow:hidden;}
+.hero-center{min-width:0;overflow:hidden;}
 .hero-badge{font-size:17px;font-weight:600;margin-bottom:6px;white-space:normal;word-break:break-word;}
 .hero.green .hero-badge{color:var(--green);}
 .hero.amber .hero-badge{color:var(--amber);}
 .hero.red   .hero-badge{color:var(--red);}
 .hero-rationale{font-size:13px;color:var(--t2);line-height:1.5;word-break:break-word;}
-.hero-right{display:flex;flex-direction:column;gap:6px;flex-shrink:0;min-width:220px;}
+.hero-right{display:flex;flex-direction:column;gap:6px;min-width:200px;}
 .hero-pill{font-size:11px;background:var(--bg4);border:1px solid var(--b2);color:var(--t2);padding:4px 10px;border-radius:20px;}
 
 /* METRICS */
