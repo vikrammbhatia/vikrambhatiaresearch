@@ -453,11 +453,8 @@ async function loadHistory() {
     console.log('UAE ipolist data:', data);
     if(!Array.isArray(data)||!data.length){el.innerHTML='<div class="no-nfos">No analyses yet.</div>';return;}
     const todayIST = new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Kolkata'});
-    const cutoff = new Date(); cutoff.setDate(cutoff.getDate()-2);
-    const cutoffStr = cutoff.toLocaleDateString('en-CA',{timeZone:'Asia/Kolkata'});
     const seen=new Map();
     data.forEach(item=>{
-      if(item.listingDate&&item.listingDate<cutoffStr) return;
       const key=item.name.toLowerCase().trim();
       const ex=seen.get(key);
       if(!ex||parseInt(item.score)>parseInt(ex.score)) seen.set(key,item);
