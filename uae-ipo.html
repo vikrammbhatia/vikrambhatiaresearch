@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
+<title>UAE IPO Research Engine — Vikram Bhatia</title>
+<style>
+:root{
+  --bg1:#0a0a0a;--bg2:#111;--bg3:#161616;--bg4:#1e1e1e;
+  --b1:#1f1f1f;--b2:#2a2a2a;--b3:#333;
+  --t1:#f0f0f0;--t2:#b0b0b0;--t3:#666;
+  --or:#e67e22;--amber:#f59e0b;
+  --green:#22c55e;--green-bg:#052e16;--green-bd:#166534;
+  --red:#ef4444;--blue:#2563eb;--blue-bg:#0d1b3e;--blue-bd:#1e40af;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-serif;font-size:13px;min-height:100vh;}
+.page{display:flex;min-height:100vh;}
+.main-col{flex:1;padding:2rem 2.5rem;max-width:1100px;min-width:0;}
+.side-col{width:300px;flex-shrink:0;background:var(--bg2);border-left:1px solid var(--b1);padding:1.5rem 1.2rem;position:sticky;top:0;height:100vh;overflow-y:auto;}
+
+/* HEADER */
+.ph-title{font-size:22px;font-weight:700;color:var(--or);margin-bottom:2px;}
+.ph-flag{font-size:14px;color:var(--t3);margin-bottom:2px;}
+.ph-sub{font-size:12px;color:var(--t3);margin-bottom:1.5rem;}
+.ph-nav{font-size:11px;color:var(--t3);margin-bottom:1.5rem;}
+.ph-nav a{color:var(--or);text-decoration:none;}
+
+/* SEARCH */
+.search-row{display:flex;gap:10px;margin-bottom:1.5rem;}
+.search-row input{flex:1;background:var(--bg3);border:1px solid var(--b2);color:var(--t1);padding:11px 16px;border-radius:8px;font-size:14px;outline:none;}
+.search-row input:focus{border-color:var(--or);}
+.btn-go{background:var(--or);color:#fff;border:none;padding:11px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;}
+.btn-go:disabled{opacity:0.6;}
+
+/* RESULTS */
+#results{min-height:200px;}
+.no-result{text-align:center;padding:3rem;color:var(--t3);}
+
+/* HERO */
+.hero{border-radius:10px;padding:18px 22px;margin-bottom:1.25rem;display:flex;align-items:flex-start;gap:20px;}
+.hero.green{background:var(--green-bg);border:1px solid var(--green-bd);}
+.hero.amber{background:#1a1200;border:1px solid #854d0e;}
+.hero.red{background:#1a0000;border:1px solid #7f1d1d;}
+.hero.blue{background:var(--blue-bg);border:1px solid var(--blue-bd);}
+.hero-score{font-size:52px;font-weight:600;line-height:1;text-align:center;min-width:80px;}
+.hero-score-lbl{font-size:11px;color:var(--t3);text-align:center;}
+.hero.green .hero-score{color:var(--green);}
+.hero.amber .hero-score{color:var(--amber);}
+.hero.red .hero-score{color:var(--red);}
+.hero.blue .hero-score{color:#60a5fa;}
+.hero-center{flex:1;min-width:0;}
+.hero-badge{font-size:17px;font-weight:600;margin-bottom:6px;}
+.hero.green .hero-badge{color:var(--green);}
+.hero.amber .hero-badge{color:var(--amber);}
+.hero.red .hero-badge{color:var(--red);}
+.hero.blue .hero-badge{color:#60a5fa;}
+.hero-rationale{font-size:13px;color:var(--t2);line-height:1.5;margin-bottom:10px;}
+.hero-pills{display:flex;flex-wrap:wrap;gap:6px;}
+.hero-pill{font-size:11px;background:var(--bg4);border:1px solid var(--b2);color:var(--t2);padding:4px 10px;border-radius:20px;}
+.cache-badge{font-size:10px;color:var(--t3);margin-top:4px;}
+.phase-badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;margin-top:4px;}
+.phase-1{background:#1a1000;border:1px solid #854d0e;color:var(--amber);}
+.phase-2{background:var(--green-bg);border:1px solid var(--green-bd);color:var(--green);}
+
+/* SECTIONS */
+.slabel{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--or);margin-bottom:8px;margin-top:1.5rem;}
+.div{height:1px;background:var(--b1);margin:1.5rem 0;}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px;margin-bottom:1rem;}
+.mc{background:var(--bg3);border:1px solid var(--b1);border-radius:6px;padding:8px 10px;}
+.mc-lbl{font-size:9px;text-transform:uppercase;letter-spacing:0.05em;color:var(--t3);margin-bottom:4px;}
+.mc-val{font-size:12px;font-weight:600;color:var(--t1);}
+
+/* CATEGORY BARS */
+.cat-bars{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem;}
+.cat-bar-row{display:flex;align-items:center;gap:10px;}
+.cat-bar-name{width:90px;font-size:11px;color:var(--t2);display:flex;align-items:center;gap:4px;flex-shrink:0;}
+.cat-bar-track{flex:1;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;}
+.cat-bar-fill{height:100%;border-radius:3px;transition:width 0.6s ease;}
+.cat-bar-val{width:35px;font-size:11px;text-align:right;flex-shrink:0;}
+
+/* FACTOR GRID */
+.factor-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-bottom:1rem;}
+.fg-card{background:var(--bg3);border:1px solid var(--b1);border-radius:6px;padding:8px 10px;}
+.fg-cat{font-size:9px;text-transform:uppercase;letter-spacing:0.05em;color:var(--t3);margin-bottom:2px;}
+.fg-name{font-size:11px;color:var(--t2);margin-bottom:6px;}
+.fg-bottom{display:flex;align-items:center;gap:6px;}
+.fg-bar{flex:1;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;}
+.fg-bar-fill{height:100%;border-radius:2px;}
+.fg-score{font-size:11px;font-weight:600;flex-shrink:0;}
+.sg{color:var(--green);}.sa{color:var(--amber);}.sr{color:var(--red);}.sn{color:var(--t3);}
+
+/* POS/RISK */
+.pos-risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;}
+.pr-box{background:var(--bg3);border-radius:8px;padding:12px 14px;}
+.pr-box.pos{border:1px solid #166534;}.pr-box.risk{border:1px solid #7f1d1d;}
+.pr-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;}
+.pr-box.pos .pr-title{color:var(--green);}.pr-box.risk .pr-title{color:var(--red);}
+.pr-item{font-size:12px;color:var(--t2);padding:4px 0;border-bottom:1px solid var(--b1);line-height:1.4;}
+.pr-item:last-child{border-bottom:none;}
+
+/* DATA TABLE */
+.dtable{width:100%;border-collapse:collapse;margin-bottom:1rem;}
+.dtable td{padding:6px 8px;border-bottom:1px solid var(--b1);vertical-align:top;font-size:12px;color:var(--t2);}
+.dtable td:first-child{color:var(--t3);width:160px;font-size:11px;}
+
+/* AI ANALYSIS */
+.ai-box{background:transparent;border:none;padding:0;}
+.ai-block{margin-bottom:8px;display:flex;align-items:flex-start;gap:0;padding:7px 0;border-bottom:1px solid #0e0e0e;}
+.ai-block:last-child{border-bottom:none;}
+.ai-lbl{font-size:12px;font-weight:500;color:var(--t3);white-space:nowrap;flex-shrink:0;min-width:130px;}
+.ai-text{font-size:12px;color:var(--t2);line-height:1.6;}
+
+/* SIDEBAR */
+.side-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.side-title{font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--or);}
+.refresh-btn{background:var(--or);color:#fff;border:none;padding:4px 10px;border-radius:4px;font-size:10px;cursor:pointer;}
+.nfo-item{background:var(--bg3);border:1px solid var(--b1);border-radius:6px;padding:10px 12px;margin-bottom:8px;}
+.nfo-item-name{font-size:12px;font-weight:600;color:var(--t1);line-height:1.3;}
+.nfo-item-cat{font-size:10px;color:var(--t3);margin-top:2px;}
+.no-nfos{font-size:11px;color:var(--t3);text-align:center;padding:1.5rem 0;}
+
+/* LOADER */
+#loader{display:none;text-align:center;padding:3rem;color:var(--t3);}
+.spin{font-size:24px;animation:spin 1s linear infinite;display:inline-block;margin-bottom:12px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* TOOLTIP */
+.tooltip-wrap{position:relative;display:inline-block;}
+.tooltip-wrap .tooltip-box{display:none;position:absolute;z-index:999;background:#1c1c1c;color:var(--t2);font-size:11px;line-height:1.6;border:1px solid var(--b2);border-radius:6px;padding:8px 10px;width:220px;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,0.4);}
+.tooltip-wrap:hover .tooltip-box{display:block;}
+.info-i{font-size:11px;color:var(--t3);cursor:help;}
+
+/* URGENT */
+@keyframes pulse-red{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.6);}50%{box-shadow:0 0 0 8px rgba(239,68,68,0);}}
+@keyframes pulse-amber{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0.6);}50%{box-shadow:0 0 0 8px rgba(245,158,11,0);}}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.urgent-close{animation:pulse-red 1.5s infinite;border-color:#ef4444 !important;}
+.urgent-list{animation:pulse-amber 1.5s infinite;border-color:#f59e0b !important;}
+.urgent-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;animation:blink 1s infinite;}
+.urgent-dot.red{background:#ef4444;}.urgent-dot.amber{background:#f59e0b;}
+
+/* METHODOLOGY NOTE */
+.method-note{font-size:11px;color:var(--t3);margin-top:8px;margin-bottom:1rem;line-height:1.7;padding:10px 14px;background:var(--bg3);border-radius:6px;border:1px solid var(--b1);}
+
+/* DISCLAIMER */
+.disclaimer{font-size:10px;color:var(--t3);line-height:1.6;margin-top:2rem;padding:12px;background:var(--bg3);border-radius:6px;border:1px solid var(--b1);}
+
+/* MOBILE */
+.mob-sidebar-btn{display:none;}
+@media(max-width:900px){
+  .side-col{display:none;}
+  .main-col{padding:1.5rem;}
+  .mob-sidebar-btn{display:flex;align-items:center;justify-content:center;position:fixed;bottom:20px;right:20px;z-index:100;background:var(--or);color:#fff;border:none;border-radius:50%;width:52px;height:52px;font-size:20px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.4);}
+}
+@media(max-width:600px){
+  .main-col{padding:1rem 0.75rem;}
+  .search-row{flex-direction:column;}
+  .btn-go{width:100%;}
+  .hero{flex-direction:column;gap:10px;padding:14px 16px;}
+  .metrics{grid-template-columns:repeat(2,1fr);}
+  .pos-risk-grid{grid-template-columns:1fr;}
+  .factor-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="main-col">
+    <div class="ph-title">🇦🇪 UAE IPO Research Engine</div>
+    <div class="ph-flag">DFM · ADX · Dubai · Abu Dhabi</div>
+    <div class="ph-sub">AI-powered analysis · 20-factor scoring · AED denominated</div>
+    <div class="ph-nav">← <a href="/ipo">India IPO Engine</a></div>
+
+    <div class="search-row">
+      <input id="ipoInput" placeholder="Enter UAE company name e.g. Lulu Retail Holdings PJSC" onkeydown="if(event.key==='Enter')analyse()"/>
+      <button class="btn-go" id="goBtn" onclick="analyse()">Analyse ↗</button>
+    </div>
+
+    <div id="loader">
+      <div class="spin">⚙</div>
+      <div id="loaderMsg">Fetching UAE IPO data…</div>
+    </div>
+    <div id="results"></div>
+  </div>
+
+  <div class="side-col">
+    <div class="side-header">
+      <div class="side-title">Analysed IPOs</div>
+      <button class="refresh-btn" onclick="loadHistory()">Refresh</button>
+    </div>
+    <div id="analysedIpoList"><div class="no-nfos">No analyses yet.</div></div>
+  </div>
+</div>
+
+<button class="mob-sidebar-btn" onclick="document.querySelector('.side-col').style.display='block'" title="View analysed IPOs">📋</button>
+
+<script>
+const AS_URL = 'https://ipo-proxy.vikrammbhatia.workers.dev';
+const T = 'VB2026UAEIPO';
+
+const VERDICTS = {
+  'strong subscribe': {color:'green', icon:'✓✓', label:'Strong Subscribe', horizon:'Short to medium term', alloc:'Full allocation'},
+  'subscribe':        {color:'green', icon:'✓',  label:'Subscribe',        horizon:'Short to medium term', alloc:'Standard allocation'},
+  'subscribe with caution':{color:'amber',icon:'⚠',label:'Subscribe with Caution',horizon:'Listing gains focus',alloc:'Minimum lot'},
+  'neutral':          {color:'blue',  icon:'~',  label:'Neutral',          horizon:'Monitor post listing',  alloc:'Avoid'},
+  'avoid':            {color:'red',   icon:'✗',  label:'Avoid',            horizon:'Do not apply',          alloc:'Skip'},
+  'strong avoid':     {color:'red',   icon:'✗✗', label:'Strong Avoid',     horizon:'Do not apply',          alloc:'Skip'},
+};
+
+const CAT_TIPS = {
+  Market:     'Subscription multiples and GMP — Phase 2 only',
+  Financials: 'Revenue growth, profit growth, EBITDA margin, D/E, RoE',
+  Valuation:  'P/E vs peers, EV/EBITDA vs peers, free float, offer size',
+  Governance: 'Govt backing, sponsor reputation, fresh vs secondary, use of proceeds, lead managers, lock-in',
+  Strategic:  'Gulf sector tailwinds and competitive moat',
+};
+
+const FACTOR_TIPS = {
+  f01:'Revenue Growth 3yr CAGR — compound annual revenue growth over 3 years.',
+  f02:'PAT Growth 3yr CAGR — profit after tax growth compound annual rate.',
+  f03:'EBITDA Margin — operating profitability; >20% is strong for UAE market.',
+  f04:'Debt-to-Equity — lower is better; UAE infrastructure companies can carry more debt.',
+  f05:'Return on Equity — profitability relative to shareholder equity.',
+  f06:'P/E vs Sector Peers — is the IPO priced fairly vs listed peers on DFM/ADX?',
+  f07:'EV/EBITDA vs Peers — enterprise value multiple; more relevant than P/E for asset-heavy UAE companies.',
+  f08:'Free Float % — % of shares available to public post-listing; higher = more liquidity.',
+  f09:'Govt/Sovereign Backing — ADNOC, Emaar, DP World affiliates score highest in UAE market.',
+  f10:'Sponsor/Promoter Reputation — track record of the founding entity or sponsor.',
+  f11:'Fresh Issue vs Secondary — fresh issue = funds go to company; secondary = existing shareholders exit.',
+  f12:'Use of Proceeds — quality and business-orientation of how fresh funds will be deployed.',
+  f13:'Post-listing Supply Risk — lock-in periods and secondary offer overhang.',
+  f14:'Lead Manager Reputation — FAB, Emirates NBD Capital, UBS etc. signal institutional quality.',
+  f15:'Sector Tailwinds (Gulf) — alignment with UAE Vision 2031, tourism, infrastructure, fintech themes.',
+  f16:'Competitive Moat — sustainable competitive advantages in the UAE/GCC market.',
+  f17:'Offer Size — is the raise appropriate for the company stage and market conditions?',
+  f18:'Overall Subscription Multiple — total demand vs shares offered; Phase 2 only.',
+  f19:'Institutional Subscription — institutional tranche demand; stronger signal than retail.',
+  f20:'GMP Signal — grey market premium; informal but indicative of listing day sentiment.',
+};
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+let _analysing = false;
+async function analyse() {
+  if(_analysing) return;
+  const name = document.getElementById('ipoInput').value.trim();
+  if(!name) return;
+  _analysing = true;
+  const btn = document.getElementById('goBtn');
+  btn.disabled=true; btn.textContent='Analysing…';
+  document.getElementById('loader').style.display='block';
+  document.getElementById('results').innerHTML='';
+  const msgs = ['Searching DFM/ADX and UAE financial portals…','Fetching prospectus data and financials…','Running 20-factor scoring model…','Generating AI analysis…'];
+  let mi=0;
+  const iv = setInterval(()=>{ document.getElementById('loaderMsg').textContent=msgs[mi++%msgs.length]; },3500);
+  try {
+    const forceRefresh = document.getElementById('results').dataset.forceRefresh==='1';
+    const url = AS_URL+'?t='+T+'&action=uae_analyse&ipo='+encodeURIComponent(name)+(forceRefresh?'&refresh=1':'');
+    const res = await fetch(url, {redirect:'follow'});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const d = await res.json();
+    if(d.error) throw new Error(d.error);
+    render(d);
+    loadHistory();
+  } catch(e) {
+    document.getElementById('results').innerHTML=`<div style="background:#1a0000;border:1px solid #7f1d1d;border-radius:10px;padding:2rem;text-align:center;color:var(--red);">
+      <div style="font-size:20px;margin-bottom:8px;">⚠</div>
+      <div style="font-weight:600;margin-bottom:6px;">Analysis Error</div>
+      <div style="font-size:11px;color:var(--t3);">${esc(e.message)}</div></div>`;
+  } finally {
+    clearInterval(iv);
+    document.getElementById('loader').style.display='none';
+    btn.disabled=false; btn.textContent='Analyse ↗';
+    _analysing=false;
+    document.getElementById('results').dataset.forceRefresh='0';
+  }
+}
+
+function forceRefresh(e){
+  e.preventDefault();
+  document.getElementById('results').dataset.forceRefresh='1';
+  analyse();
+}
+
+function render(d) {
+  if(!d||!d.scores) return;
+  const sc = d.scores, cl = d.claudeAnalysis||{}, fd = d.fetchedData||{};
+  const vText = String(cl.verdict||'').toLowerCase();
+  let vColor = 'amber';
+  if(vText.includes('caution')) vColor='amber';
+  else if(vText.includes('avoid')) vColor='red';
+  else if(vText.includes('subscribe')) vColor='green';
+  else if(vText.includes('neutral')) vColor='blue';
+  const vrd = VERDICTS[vText] || VERDICTS['subscribe with caution'];
+
+  const lp = d.expectedListingPremium, elp = d.expectedListingPrice;
+  const lpClr = lp>0?'var(--green)':lp<0?'var(--red)':'var(--t3)';
+  const lpTxt = lp!==null&&lp!==undefined?(lp>0?'+':'')+lp+'%':'N/A';
+  const displayAmount = cl.suggestedAmount||vrd.alloc||'—';
+
+  const cacheBadge = d.fromCache?`<div class="cache-badge">⚡ From cache · <a href="#" onclick="forceRefresh(event)" style="color:var(--or);text-decoration:none;">Force fresh analysis ↗</a></div>`:'';
+  const phase = sc.phase||1;
+  const phaseBadge = phase===1
+    ? `<div class="phase-badge phase-1">Phase 1 · Pre-subscription · ${sc.totalActiveWeight||107}/127 pts active</div>`
+    : `<div class="phase-badge phase-2">Phase 2 · Full subscription data · All 127 pts active</div>`;
+
+  // Today IST for urgency
+  const todayHero = new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Kolkata'});
+  const heroBanner = fd.closeDate===todayHero
+    ? `<div style="background:#7f1d1d;border:1px solid #ef4444;color:#fca5a5;font-size:12px;font-weight:600;padding:8px 16px;border-radius:6px;margin-bottom:12px;display:flex;align-items:center;gap:8px;animation:blink 1s infinite;"><span style="font-size:16px;">⚠</span> LAST DAY TO APPLY — Subscription closes today!</div>`
+    : fd.listingDate===todayHero
+    ? `<div style="background:#78350f;border:1px solid #f59e0b;color:#fde68a;font-size:12px;font-weight:600;padding:8px 16px;border-radius:6px;margin-bottom:12px;display:flex;align-items:center;gap:8px;animation:blink 1.5s infinite;"><span style="font-size:16px;">🔔</span> LISTING TODAY — Monitor on DFM/ADX</div>` : '';
+
+  // Key Metrics
+  const mDefs = [
+    {l:'Open Date',   v:fd.openDate||'—'},
+    {l:'Close Date',  v:fd.closeDate||'—'},
+    {l:'Listing Date',v:fd.listingDate||'—'},
+    {l:'Exchange',    v:fd.exchange||null},
+    {l:'Offer Price', v:fd.pricePerShare?'AED '+fd.pricePerShare:null},
+    {l:'Offer Size',  v:fd.offerSizeAED?'AED '+fd.offerSizeAED+'Mn':null},
+    {l:'Free Float',  v:fd.freeFloat?fd.freeFloat+'%':null},
+    {l:'Govt Backed', v:fd.govtBacked!==null?String(fd.govtBacked):null},
+    {l:'GMP',         v:fd.gmpPct!==null&&fd.gmpPct!==undefined?fd.gmpPct+'%':null},
+    {l:'Total Sub',   v:fd.subscriptionOverall?fd.subscriptionOverall+'×':null},
+    {l:'Inst. Sub',   v:fd.subscriptionInstitutional?fd.subscriptionInstitutional+'×':null},
+    {l:'Rev CAGR',    v:fd.revenueCAGR3yr?fd.revenueCAGR3yr+'%':null},
+    {l:'PAT CAGR',    v:fd.patCAGR3yr?fd.patCAGR3yr+'%':null},
+    {l:'EBITDA Margin',v:fd.ebitdaMargin?fd.ebitdaMargin+'%':null},
+    {l:'P/E (Offer)', v:fd.peOffer?fd.peOffer+'×':null},
+    {l:'Min Invest',  v:fd.minInvestment?'AED '+fd.minInvestment:null},
+    {l:'Lot Size',    v:fd.lotSize?fd.lotSize+' shares':null},
+  ];
+  const metricsHtml = mDefs.filter(m=>m.v).map(m=>`<div class="mc"><div class="mc-lbl">${m.l}</div><div class="mc-val">${esc(String(m.v))}</div></div>`).join('');
+
+  // Category bars
+  const catOrder = ['Market','Financials','Valuation','Governance','Strategic'];
+  const catBars = catOrder.map(cat=>{
+    const s=sc.catScores&&sc.catScores[cat]!==null?sc.catScores[cat]:null;
+    if(s===null) return '';
+    const clr=s>=70?'var(--green)':s>=50?'var(--amber)':'var(--red)';
+    const tip=CAT_TIPS[cat]||'';
+    return `<div class="cat-bar-row"><div class="cat-bar-name">${cat} <span class="tooltip-wrap"><span class="info-i">ⓘ</span><span class="tooltip-box">${tip}</span></span></div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:${s}%;background:${clr};"></div></div><div class="cat-bar-val" style="color:${clr};">${s}%</div></div>`;
+  }).join('');
+
+  // Factor grid
+  const pendingIds = new Set((sc.pendingFactors||[]).map(f=>f.id));
+  const factorGrid = (sc.factors||[]).map(f=>{
+    const s=f.score, isPending=pendingIds.has(f.id);
+    const tip=(FACTOR_TIPS[f.id]||f.label).replace(/'/g,"&#39;");
+    if(isPending) return `<div class="fg-card" style="opacity:0.5;"><div class="fg-cat">${f.cat}</div><div class="fg-name" style="color:var(--t3);">${esc(f.label)} <span class="tooltip-wrap"><span class="info-i">ⓘ</span><span class="tooltip-box">${tip} — Awaiting subscription data</span></span></div><div class="fg-bottom"><div class="fg-bar"></div><span class="fg-score sn">Pending</span></div></div>`;
+    const fc=s>=4?'#22c55e':s>=3?'#f59e0b':'#ef4444';
+    const sc2=s>=4?'sg':s>=3?'sa':'sr';
+    const isPenalty=(s===2)&&(f.phase===1);
+    const penIcon=isPenalty?'<span style="font-size:9px;color:var(--t3);" title="Data not available — penalty 2/5">⚠</span>':'';
+    return `<div class="fg-card"><div class="fg-cat">${f.cat}</div><div class="fg-name">${esc(f.label)} <span class="tooltip-wrap"><span class="info-i">ⓘ</span><span class="tooltip-box">${tip}</span></span>${penIcon}</div><div class="fg-bottom"><div class="fg-bar"><div class="fg-bar-fill" style="width:${s/5*100}%;background:${fc};"></div></div><span class="fg-score ${sc2}">${s}/5</span></div></div>`;
+  }).join('');
+
+  // Key Positives & Risks
+  const pos = Array.isArray(cl.keyPositives)?cl.keyPositives:[];
+  const risks = Array.isArray(cl.keyRisks)?cl.keyRisks:[];
+  const prHtml = `
+    <div class="pr-box pos"><div class="pr-title">✓ Key Positives</div>${pos.map(p=>`<div class="pr-item">${esc(p)}</div>`).join('')}</div>
+    <div class="pr-box risk"><div class="pr-title">✗ Key Risks</div>${risks.map(r=>`<div class="pr-item">${esc(r)}</div>`).join('')}</div>`;
+
+  // AI Analysis
+  let aiHtml = `<div class="slabel">AI Analysis</div><div class="ai-box">`;
+  if(cl.listingOutlook)    aiHtml+=`<div class="ai-block"><span class="ai-lbl">Listing day &nbsp;</span><span class="ai-text">${esc(cl.listingOutlook)}</span></div>`;
+  if(cl.mediumTermOutlook) aiHtml+=`<div class="ai-block"><span class="ai-lbl">6–12 months &nbsp;</span><span class="ai-text">${esc(cl.mediumTermOutlook)}</span></div>`;
+  if(cl.allocationAdvice)  aiHtml+=`<div class="ai-block"><span class="ai-lbl">Allocation &nbsp;</span><span class="ai-text">${esc(cl.allocationAdvice)}</span></div>`;
+  if(cl.analystNote)       aiHtml+=`<div class="ai-block"><span class="ai-lbl">Analyst note &nbsp;</span><span class="ai-text">${esc(cl.analystNote)}</span></div>`;
+  aiHtml += '</div>';
+
+  // Other details table
+  const drows = [
+    ['Sponsor/Promoter', fd.sponsorName],
+    ['Lead Managers', fd.leadManagers],
+    ['Use of Proceeds', fd.useOfProceeds],
+    ['Fresh Issue', fd.freshIssuePct?fd.freshIssuePct+'%':null],
+    ['Secondary', fd.secondaryPct?fd.secondaryPct+'%':null],
+    ['Lock-in Period', fd.lockInPeriod],
+    ['Broker Recommendations', fd.brokerRecommendations],
+    ['Expert Consensus', fd.expertConsensus],
+    ['Key Risks', fd.keyRisks],
+    ['Recent News', fd.recentNews],
+  ].filter(r=>r[1]).map(r=>`<tr><td>${r[0]}</td><td>${esc(String(r[1]))}</td></tr>`).join('');
+
+  const html = `<div class="hero ${vColor}" id="heroCard">
+    <div style="flex-shrink:0;width:90px;text-align:center;">
+      <div class="hero-score">${sc.composite||'—'}</div>
+      <div class="hero-score-lbl">out of 100</div>
+      ${cacheBadge}
+      ${phaseBadge}
+    </div>
+    <div class="hero-center">
+      <div class="hero-badge">${vrd.icon||''} ${esc(cl.verdict||vrd.label||'—')}</div>
+      <div class="hero-rationale">${esc(cl.oneLineRationale||'')}</div>
+      <div class="hero-pills">
+        <div class="hero-pill">Horizon <strong>${esc(cl.investmentHorizon||vrd.horizon||'—')}</strong></div>
+        <div class="hero-pill">Allocation <strong>${esc(displayAmount)}</strong></div>
+        <div class="hero-pill" style="border-color:${lpClr};">Est. listing <strong style="color:${lpClr};">${lpTxt}${elp?' · AED '+elp:''}</strong></div>
+      </div>
+    </div>
+  </div>`;
+
+  document.getElementById('results').innerHTML = heroBanner + html + `
+    <div class="slabel">Key Metrics</div><div class="metrics">${metricsHtml}</div>
+    <div class="slabel">Score by Category</div><div class="cat-bars">${catBars}</div>
+    <div class="div"></div>
+    <div class="slabel">Scoring Parameters</div>
+    <div class="factor-grid">${factorGrid}</div>
+    <div class="method-note">
+      <strong style="color:var(--t2);">Scoring methodology:</strong>
+      &nbsp;·&nbsp; <strong style="color:var(--amber);">Phase 1</strong> — 17 prospectus factors (107/127 pts).
+      &nbsp;·&nbsp; <strong style="color:var(--green);">Phase 2</strong> — All 20 factors when subscription data available.
+      &nbsp;·&nbsp; ⚠ = data not disclosed, penalty score 2/5 applied.
+    </div>
+    <div class="div"></div>
+    <div class="slabel">Key Positives &amp; Risks</div><div class="pos-risk-grid">${prHtml}</div>
+    <div class="div"></div>
+    ${aiHtml}
+    <div class="div"></div>
+    <div class="slabel">Other IPO Details</div>
+    <table class="dtable">${drows}</table>
+    <div class="disclaimer">
+      <strong>Disclaimer:</strong> This analysis is AI-generated for informational purposes only.
+      Not financial advice. UAE IPO investments carry market risk. Always read the official prospectus on DFM or ADX
+      before investing. Past performance does not guarantee future results.
+    </div>`;
+}
+
+async function loadHistory() {
+  const el = document.getElementById('analysedIpoList');
+  el.innerHTML='<div class="no-nfos">Loading…</div>';
+  try {
+    const res = await fetch(AS_URL+'?action=uae_ipolist&v='+Date.now(), {redirect:'follow'});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data = await res.json();
+    if(!Array.isArray(data)||!data.length){el.innerHTML='<div class="no-nfos">No analyses yet.</div>';return;}
+    const todayIST = new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Kolkata'});
+    const cutoff = new Date(); cutoff.setDate(cutoff.getDate()-2);
+    const cutoffStr = cutoff.toLocaleDateString('en-CA',{timeZone:'Asia/Kolkata'});
+    const seen=new Map();
+    data.forEach(item=>{
+      if(item.listingDate&&item.listingDate<cutoffStr) return;
+      const key=item.name.toLowerCase().trim();
+      const ex=seen.get(key);
+      if(!ex||parseInt(item.score)>parseInt(ex.score)) seen.set(key,item);
+    });
+    const deduped=Array.from(seen.values());
+    if(!deduped.length){el.innerHTML='<div class="no-nfos">No active analyses.</div>';return;}
+    el.innerHTML=deduped.map(item=>{
+      const v=String(item.verdict||'').toLowerCase();
+      const verdictClr=v.includes('caution')?'var(--amber)':v.includes('avoid')?'var(--red)':v.includes('subscribe')?'var(--green)':'var(--amber)';
+      const verdictShort=v.includes('strong subscribe')?'Strong Subscribe':v.includes('caution')?'Caution':v.includes('strong avoid')?'Strong Avoid':v.includes('avoid')?'Avoid':v.includes('subscribe')?'Subscribe':item.verdict||'—';
+      const s=item.score, scoreClr=s>=62?'var(--green)':s>=50?'var(--amber)':'var(--red)';
+      const gmp=item.gmp, lp=item.listingPremium, lpPx=item.listingPrice;
+      const gmpClr=gmp>0?'var(--green)':gmp<0?'var(--red)':'var(--t3)';
+      const lpClr=lp>0?'var(--green)':lp<0?'var(--red)':'var(--t3)';
+      const isClosed=item.closeDate&&item.closeDate<todayIST;
+      const closingToday=item.closeDate===todayIST;
+      const listingToday=item.listingDate===todayIST;
+      const urgentClass=closingToday?'urgent-close':listingToday?'urgent-list':'';
+      const urgentBanner=closingToday
+        ?`<div style="background:#7f1d1d;color:#fca5a5;font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;margin-bottom:6px;display:flex;align-items:center;"><span class="urgent-dot red"></span>CLOSES TODAY</div>`
+        :listingToday
+        ?`<div style="background:#78350f;color:#fde68a;font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;margin-bottom:6px;display:flex;align-items:center;"><span class="urgent-dot amber"></span>LISTING TODAY</div>`:'';
+      return `<div class="nfo-item ${urgentClass}">
+        ${urgentBanner}
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;margin-bottom:3px;">
+          <div class="nfo-item-name">${esc(item.name)}</div>
+          ${s?`<span style="font-size:12px;font-weight:600;color:${scoreClr};flex-shrink:0;">${s}</span>`:''}
+        </div>
+        <div class="nfo-item-cat">${esc(item.sector||'—')} · ${esc(item.exchange||'')}</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:3px;">
+          <div style="font-size:11px;color:${verdictClr};font-weight:500;">${verdictShort}</div>
+          ${isClosed?'<span style="font-size:9px;color:var(--t3);background:var(--bg4);padding:1px 5px;border-radius:3px;">Closed</span>':''}
+        </div>
+        <div style="font-size:10px;color:var(--t3);margin-top:4px;">
+          ${item.openDate?'<strong style="color:var(--t2)">Open:</strong> '+item.openDate:''}
+          ${item.closeDate?' · <strong style="color:var(--t2)">Close:</strong> '+item.closeDate:''}
+          ${item.listingDate?' · <strong style="color:var(--t2)">Listing:</strong> '+item.listingDate:''}
+        </div>
+        <div style="display:flex;gap:10px;margin-top:5px;flex-wrap:wrap;">
+          ${gmp!==null?`<div style="font-size:11px;"><span style="color:var(--t3);">GMP ${item.analysedOn?'('+item.analysedOn+')':''}  </span><span style="color:${gmpClr};font-weight:500;">${gmp>0?'+':''}${gmp}%</span></div>`:''}
+          ${lp!==null?`<div style="font-size:11px;"><span style="color:var(--t3);">Est. listing </span><span style="color:${lpClr};font-weight:500;">${lp>0?'+':''}${lp}%${lpPx?' · AED '+lpPx:''}</span></div>`:''}
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    el.innerHTML=`<div class="no-nfos">Could not load.<br><span style="font-size:10px;">${e.message}</span></div>`;
+  }
+}
+
+window.addEventListener('load', ()=>{ loadHistory(); });
+</script>
+</body>
+</html>
