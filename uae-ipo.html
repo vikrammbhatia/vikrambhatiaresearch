@@ -170,7 +170,7 @@ body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-s
 <body>
 <div class="page">
   <div class="main-col">
-    <div class="ph-title">🇦🇪 UAE IPO Research Engine</div>
+    <div class="ph-title">UAE IPO Research Engine</div>
     <div class="ph-flag">by Vikram Bhatia</div>
     <div class="ph-sub">AI-powered analysis using live data, quantitative scoring and qualitative assessment</div>
 
@@ -181,7 +181,7 @@ body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-s
 
     <div id="loader">
       <div class="spin">⚙</div>
-      <div id="loaderMsg">Fetching UAE IPO data…</div>
+      <div id="loaderMsg">Fetching live UAE IPO data via web search…</div>
     </div>
     <div id="results"></div>
   </div>
@@ -419,7 +419,7 @@ function render(d) {
     <div class="slabel">Score by Category</div><div class="cat-bars">${catBars}</div>
     <div class="div"></div>
     <div class="slabel">Scoring Parameters</div>
-    <div class="factor-grid">${factorGrid}</div>
+    ${factorGrid ? '<div class="factor-grid">'+factorGrid+'</div>' : '<div style="color:var(--t3);font-size:12px;padding:1rem 0;">Factor-level scores available after fresh analysis. Click <a href=\"#\" onclick=\"forceRefresh(event)\" style=\"color:var(--or)\">Force fresh analysis</a> to load.</div>'}
     <div class="method-note">
       <strong style="color:var(--t2);">Scoring methodology:</strong>
       &nbsp;·&nbsp; <strong style="color:var(--amber);">Phase 1</strong> — 17 prospectus factors (107/127 pts).
@@ -448,6 +448,7 @@ async function loadHistory() {
     const res = await fetch(AS_URL+'?action=uae_ipolist&v='+Date.now(), {redirect:'follow'});
     if(!res.ok) throw new Error('HTTP '+res.status);
     const data = await res.json();
+    console.log('UAE ipolist data:', data);
     if(!Array.isArray(data)||!data.length){el.innerHTML='<div class="no-nfos">No analyses yet.</div>';return;}
     const todayIST = new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Kolkata'});
     const cutoff = new Date(); cutoff.setDate(cutoff.getDate()-2);
