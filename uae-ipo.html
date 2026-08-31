@@ -123,10 +123,12 @@ body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-s
 .nfo-item-cat{font-size:10px;color:var(--t3);margin-top:2px;}
 .no-nfos{font-size:11px;color:var(--t3);text-align:center;padding:1.5rem 0;}
 
-/* LOADER */
-#loader{display:none;text-align:center;padding:3rem;color:var(--t3);}
-.spin{font-size:24px;animation:spin 1s linear infinite;display:inline-block;margin-bottom:12px;}
-@keyframes spin{to{transform:rotate(360deg);}}
+/* LOADER — matches India IPO engine style */
+#loader{display:none;padding:1.5rem 0;color:var(--t3);}
+.loader-track{height:2px;background:var(--b1);border-radius:1px;overflow:hidden;}
+.loader-fill{height:100%;background:var(--or);animation:ld 2.4s ease-in-out infinite;}
+@keyframes ld{0%{width:0%}60%{width:75%}100%{width:100%}}
+.loader-msg{font-size:12px;color:var(--t3);margin-top:8px;}
 
 /* TOOLTIP */
 .tooltip-wrap{position:relative;display:inline-block;}
@@ -180,8 +182,8 @@ body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-s
     </div>
 
     <div id="loader">
-      <div class="spin">⚙</div>
-      <div id="loaderMsg">Fetching live UAE IPO data via web search…</div>
+      <div class="loader-track"><div class="loader-fill"></div></div>
+      <div class="loader-msg" id="loaderMsg">Fetching live UAE IPO data via web search…</div>
     </div>
     <div id="results"></div>
   </div>
@@ -501,6 +503,7 @@ async function loadHistory() {
       </div>`;
     }).join('');
   } catch(e) {
+    console.error('UAE loadHistory error:', e);
     el.innerHTML=`<div class="no-nfos">Could not load.<br><span style="font-size:10px;">${e.message}</span></div>`;
   }
 }
