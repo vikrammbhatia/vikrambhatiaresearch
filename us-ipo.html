@@ -292,6 +292,7 @@ async function analyse() {
     render(d);
     loadHistory();
   } catch(e) {
+    console.error('Render error:', e, e.stack);
     document.getElementById('results').innerHTML=`<div style="background:#1a0000;border:1px solid #7f1d1d;border-radius:10px;padding:2rem;text-align:center;color:var(--red);">
       <div style="font-size:20px;margin-bottom:8px;">⚠</div>
       <div style="font-weight:600;margin-bottom:6px;">Analysis Error</div>
@@ -313,7 +314,12 @@ function forceRefresh(e){
 
 function render(d) {
   if(!d||!d.scores) return;
-  const sc = d.scores, cl = d.claudeAnalysis||{}, fd = d.fetchedData||{};
+  const sc = d.scores, cl = d.claudeAnalysis||{}, fdRaw = d.fetchedData||{};
+  // Sanitise all string fields to prevent type errors
+  const fd = Object.fromEntries(Object.entries(fdRaw).map(([k,v])=>[k,
+    (v!==null&&v!==undefined&&typeof v==='object'&&!Array.isArray(v)) ? null :
+    (Array.isArray(v)) ? v.join(', ') : v
+  ]));
   const vText = String(cl.verdict||'').toLowerCase();
   let vColor = 'amber';
   if(vText.includes('caution')) vColor='amber';
@@ -404,7 +410,7 @@ function render(d) {
   // Expert Consensus Section (US equivalent of broker recommendations)
   let brokerHtml = '';
   if(fd.expertConsensus || fd.renaissanceRating || fd.ipoScoopRating) {
-    const cons = fd.expertConsensus || '';
+    const cons = String(fd.expertConsensus || '').replace(/\[Ljava[^]]+\]/g,'');
     const consClr = String(cons).toLowerCase().includes('buy')?'var(--green)':String(cons).toLowerCase().includes('avoid')?'var(--red)':'var(--amber)';
     const ratingStr = [
       fd.renaissanceRating?'Renaissance: '+fd.renaissanceRating:null,
@@ -527,6 +533,7 @@ function render(d) {
       The creators, operators, and contributors of this platform disclaim all liability for any loss or damage arising from the use of or reliance on this analysis.
     </div>`;
 }
+
 
 async function loadHistory() {
   const el = document.getElementById('analysedIpoList');
