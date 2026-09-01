@@ -431,10 +431,14 @@ function render(d) {
     // Use final price, or midpoint of range, or null
     const basePrice = ip || (fd.priceRangeLow&&fd.priceRangeHigh?(fd.priceRangeLow+fd.priceRangeHigh)/2:null);
     function projCell(label, pct) {
-      if(!pct||!basePrice) return `<div class="proj-cell"><div class="proj-lbl">${label}</div><div class="proj-val" style="color:var(--t3);">—</div></div>`;
-      const price = Math.round(basePrice*(1+pct/100)*100)/100;
+      if(!pct) return `<div class="proj-cell"><div class="proj-lbl">${label}</div><div class="proj-val" style="color:var(--t3);">—</div></div>`;
       const clr = pct>=0?'var(--green)':'var(--red)';
-      return `<div class="proj-cell"><div class="proj-lbl">${label}</div><div class="proj-val" style="color:${clr};">$${price}</div><div class="proj-chg" style="color:${clr};">${pct>=0?'+':''}${pct}%</div></div>`;
+      if(basePrice) {
+        const price = Math.round(basePrice*(1+pct/100)*100)/100;
+        return `<div class="proj-cell"><div class="proj-lbl">${label}</div><div class="proj-val" style="color:${clr};">$${price}</div><div class="proj-chg" style="color:${clr};">${pct>=0?'+':''}${pct}%</div></div>`;
+      }
+      // No base price yet — show % estimate only
+      return `<div class="proj-cell"><div class="proj-lbl">${label}</div><div class="proj-val" style="color:${clr};">${pct>=0?'+':''}${pct}%</div><div class="proj-chg" style="color:var(--t3);font-size:9px;">est. return</div></div>`;
     }
     const estPremium = d.expectedListingPremium||cl.expectedListingPremium||null;
     const ann = (cl.expectedAnnualReturn!==null&&cl.expectedAnnualReturn!==undefined)?cl.expectedAnnualReturn:null;
@@ -449,9 +453,9 @@ function render(d) {
       <div class="slabel" style="margin-top:4px;margin-bottom:8px;">Projected Share Price</div>
       <div class="proj-grid">
         ${projCell('Listing Day', estPremium)}
-        ${projCell('3 Months', ann?Math.round(ann/4):null)}
-        ${projCell('6 Months', ann?Math.round(ann/2):null)}
-        ${projCell('12 Months', ann)}
+        ${projCell('3 Months', cl.projectedReturn3M||ann?Math.round(ann/4):null)}
+        ${projCell('6 Months', cl.projectedReturn6M||ann?Math.round(ann/2):null)}
+        ${projCell('12 Months', cl.projectedReturn12M||ann)}
       </div>
     </div>`;
   }
