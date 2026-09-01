@@ -69,7 +69,7 @@ body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-s
 .div{height:1px;background:var(--b1);margin:1.5rem 0;}
 
 /* METRICS */
-.metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:1rem;}
+.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:1rem;}
 .mc{background:var(--bg3);border:1px solid var(--b1);border-radius:6px;padding:8px 10px;}
 .mc-lbl{font-size:9px;text-transform:uppercase;letter-spacing:0.05em;color:var(--t3);margin-bottom:4px;}
 .mc-val{font-size:12px;font-weight:600;color:var(--t1);word-break:break-word;line-height:1.4;}
@@ -222,28 +222,28 @@ const CAT_TIPS = {
 };
 
 const FACTOR_TIPS = {
-  f01:'Revenue Growth YoY — year-on-year revenue growth. >50% is strong for US growth IPOs.',
-  f02:'Gross Margin — % of revenue remaining after cost of goods. >70% = high quality SaaS/tech business.',
-  f03:'Path to Profitability — is company EBITDA positive? If not, how close? Pre-revenue = high risk.',
-  f04:'Burn Rate / Runway — months of cash after IPO. <12 months runway = high dilution risk.',
-  f05:'Net Revenue Retention — NRR >120% means existing customers are spending more each year. SaaS key metric.',
-  f06:'P/S vs Sector Peers — price-to-sales ratio vs comparable listed companies. US uses P/S more than P/E.',
-  f07:'EV/Revenue vs Peers — enterprise value to revenue; secondary valuation check.',
-  f08:'Pre-IPO Step-up — % change from last private round to IPO price. Negative = discount = strong signal.',
-  f09:'TAM Size & Growth — total addressable market. $100B+ TAM = large opportunity.',
-  f10:'Competitive Position — is this company the market leader, challenger, or niche player?',
-  f11:'Sector Momentum — is this sector currently in favour with US investors? AI/cloud = hot.',
-  f12:'Market Conditions — VIX level and S&P 500 trend. Low VIX + bull market = better IPO window.',
-  f13:'Underwriter Tier — Goldman Sachs, Morgan Stanley, JPMorgan = tier 1. Strong predictor of institutional demand.',
-  f14:'VC/PE Backer Quality — Sequoia, a16z, Accel = tier 1 VCs. Smart money validation.',
-  f15:'Insider Selling % — % of IPO that is secondary shares (insiders selling). High = red flag.',
-  f16:'Lock-up Period — days before insiders can sell. 180 days standard. Shorter = higher supply risk.',
-  f17:'Float % — % of company shares in public hands. Low float = volatile listing day pop.',
-  f18:'Use of Proceeds — how fresh capital will be deployed. R&D/growth > debt repayment.',
-  f19:'Management Track Record — CEO/founder prior IPO or exit history.',
-  f20:'Expert Consensus — Renaissance Capital, IPOScoop, and analyst ratings combined.',
-  f21:'Comparable IPO Performance — how similar recent IPOs performed on listing day and beyond.',
-  f22:'Listing Premium Estimate — derived from underwriter tier, float, sector momentum, and expert consensus.',
+  f01:'Revenue Growth YoY: Year-over-year revenue growth. >100% = hypergrowth (AI/cloud). >50% = strong. >25% = healthy. US growth IPOs typically need >30% to justify premium valuations.',
+  f02:'Gross Margin: Revenue minus cost of goods sold. Software/SaaS >70% = excellent. Marketplace 40-60% = good. Hardware/manufacturing <30% = low quality. Higher margin = more scalable business.',
+  f03:'Path to Profitability: Is company EBITDA-positive? If not, how close? Pre-revenue biotech = speculative. Near-breakeven SaaS = acceptable. Cash-burning with no path = high risk.',
+  f04:'Burn Rate / Runway: Monthly cash burn and months of runway after IPO proceeds. <12 months = danger (needs another raise soon). >36 months = comfortable. Runway directly impacts dilution risk.',
+  f05:'Net Revenue Retention (NRR): For SaaS/subscription companies — % of last year revenue retained plus expansion from existing customers. >130% = best-in-class (Snowflake). >110% = strong. <100% = churning.',
+  f06:'P/S vs Sector Peers: Price-to-sales ratio at IPO vs comparable listed companies. US growth stocks valued on P/S not P/E. Fair = 1x peers. Discount = potential upside. 2x+ premium = stretched valuation.',
+  f07:'EV/Revenue vs Peers: Enterprise value to revenue multiple. More relevant for pre-profit companies. Lower vs peers = better value. Check against SaaS, marketplace, or sector-specific benchmarks.',
+  f08:'Pre-IPO Step-up: % change from last private funding round valuation to IPO price. IPO below last round (down round) = very bullish — underwriters found floor. 50%+ premium to last round = risky.',
+  f09:'TAM Size & Growth: Total addressable market in $B. >$100B = large opportunity. $20-100B = medium. <$20B = limited scale. Also check if TAM is growing — secular tailwinds matter more than absolute size.',
+  f10:'Competitive Position: Is company the market leader (largest share), challenger (gaining share), or niche player? Leaders command valuation premiums. First-mover with network effects = strongest signal.',
+  f11:'Sector Momentum: Is the sector currently in favour with US institutional investors? AI/ML, cybersecurity, defense tech = hot in 2026. Traditional retail, legacy finance = cold. Momentum drives day-1 pop.',
+  f12:'Market Conditions: VIX below 15 = low fear, good IPO window. VIX above 25 = high volatility, IPOs underperform. S&P 500 bullish trend = better allocation appetite from institutional investors.',
+  f13:'Underwriter Tier: Goldman Sachs, Morgan Stanley, JPMorgan, Bank of America = Tier 1. Average day-1 return for Tier 1 deals ~18% vs ~8% for Tier 3. Strong predictor of institutional book quality.',
+  f14:'VC/PE Backer Quality: Sequoia, Andreessen Horowitz (a16z), Accel, Benchmark = Tier 1. Their presence signals rigorous diligence, strong networks, and typically better governance. Smart money validation.',
+  f15:'Insider Selling %: % of IPO shares being sold by existing shareholders (secondary). <15% = insiders believe in upside. >50% = insiders cashing out aggressively = red flag. Pure primary raises score highest.',
+  f16:'Lock-up Period: Days before insiders can sell post-IPO. 180 days is US standard. Shorter = higher supply risk sooner. Lock-up expiry often causes 10-20% price dip — plan holding period accordingly.',
+  f17:'Float %: % of total shares available to public. Low float (5-15%) = volatile listing day pop due to supply scarcity. Very high float = more liquid but less price pressure. Sweet spot is 15-25%.',
+  f18:'Use of Proceeds: How will IPO funds be deployed? R&D and growth investment = positive. Working capital = neutral. Debt repayment = negative (was over-leveraged). Pure secondary = no proceeds to company.',
+  f19:'Management Track Record: Has the CEO/founder previously taken a company public? Prior successful exits signal execution ability. Serial entrepreneurs with IPO experience command premium trust from institutional investors.',
+  f20:'Expert Consensus: Renaissance Capital (Buy/Neutral/Avoid), IPOScoop (1-5 stars), and sell-side analyst pre-IPO ratings combined. Strong buy consensus from multiple sources = reliable demand signal.',
+  f21:'Comparable IPO Performance: How did similar companies perform on listing day and 30/90 days after? Recent comps in same sector = most predictive. Sector-wide IPO fatigue shows up here.',
+  f22:'Listing Premium Estimate: Derived from underwriter tier (base), float % (supply), sector momentum (demand), expert consensus (conviction), and pre-IPO step-up (discount signal). Combines all market signals.',
 };
 
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -333,7 +333,7 @@ function render(d) {
     {l:'Listing Date', v:fd.listingDate||'TBD (not yet priced)'},
     {l:'Price Range',  v:fd.priceRangeLow&&fd.priceRangeHigh?'$'+fd.priceRangeLow+' – $'+fd.priceRangeHigh:null},
     {l:'Final Price',  v:fd.finalPrice?'$'+fd.finalPrice:null},
-    {l:'Offer Size',   v:fd.offerSizeM?'$'+fd.offerSizeM+'M':null},
+    {l:'Offer Size',   v:fd.offerSizeM?(fd.offerSizeM>=1000?'$'+Math.round(fd.offerSizeM/1000*10)/10+'B':'$'+fd.offerSizeM+'M'):null},
     {l:'Float',        v:fd.floatPct?fd.floatPct+'%':null},
     {l:'Rev Growth',   v:fd.revenueGrowthYoY?fd.revenueGrowthYoY+'% YoY':null},
     {l:'Gross Margin', v:fd.grossMargin?fd.grossMargin+'%':null},
