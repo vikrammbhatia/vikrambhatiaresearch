@@ -344,7 +344,7 @@ function render(d) {
     {l:'Key Investors',v:fd.keyInvestors||null},
     {l:'Insider Sell', v:fd.insiderSellingPct?fd.insiderSellingPct+'%':null},
     {l:'Lock-up',      v:fd.lockupDays?fd.lockupDays+' days':null},
-    {l:'TAM',          v:fd.tamB?'$'+fd.tamB+'B':null},
+    {l:'TAM',          v:fd.tamB?(fd.tamB>=1000?'$'+Math.round(fd.tamB/1000)+'T':'$'+fd.tamB+'B'):null},
     {l:'Mkt Momentum', v:fd.sectorMomentum?fd.sectorMomentum+' momentum':null},
     {l:'Renaissance',  v:fd.renaissanceRating||null},
     {l:'IPOScoop',     v:fd.ipoScoopRating||null},
@@ -380,7 +380,9 @@ function render(d) {
 
   // Key Positives & Risks
   const pos = Array.isArray(cl.keyPositives)?cl.keyPositives:[];
-  const risks = Array.isArray(cl.keyRisks)?cl.keyRisks:[];
+  // Fall back to raw data key risks if claude analysis risks are empty
+  const rawRisks = fd.keyRisks ? String(fd.keyRisks).split(/[,;]/).map(s=>s.trim()).filter(s=>s.length>5) : [];
+  const risks = (Array.isArray(cl.keyRisks)&&cl.keyRisks.length>0) ? cl.keyRisks : rawRisks;
   const prHtml = `
     <div class="pr-box pos"><div class="pr-title">✓ Key Positives</div>${pos.map(p=>`<div class="pr-item">${esc(p)}</div>`).join('')}</div>
     <div class="pr-box risk"><div class="pr-title">✗ Key Risks</div>${risks.map(r=>`<div class="pr-item">${esc(r)}</div>`).join('')}</div>`;
@@ -410,7 +412,7 @@ function render(d) {
     ['Market Conditions', fd.sp500Trend?fd.sp500Trend+' | VIX: '+(fd.vixLevel||'N/A'):null],
     ['Key Risks', fd.keyRisks],
     ['Recent News', fd.recentNews],
-  ].filter(r=>r[1]).map(r=>`<tr><td>${r[0]}</td><td>${esc(String(r[1]))}</td></tr>`).join('');
+  ].filter(r=>r[1]&&!String(r[1]).includes('[Ljava')).map(r=>`<tr><td>${r[0]}</td><td>${esc(String(r[1]))}</td></tr>`).join('');
 
   const html = `<div class="hero ${vColor}" id="heroCard">
     <div style="flex-shrink:0;width:90px;text-align:center;">
@@ -435,7 +437,8 @@ function render(d) {
     <div class="slabel">Score by Category</div><div class="cat-bars">${catBars}</div>
     <div class="div"></div>
     <div class="slabel">Scoring Parameters</div>
-    ${factorGrid ? '<div class="factor-grid">'+factorGrid+'</div>' : '<div style="color:var(--t3);font-size:12px;padding:1rem 0;">Factor-level scores available after fresh analysis. Click <a href=\"#\" onclick=\"forceRefresh(event)\" style=\"color:var(--or)\">Force fresh analysis</a> to load.</div>'}
+    <div class="factor-grid">${factorGrid}</div>
+    ${!factorGrid?`<div style="color:var(--t3);font-size:12px;padding:0.5rem 0;">Factor cards load after fresh analysis. <a href="#" onclick="forceRefresh(event)" style="color:var(--or);">Force fresh analysis ↗</a></div>`:''}
     <div class="method-note">
       <strong style="color:var(--t2);">Scoring methodology:</strong>
       &nbsp;·&nbsp; <strong style="color:var(--amber);">Phase 1</strong> — 17 prospectus factors (107/127 pts).
