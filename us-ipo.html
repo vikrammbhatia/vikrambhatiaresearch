@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
-<title>UAE IPO Research Engine — Vikram Bhatia</title>
+<title>US IPO Research Engine — Vikram Bhatia</title>
 <style>
 :root{
   --bg1:#0a0a0a;--bg2:#111;--bg3:#161616;--bg4:#1e1e1e;
@@ -175,7 +175,7 @@ body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-s
     <div class="ph-title">UAE IPO Research Engine</div>
     <div class="ph-flag">by Vikram Bhatia</div>
     <div class="ph-sub">AI-powered analysis using live data, quantitative scoring and qualitative assessment</div>
-    <div class="ph-nav"><a href="/ipo" style="color:var(--or);text-decoration:none;">🇮🇳 India IPO Engine</a> &nbsp;·&nbsp; <a href="/us-ipo" style="color:var(--or);text-decoration:none;">🇺🇸 US IPO Engine</a></div>
+    <div class="ph-nav"><a href="/ipo" style="color:var(--or);text-decoration:none;">🇮🇳 India IPO Engine</a> &nbsp;·&nbsp; <a href="/uae-ipo" style="color:var(--or);text-decoration:none;">🇺🇸 US IPO Engine</a></div>
 
     <div class="search-row">
       <input id="ipoInput" placeholder="Enter UAE company name e.g. Lulu Retail Holdings PJSC" onkeydown="if(event.key==='Enter')analyse()"/>
@@ -184,7 +184,7 @@ body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-s
 
     <div id="loader">
       <div class="loader-track"><div class="loader-fill"></div></div>
-      <div class="loader-msg" id="loaderMsg">Fetching live UAE IPO data via web search…</div>
+      <div class="loader-msg" id="loaderMsg">Fetching live US IPO data via web search…</div>
     </div>
     <div id="results"></div>
   </div>
@@ -202,7 +202,7 @@ body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-s
 
 <script>
 const AS_URL = 'https://ipo-proxy.vikrammbhatia.workers.dev';
-const T = 'VB2026UAEIPO';
+const T = 'VB2026USIPO';
 
 const VERDICTS = {
   'strong subscribe': {color:'green', icon:'✓✓', label:'Strong Subscribe', horizon:'Short to medium term', alloc:'Full allocation'},
@@ -222,26 +222,28 @@ const CAT_TIPS = {
 };
 
 const FACTOR_TIPS = {
-  f01:'Revenue Growth 3yr CAGR — compound annual revenue growth over 3 years.',
-  f02:'PAT Growth 3yr CAGR — profit after tax growth compound annual rate.',
-  f03:'EBITDA Margin — operating profitability; >20% is strong for UAE market.',
-  f04:'Debt-to-Equity — lower is better; UAE infrastructure companies can carry more debt.',
-  f05:'Return on Equity — profitability relative to shareholder equity.',
-  f06:'P/E vs Sector Peers — is the IPO priced fairly vs listed peers on DFM/ADX?',
-  f07:'EV/EBITDA vs Peers — enterprise value multiple; more relevant than P/E for asset-heavy UAE companies.',
-  f08:'Free Float % — % of shares available to public post-listing; higher = more liquidity.',
-  f09:'Govt/Sovereign Backing — ADNOC, Emaar, DP World affiliates score highest in UAE market.',
-  f10:'Sponsor/Promoter Reputation — track record of the founding entity or sponsor.',
-  f11:'Fresh Issue vs Secondary — fresh issue = funds go to company; secondary = existing shareholders exit.',
-  f12:'Use of Proceeds — quality and business-orientation of how fresh funds will be deployed.',
-  f13:'Post-listing Supply Risk — lock-in periods and secondary offer overhang.',
-  f14:'Lead Manager Reputation — FAB, Emirates NBD Capital, UBS etc. signal institutional quality.',
-  f15:'Sector Tailwinds (Gulf) — alignment with UAE Vision 2031, tourism, infrastructure, fintech themes.',
-  f16:'Competitive Moat — sustainable competitive advantages in the UAE/GCC market.',
-  f17:'Offer Size — is the raise appropriate for the company stage and market conditions?',
-  f18:'Overall Subscription Multiple — total demand vs shares offered; Phase 2 only.',
-  f19:'Institutional Subscription — institutional tranche demand; stronger signal than retail.',
-  f20:'GMP Signal — grey market premium; informal but indicative of listing day sentiment.',
+  f01:'Revenue Growth YoY — year-on-year revenue growth. >50% is strong for US growth IPOs.',
+  f02:'Gross Margin — % of revenue remaining after cost of goods. >70% = high quality SaaS/tech business.',
+  f03:'Path to Profitability — is company EBITDA positive? If not, how close? Pre-revenue = high risk.',
+  f04:'Burn Rate / Runway — months of cash after IPO. <12 months runway = high dilution risk.',
+  f05:'Net Revenue Retention — NRR >120% means existing customers are spending more each year. SaaS key metric.',
+  f06:'P/S vs Sector Peers — price-to-sales ratio vs comparable listed companies. US uses P/S more than P/E.',
+  f07:'EV/Revenue vs Peers — enterprise value to revenue; secondary valuation check.',
+  f08:'Pre-IPO Step-up — % change from last private round to IPO price. Negative = discount = strong signal.',
+  f09:'TAM Size & Growth — total addressable market. $100B+ TAM = large opportunity.',
+  f10:'Competitive Position — is this company the market leader, challenger, or niche player?',
+  f11:'Sector Momentum — is this sector currently in favour with US investors? AI/cloud = hot.',
+  f12:'Market Conditions — VIX level and S&P 500 trend. Low VIX + bull market = better IPO window.',
+  f13:'Underwriter Tier — Goldman Sachs, Morgan Stanley, JPMorgan = tier 1. Strong predictor of institutional demand.',
+  f14:'VC/PE Backer Quality — Sequoia, a16z, Accel = tier 1 VCs. Smart money validation.',
+  f15:'Insider Selling % — % of IPO that is secondary shares (insiders selling). High = red flag.',
+  f16:'Lock-up Period — days before insiders can sell. 180 days standard. Shorter = higher supply risk.',
+  f17:'Float % — % of company shares in public hands. Low float = volatile listing day pop.',
+  f18:'Use of Proceeds — how fresh capital will be deployed. R&D/growth > debt repayment.',
+  f19:'Management Track Record — CEO/founder prior IPO or exit history.',
+  f20:'Expert Consensus — Renaissance Capital, IPOScoop, and analyst ratings combined.',
+  f21:'Comparable IPO Performance — how similar recent IPOs performed on listing day and beyond.',
+  f22:'Listing Premium Estimate — derived from underwriter tier, float, sector momentum, and expert consensus.',
 };
 
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -257,9 +259,9 @@ async function analyse() {
   document.getElementById('loader').style.display='block';
   document.getElementById('results').innerHTML='';
   const msgs = [
-    'Fetching live UAE IPO data via web search…',
+    'Fetching live US IPO data via web search…',
     'Extracting financials, GMP and subscription data…',
-    'Scoring 20 quantitative parameters…',
+    'Scoring 22 quantitative parameters…',
     'Running Claude AI qualitative analysis…',
     'Generating price projections…',
     'Saving analysis to Google Sheet…',
@@ -268,7 +270,7 @@ async function analyse() {
   const iv = setInterval(()=>{ document.getElementById('loaderMsg').textContent=msgs[mi++%msgs.length]; },3500);
   try {
     const forceRefresh = document.getElementById('results').dataset.forceRefresh==='1';
-    const url = AS_URL+'?t='+T+'&action=uae_analyse&ipo='+encodeURIComponent(name)+(forceRefresh?'&refresh=1':'')+'&v='+Date.now();
+    const url = AS_URL+'?t='+T+'&action=us_analyse&ipo='+encodeURIComponent(name)+(forceRefresh?'&refresh=1':'')+'&v='+Date.now();
     const res = await fetch(url, {redirect:'follow'});
     if(!res.ok) throw new Error('HTTP '+res.status);
     const d = await res.json();
@@ -314,36 +316,40 @@ function render(d) {
   const cacheBadge = d.fromCache?`<div class="cache-badge">⚡ From cache · <a href="#" onclick="forceRefresh(event)" style="color:var(--or);text-decoration:none;">Force fresh analysis ↗</a></div>`:'';
   const phase = sc.phase||1;
   const phaseBadge = phase===1
-    ? `<div class="phase-badge phase-1">Phase 1 · Pre-subscription · ${sc.totalActiveWeight||107}/127 pts active</div>`
-    : `<div class="phase-badge phase-2">Phase 2 · Full subscription data · All 127 pts active</div>`;
+    ? `<div class="phase-badge phase-1">Phase 1 · Pre-subscription · ${sc.totalActiveWeight||107}/130 pts active</div>`
+    : `<div class="phase-badge phase-2">Phase 2 · Full subscription data · All 130 pts active</div>`;
 
   // Today IST for urgency
   const todayHero = new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Kolkata'});
   const heroBanner = fd.closeDate===todayHero
     ? `<div style="background:#7f1d1d;border:1px solid #ef4444;color:#fca5a5;font-size:12px;font-weight:600;padding:8px 16px;border-radius:6px;margin-bottom:12px;display:flex;align-items:center;gap:8px;animation:blink 1s infinite;"><span style="font-size:16px;">⚠</span> LAST DAY TO APPLY — Subscription closes today!</div>`
     : fd.listingDate===todayHero
-    ? `<div style="background:#78350f;border:1px solid #f59e0b;color:#fde68a;font-size:12px;font-weight:600;padding:8px 16px;border-radius:6px;margin-bottom:12px;display:flex;align-items:center;gap:8px;animation:blink 1.5s infinite;"><span style="font-size:16px;">🔔</span> LISTING TODAY — Monitor on DFM/ADX</div>` : '';
+    ? `<div style="background:#78350f;border:1px solid #f59e0b;color:#fde68a;font-size:12px;font-weight:600;padding:8px 16px;border-radius:6px;margin-bottom:12px;display:flex;align-items:center;gap:8px;animation:blink 1.5s infinite;"><span style="font-size:16px;">🔔</span> LISTING TODAY — Monitor on NYSE/NASDAQ</div>` : '';
 
   // Key Metrics
   const mDefs = [
-    {l:'Open Date',   v:fd.openDate||'—'},
-    {l:'Close Date',  v:fd.closeDate||'—'},
-    {l:'Listing Date',v:fd.listingDate||'—'},
-    {l:'Exchange',    v:fd.exchange||null},
-    {l:'Offer Price', v:fd.pricePerShare?'AED '+fd.pricePerShare:null},
-    {l:'Offer Size',  v:fd.offerSizeAED?'AED '+fd.offerSizeAED+'Mn':null},
-    {l:'Free Float',  v:fd.freeFloat?fd.freeFloat+'%':null},
-    {l:'Govt Backed', v:fd.govtBacked!==null?String(fd.govtBacked):null},
-    {l:'GMP',         v:fd.gmpPct!==null&&fd.gmpPct!==undefined?fd.gmpPct+'%':null},
-    {l:'Total Sub',   v:fd.subscriptionOverall?fd.subscriptionOverall+'×':null},
-    {l:'Inst. Sub',   v:fd.subscriptionInstitutional?fd.subscriptionInstitutional+'×':null},
-    {l:'Rev CAGR',    v:fd.revenueCAGR3yr?fd.revenueCAGR3yr+'%':null},
-    {l:'PAT CAGR',    v:fd.patCAGR3yr?fd.patCAGR3yr+'%':null},
-    {l:'EBITDA Margin',v:fd.ebitdaMargin?fd.ebitdaMargin+'%':null},
-    {l:'P/E (Offer)', v:fd.peOffer?fd.peOffer+'×':null},
-    {l:'Min Invest',  v:fd.minInvestment?'AED '+fd.minInvestment:null},
-    {l:'Lot Size',    v:fd.lotSize?fd.lotSize+' shares':null},
+    {l:'Ticker',       v:fd.ticker||null},
+    {l:'Exchange',     v:fd.exchange||null},
+    {l:'Listing Date', v:fd.listingDate||'—'},
+    {l:'Price Range',  v:fd.priceRangeLow&&fd.priceRangeHigh?'$'+fd.priceRangeLow+' – $'+fd.priceRangeHigh:null},
+    {l:'Final Price',  v:fd.finalPrice?'$'+fd.finalPrice:null},
+    {l:'Offer Size',   v:fd.offerSizeM?'$'+fd.offerSizeM+'M':null},
+    {l:'Float',        v:fd.floatPct?fd.floatPct+'%':null},
+    {l:'Rev Growth',   v:fd.revenueGrowthYoY?fd.revenueGrowthYoY+'% YoY':null},
+    {l:'Gross Margin', v:fd.grossMargin?fd.grossMargin+'%':null},
+    {l:'NRR',          v:fd.nrr?fd.nrr+'%':null},
+    {l:'P/S (Offer)',  v:fd.psRatioOffer?fd.psRatioOffer+'x':null},
+    {l:'P/S (Peers)',  v:fd.psRatioPeers?fd.psRatioPeers+'x':null},
+    {l:'Underwriters', v:fd.leadUnderwriters||null},
+    {l:'Key Investors',v:fd.keyInvestors||null},
+    {l:'Insider Sell', v:fd.insiderSellingPct?fd.insiderSellingPct+'%':null},
+    {l:'Lock-up',      v:fd.lockupDays?fd.lockupDays+' days':null},
+    {l:'TAM',          v:fd.tamB?'$'+fd.tamB+'B':null},
+    {l:'Mkt Momentum', v:fd.sectorMomentum?fd.sectorMomentum+' momentum':null},
+    {l:'Renaissance',  v:fd.renaissanceRating||null},
+    {l:'IPOScoop',     v:fd.ipoScoopRating||null},
   ];
+  const midPrice = fd.finalPrice || (fd.priceRangeLow&&fd.priceRangeHigh?(fd.priceRangeLow+fd.priceRangeHigh)/2:null);
   const metricsHtml = mDefs.filter(m=>m.v).map(m=>`<div class="mc"><div class="mc-lbl">${m.l}</div><div class="mc-val">${esc(String(m.v))}</div></div>`).join('');
 
   // Category bars
@@ -387,14 +393,19 @@ function render(d) {
 
   // Other details table
   const drows = [
-    ['Sponsor/Promoter', fd.sponsorName],
-    ['Lead Managers', fd.leadManagers],
+    ['Underwriters', fd.leadUnderwriters],
+    ['Key Investors', fd.keyInvestors],
     ['Use of Proceeds', fd.useOfProceeds],
-    ['Fresh Issue', fd.freshIssuePct?fd.freshIssuePct+'%':null],
-    ['Secondary', fd.secondaryPct?fd.secondaryPct+'%':null],
-    ['Lock-in Period', fd.lockInPeriod],
-    ['Broker Recommendations', fd.brokerRecommendations],
+    ['Insider Selling', fd.insiderSellingPct?fd.insiderSellingPct+'%':null],
+    ['Secondary %', fd.secondaryPct?fd.secondaryPct+'%':null],
+    ['Lock-up', fd.lockupDays?fd.lockupDays+' days':null],
+    ['Last Round', fd.lastRoundValuationB?'$'+fd.lastRoundValuationB+'B ('+fd.lastRoundDate+')':null],
+    ['Step-up', fd.stepUpPct?fd.stepUpPct+'%':null],
+    ['Comparable IPOs', fd.comparableIpos],
+    ['Renaissance Rating', fd.renaissanceRating],
+    ['IPOScoop Rating', fd.ipoScoopRating],
     ['Expert Consensus', fd.expertConsensus],
+    ['Market Conditions', fd.sp500Trend?fd.sp500Trend+' | VIX: '+(fd.vixLevel||'N/A'):null],
     ['Key Risks', fd.keyRisks],
     ['Recent News', fd.recentNews],
   ].filter(r=>r[1]).map(r=>`<tr><td>${r[0]}</td><td>${esc(String(r[1]))}</td></tr>`).join('');
@@ -412,7 +423,7 @@ function render(d) {
       <div class="hero-pills">
         <div class="hero-pill">Horizon <strong>${esc(cl.investmentHorizon||vrd.horizon||'—')}</strong></div>
         <div class="hero-pill">Allocation <strong>${esc(displayAmount)}</strong></div>
-        <div class="hero-pill" style="border-color:${lpClr};">Est. listing <strong style="color:${lpClr};">${lpTxt}${elp?' · AED '+elp:''}</strong></div>
+        <div class="hero-pill" style="border-color:${lpClr};">Est. listing <strong style="color:${lpClr};">${lpTxt}${elp?' · USD '+elp:''}</strong></div>
       </div>
     </div>
   </div>`;
@@ -439,7 +450,7 @@ function render(d) {
     <div class="disclaimer">
       <strong>Disclaimer:</strong> This IPO analysis is generated by an AI-powered quantitative and qualitative assessment model developed by Vikram Bhatia and is provided solely for informational and educational purposes.
       Nothing on this platform constitutes financial, investment, legal, or tax advice, or a recommendation to apply for, buy, sell, or hold any IPO or security. All scores, ratings, projections, and analysis are based on publicly available information and AI-driven methodologies and should be used only as a starting point for independent research. They do not guarantee listing gains or future performance.
-      IPO investments involve market risks, including the risk of capital loss. Investors should carefully read the official Prospectus on DFM or ADX, and consult a licensed financial advisor before making any investment decision.
+      IPO investments involve market risks, including the risk of capital loss. Investors should carefully read the official Prospectus on NYSE or NASDAQ, and consult a licensed financial advisor before making any investment decision.
       The creators, operators, and contributors of this platform disclaim all liability for any loss or damage arising from the use of or reliance on this analysis.
     </div>`;
 }
@@ -448,10 +459,10 @@ async function loadHistory() {
   const el = document.getElementById('analysedIpoList');
   el.innerHTML='<div class="no-nfos">Loading…</div>';
   try {
-    const res = await fetch(AS_URL+'?action=uae_ipolist&v='+Date.now(), {redirect:'follow'});
+    const res = await fetch(AS_URL+'?action=us_ipolist&v='+Date.now(), {redirect:'follow'});
     if(!res.ok) throw new Error('HTTP '+res.status);
     const data = await res.json();
-    console.log('UAE ipolist data:', data);
+    console.log('US ipolist data:', data);
     if(!Array.isArray(data)||!data.length){el.innerHTML='<div class="no-nfos">No analyses yet.</div>';return;}
     const todayIST = new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Kolkata'});
     const seen=new Map();
@@ -481,7 +492,7 @@ async function loadHistory() {
       return `<div class="nfo-item ${urgentClass}">
         ${urgentBanner}
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;margin-bottom:3px;">
-          <div class="nfo-item-name">${esc(item.name)}</div>
+          <div class="nfo-item-name">${esc(item.name)}${item.ticker?' <span style=\"font-size:10px;color:var(--t3);\">('+item.ticker+')</span>':''}</div>
           ${s?`<span style="font-size:12px;font-weight:600;color:${scoreClr};flex-shrink:0;">${s}</span>`:''}
         </div>
         <div class="nfo-item-cat">${esc(item.sector||'—')} · ${esc(item.exchange||'')}</div>
@@ -496,12 +507,12 @@ async function loadHistory() {
         </div>
         <div style="display:flex;gap:10px;margin-top:5px;flex-wrap:wrap;">
           ${gmp!==null?`<div style="font-size:11px;"><span style="color:var(--t3);">GMP ${item.analysedOn?'('+item.analysedOn+')':''}  </span><span style="color:${gmpClr};font-weight:500;">${gmp>0?'+':''}${gmp}%</span></div>`:''}
-          ${lp!==null?`<div style="font-size:11px;"><span style="color:var(--t3);">Est. listing </span><span style="color:${lpClr};font-weight:500;">${lp>0?'+':''}${lp}%${lpPx?' · AED '+lpPx:''}</span></div>`:''}
+          ${lp!==null?`<div style="font-size:11px;"><span style="color:var(--t3);">Est. listing </span><span style="color:${lpClr};font-weight:500;">${lp>0?'+':''}${lp}%${lpPx?' · USD '+lpPx:''}</span></div>`:''}
         </div>
       </div>`;
     }).join('');
   } catch(e) {
-    console.error('UAE loadHistory error:', e);
+    console.error('US loadHistory error:', e);
     el.innerHTML=`<div class="no-nfos">Could not load.<br><span style="font-size:10px;">${e.message}</span></div>`;
   }
 }
