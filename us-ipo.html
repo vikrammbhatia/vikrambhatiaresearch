@@ -422,21 +422,23 @@ function render(d) {
   let invHtml = '';
   const ip = fd.finalPrice || (fd.priceRangeLow&&fd.priceRangeHigh?(fd.priceRangeLow+fd.priceRangeHigh)/2:null);
   if(cl.suggestedAmount) {
+    // Use final price, or midpoint of range, or null
+    const basePrice = ip || (fd.priceRangeLow&&fd.priceRangeHigh?(fd.priceRangeLow+fd.priceRangeHigh)/2:null);
     function projCell(label, pct) {
-      if(!pct||!ip) return `<div class="proj-cell"><div class="proj-lbl">${label}</div><div class="proj-val" style="color:var(--t3);">—</div></div>`;
-      const price = Math.round(ip*(1+pct/100)*100)/100;
+      if(!pct||!basePrice) return `<div class="proj-cell"><div class="proj-lbl">${label}</div><div class="proj-val" style="color:var(--t3);">—</div></div>`;
+      const price = Math.round(basePrice*(1+pct/100)*100)/100;
       const clr = pct>=0?'var(--green)':'var(--red)';
       return `<div class="proj-cell"><div class="proj-lbl">${label}</div><div class="proj-val" style="color:${clr};">$${price}</div><div class="proj-chg" style="color:${clr};">${pct>=0?'+':''}${pct}%</div></div>`;
     }
     const estPremium = d.expectedListingPremium||cl.expectedListingPremium||null;
-    const ann = cl.expectedAnnualReturn||null;
+    const ann = (cl.expectedAnnualReturn!==null&&cl.expectedAnnualReturn!==undefined)?cl.expectedAnnualReturn:null;
     invHtml = `<div class="slabel">Investment Recommendation</div>
     <div class="inv-card">
       <div class="inv-top">
         <div class="inv-cell"><div class="inv-lbl">Suggested Amount</div><div class="inv-val">${esc(cl.suggestedAmount||'—')}</div></div>
         <div class="inv-cell"><div class="inv-lbl">Investment Horizon</div><div class="inv-val">${esc(cl.investmentHorizon||'—')}</div></div>
-        <div class="inv-cell"><div class="inv-lbl">Expected Annual Return</div><div class="inv-val green">${ann?ann+'%':'—'}</div></div>
-        <div class="inv-cell"><div class="inv-lbl">Offer Price</div><div class="inv-val">${ip?'$'+ip:'—'}</div></div>
+        <div class="inv-cell"><div class="inv-lbl">Expected Annual Return</div><div class="inv-val" style="color:${ann>=0?'var(--green)':'var(--red)'}">${ann!==null&&ann!==undefined?ann+'%':'—'}</div></div>
+        <div class="inv-cell"><div class="inv-lbl">Offer Price</div><div class="inv-val">${fd.finalPrice?'$'+fd.finalPrice:fd.priceRangeLow&&fd.priceRangeHigh?'$'+fd.priceRangeLow+'–$'+fd.priceRangeHigh:'TBD'}</div></div>
       </div>
       <div class="slabel" style="margin-top:4px;margin-bottom:8px;">Projected Share Price</div>
       <div class="proj-grid">
