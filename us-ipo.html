@@ -70,9 +70,9 @@ body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-s
 
 /* METRICS */
 .metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px;margin-bottom:1rem;}
-.mc{background:var(--bg3);border:1px solid var(--b1);border-radius:6px;padding:8px 10px;overflow:hidden;}
+.mc{background:var(--bg3);border:1px solid var(--b1);border-radius:6px;padding:8px 10px;}
 .mc-lbl{font-size:9px;text-transform:uppercase;letter-spacing:0.05em;color:var(--t3);margin-bottom:4px;}
-.mc-val{font-size:12px;font-weight:600;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mc-val{font-size:12px;font-weight:600;color:var(--t1);word-break:break-word;line-height:1.4;}
 
 /* CATEGORY BARS */
 .cat-bars{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem;}
@@ -330,7 +330,7 @@ function render(d) {
   const mDefs = [
     {l:'Ticker',       v:fd.ticker||null},
     {l:'Exchange',     v:fd.exchange||null},
-    {l:'Listing Date', v:fd.listingDate||'—'},
+    {l:'Listing Date', v:fd.listingDate||'TBD (not yet priced)'},
     {l:'Price Range',  v:fd.priceRangeLow&&fd.priceRangeHigh?'$'+fd.priceRangeLow+' – $'+fd.priceRangeHigh:null},
     {l:'Final Price',  v:fd.finalPrice?'$'+fd.finalPrice:null},
     {l:'Offer Size',   v:fd.offerSizeM?'$'+fd.offerSizeM+'M':null},
