@@ -350,7 +350,9 @@ function render(d) {
     {l:'IPOScoop',     v:fd.ipoScoopRating||null},
   ];
   const midPrice = fd.finalPrice || (fd.priceRangeLow&&fd.priceRangeHigh?(fd.priceRangeLow+fd.priceRangeHigh)/2:null);
-  const metricsHtml = mDefs.filter(m=>m.v).map(m=>`<div class="mc" title="${esc(String(m.v))}"><div class="mc-lbl">${m.l}</div><div class="mc-val">${esc(String(m.v))}</div></div>`).join('');
+  const metricsHtml = mDefs
+    .filter(m=>m.v && !String(m.v).includes('[Ljava.lang'))
+    .map(m=>`<div class="mc" title="${esc(String(m.v))}"><div class="mc-lbl">${m.l}</div><div class="mc-val">${esc(String(m.v))}</div></div>`).join('');
 
   // Category bars
   const catOrder = ['Market','Financials','Valuation','Governance','Strategic'];
