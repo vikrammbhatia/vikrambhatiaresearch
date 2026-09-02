@@ -343,9 +343,6 @@ function renderLockupCards(rows, el){
     </div>`;
   };
 
-  const listedHtml = listed.map(r=>makeCard(r,false)).join('');
-  const upcomingHtml = upcoming.map(r=>makeCard(r,true)).join('');
-
   const soonHtml    = expiringSoon.map(r=>makeCard(r,false)).join('');
   const expiredHtml = recentExpired.map(r=>makeCard(r,false)).join('');
   const upcomingHtml2 = upcoming.map(r=>makeCard(r,true)).join('');
