@@ -162,6 +162,14 @@ body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-s
 .proj-chg{font-size:11px;margin-top:2px;}
 .broker-box{background:var(--bg3);border:1px solid var(--b1);border-radius:8px;padding:14px 16px;margin-bottom:4px;}
 .broker-consensus-badge{font-size:14px;font-weight:600;}
+.buy-at-open-box{border-radius:10px;padding:18px 22px;margin-bottom:4px;}
+.buy-at-open-box.green{background:#052e16;border:2px solid #166534;}
+.buy-at-open-box.amber{background:#1a1200;border:2px solid #854d0e;}
+.buy-at-open-box.red{background:#1a0000;border:2px solid #7f1d1d;}
+.buy-at-open-verdict{font-size:20px;font-weight:700;margin-bottom:6px;}
+.buy-at-open-box.green .buy-at-open-verdict{color:var(--green);}
+.buy-at-open-box.amber .buy-at-open-verdict{color:var(--amber);}
+.buy-at-open-box.red .buy-at-open-verdict{color:var(--red);}
 @media(max-width:600px){.inv-top{grid-template-columns:repeat(2,1fr);}.proj-grid{grid-template-columns:repeat(2,1fr);}}
 .disclaimer{font-size:10px;color:var(--t3);line-height:1.6;margin-top:2rem;padding:12px;background:var(--bg3);border-radius:6px;border:1px solid var(--b1);}
 
@@ -258,6 +266,7 @@ const FACTOR_TIPS = {
   f20:'Expert Consensus: Renaissance Capital (Buy/Neutral/Avoid), IPOScoop (1-5 stars), and sell-side analyst pre-IPO ratings combined. Strong buy consensus from multiple sources = reliable demand signal.',
   f21:'Comparable IPO Performance: How did similar companies perform on listing day and 30/90 days after? Recent comps in same sector = most predictive. Sector-wide IPO fatigue shows up here.',
   f22:'Listing Premium Estimate: Derived from underwriter tier (base), float % (supply), sector momentum (demand), expert consensus (conviction), and pre-IPO step-up (discount signal). Combines all market signals.',
+  f23:'Price vs Preliminary Range: Did the final IPO price come in above, within, or below the preliminary S-1 range? Above range = institutions oversubscribed = very bullish for day-1 pop. Below range = weak demand = broken IPO risk.',
 };
 
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -424,6 +433,43 @@ function render(d) {
     </div>`;
   }
 
+  // Buy-at-Open Section
+  const bao = d.buyAtOpen || {};
+  const baoPremium = bao.estimatedPremium || cl.estimatedDay1OpenPct || d.expectedListingPremium || null;
+  const baoVerdict = bao.recommendation || cl.buyAtOpenVerdict || null;
+  const baoReasoning = bao.reasoning || cl.buyAtOpenReasoning || null;
+  const baoColour = bao.colour || (baoVerdict&&baoVerdict.toLowerCase().includes('strong buy')?'green':baoVerdict&&baoVerdict.toLowerCase().includes('buy')?'green':baoVerdict&&baoVerdict.toLowerCase().includes('avoid')?'red':'amber');
+  const baoOpenPrice = bao.estimatedOpenPrice || (baoPremium&&midPrice?Math.round(midPrice*(1+baoPremium/100)*100)/100:null);
+  const postPop3M = cl.postPopReturn3M || null;
+  const postPop12M = cl.postPopReturn12M || null;
+
+  let buyAtOpenHtml = '';
+  if(baoVerdict) {
+    buyAtOpenHtml = `<div class="slabel">Buy-at-Open Recommendation</div>
+    <div class="buy-at-open-box ${baoColour}">
+      <div class="buy-at-open-verdict">${esc(baoVerdict)}</div>
+      <div style="font-size:13px;color:var(--t2);margin-bottom:12px;">${esc(baoReasoning||'')}</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+        <div style="background:var(--bg4);border:1px solid var(--b2);border-radius:6px;padding:10px 12px;">
+          <div style="font-size:9px;text-transform:uppercase;color:var(--t3);margin-bottom:4px;">IPO Price</div>
+          <div style="font-size:14px;font-weight:600;">${midPrice?'$'+midPrice:'TBD'}</div>
+        </div>
+        <div style="background:var(--bg4);border:1px solid var(--b2);border-radius:6px;padding:10px 12px;">
+          <div style="font-size:9px;text-transform:uppercase;color:var(--t3);margin-bottom:4px;">Est. Day-1 Open</div>
+          <div style="font-size:14px;font-weight:600;color:var(--amber);">${baoOpenPrice?'$'+baoOpenPrice:(baoPremium?'+'+baoPremium+'% pop':'TBD')}</div>
+        </div>
+        <div style="background:var(--bg4);border:1px solid var(--b2);border-radius:6px;padding:10px 12px;">
+          <div style="font-size:9px;text-transform:uppercase;color:var(--t3);margin-bottom:4px;">Return from Open (3M)</div>
+          <div style="font-size:14px;font-weight:600;color:${postPop3M>=0?'var(--green)':'var(--red)'};">${postPop3M!==null?postPop3M+'%':'—'}</div>
+        </div>
+        <div style="background:var(--bg4);border:1px solid var(--b2);border-radius:6px;padding:10px 12px;">
+          <div style="font-size:9px;text-transform:uppercase;color:var(--t3);margin-bottom:4px;">Return from Open (12M)</div>
+          <div style="font-size:14px;font-weight:600;color:${postPop12M>=0?'var(--green)':'var(--red)'};">${postPop12M!==null?postPop12M+'%':'—'}</div>
+        </div>
+      </div>
+    </div>`;
+  }
+
   // Investment Recommendation Section
   let invHtml = '';
   const ip = fd.finalPrice || (fd.priceRangeLow&&fd.priceRangeHigh?(fd.priceRangeLow+fd.priceRangeHigh)/2:null);
@@ -524,6 +570,8 @@ function render(d) {
     <div class="div"></div>
     ${brokerHtml}
     ${brokerHtml?'<div class="div"></div>':''}
+    ${buyAtOpenHtml}
+    ${buyAtOpenHtml?'<div class="div"></div>':''}
     ${invHtml}
     ${invHtml?'<div class="div"></div>':''}
     ${aiHtml}
