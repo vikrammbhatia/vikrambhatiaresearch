@@ -416,9 +416,11 @@ function render(d) {
   }).join('');
 
   // Factor grid
-  const pendingIds = new Set((sc.pendingFactors||[]).map(f=>f.id));
+  const pendingIds = new Set(Array.isArray(sc.pendingFactors)?(sc.pendingFactors||[]).map(f=>f.id):[]);
   // If factors array is empty (from cache), show category scores as cards instead
-  const factorGrid = (sc.factors||[]).map(f=>{
+  // Ensure factors is a proper array
+  const factorsArr = Array.isArray(sc.factors) ? sc.factors.filter(f=>f&&f.id) : [];
+  const factorGrid = factorsArr.map(f=>{
     const s=f.score, isPending=pendingIds.has(f.id);
     const tip=(FACTOR_TIPS[f.id]||f.label).replace(/'/g,"&#39;");
     if(isPending) return `<div class="fg-card" style="opacity:0.5;"><div class="fg-cat">${f.cat}</div><div class="fg-name" style="color:var(--t3);">${esc(f.label)} <span class="tooltip-wrap"><span class="info-i">ⓘ</span><span class="tooltip-box">${tip} — Awaiting subscription data</span></span></div><div class="fg-bottom"><div class="fg-bar"></div><span class="fg-score sn">Pending</span></div></div>`;
@@ -430,10 +432,15 @@ function render(d) {
   }).join('');
 
   // Key Positives & Risks
-  const pos = Array.isArray(cl.keyPositives)?cl.keyPositives:[];
-  // Fall back to raw data key risks if claude analysis risks are empty
-  const rawRisks = fd.keyRisks ? String(fd.keyRisks).split(/[,;]/).map(s=>s.trim()).filter(s=>s.length>5) : [];
-  const risks = (Array.isArray(cl.keyRisks)&&cl.keyRisks.length>0) ? cl.keyRisks : rawRisks;
+  // Robust array handling - Claude sometimes returns strings or numbers
+  function toStrArray(v) {
+    if(Array.isArray(v)) return v.map(String).filter(s=>s.length>2);
+    if(typeof v==='string'&&v.length>3) return v.split(/[|;]/).map(s=>s.trim()).filter(s=>s.length>2);
+    return [];
+  }
+  const pos = toStrArray(cl.keyPositives);
+  const rawRisks = fd.keyRisks ? String(fd.keyRisks).split(/[|;,]/).map(s=>s.trim()).filter(s=>s.length>5) : [];
+  const risks = toStrArray(cl.keyRisks).length>0 ? toStrArray(cl.keyRisks) : rawRisks;
   const prHtml = `
     <div class="pr-box pos"><div class="pr-title">✓ Key Positives</div>${pos.map(p=>`<div class="pr-item">${esc(p)}</div>`).join('')}</div>
     <div class="pr-box risk"><div class="pr-title">✗ Key Risks</div>${risks.map(r=>`<div class="pr-item">${esc(r)}</div>`).join('')}</div>`;
@@ -520,21 +527,28 @@ function render(d) {
       </div>
       <div class="slabel" style="margin-top:4px;margin-bottom:8px;">Projected Share Price</div>
       <div class="proj-grid">
-        ${projCell('Listing Day', estPremium)}
-        ${projCell('3 Months', cl.projectedReturn3M||ann?Math.round(ann/4):null)}
-        ${projCell('6 Months', cl.projectedReturn6M||ann?Math.round(ann/2):null)}
-        ${projCell('12 Months', cl.projectedReturn12M||ann)}
+        ${projCell('Listing Day', typeof estPremium==='number'?estPremium:parseFloat(estPremium)||null)}
+        ${projCell('3 Months', parseFloat(cl.projectedReturn3M)||parseFloat(cl.expectedAnnualReturn)?Math.round(parseFloat(cl.expectedAnnualReturn)/4):null)}
+        ${projCell('6 Months', parseFloat(cl.projectedReturn6M)||parseFloat(cl.expectedAnnualReturn)?Math.round(parseFloat(cl.expectedAnnualReturn)/2):null)}
+        ${projCell('12 Months', parseFloat(cl.projectedReturn12M)||parseFloat(cl.expectedAnnualReturn)||null)}
       </div>
     </div>`;
   }
 
   // AI Analysis
   let aiHtml = `<div class="slabel">AI Analysis</div><div class="ai-box">`;
-  if(cl.listingOutlook)    aiHtml+=`<div class="ai-block"><span class="ai-lbl">Listing day &nbsp;</span><span class="ai-text">${esc(cl.listingOutlook)}</span></div>`;
-  if(cl.mediumTermOutlook) aiHtml+=`<div class="ai-block"><span class="ai-lbl">6–12 months &nbsp;</span><span class="ai-text">${esc(cl.mediumTermOutlook)}</span></div>`;
-  if(cl.allocationAdvice)  aiHtml+=`<div class="ai-block"><span class="ai-lbl">Allocation &nbsp;</span><span class="ai-text">${esc(cl.allocationAdvice)}</span></div>`;
-  if(cl.comparablePeers)   aiHtml+=`<div class="ai-block"><span class="ai-lbl">Comparable peers &nbsp;</span><span class="ai-text">${esc(cl.comparablePeers)}</span></div>`;
-  if(cl.analystNote)       aiHtml+=`<div class="ai-block"><span class="ai-lbl">Analyst note &nbsp;</span><span class="ai-text">${esc(cl.analystNote)}</span></div>`;
+  // Only show string fields, skip arrays/objects/numbers in AI section
+  function aiBlock(label, val) {
+    if(!val) return '';
+    const s = typeof val==='string'?val:Array.isArray(val)?val.join(', '):String(val);
+    if(s.length<3||!isNaN(Number(s))) return ''; // skip pure numbers
+    return `<div class="ai-block"><span class="ai-lbl">${label} &nbsp;</span><span class="ai-text">${esc(s)}</span></div>`;
+  }
+  aiHtml += aiBlock('Listing day', cl.listingOutlook||cl.listing_outlook);
+  aiHtml += aiBlock('6–12 months', cl.mediumTermOutlook||cl.medium_term_outlook||cl.sixMonthOutlook);
+  aiHtml += aiBlock('Allocation', cl.allocationAdvice||cl.allocation_advice);
+  aiHtml += aiBlock('Comparable peers', cl.comparablePeers||cl.comparable_peers);
+  aiHtml += aiBlock('Analyst note', cl.analystNote||cl.analyst_note);
   aiHtml += '</div>';
 
   // Other details table
@@ -642,7 +656,7 @@ function renderPostLockupResult(currentPrice, ipoPrice, day1Open, pl) {
   if(!plDiv) return;
 
   const v = String(pl.secondaryVerdict||'').toLowerCase();
-  const boxClass = v.includes('strong buy')?'strongbuy':v.includes('buy')?'buy':v.includes('avoid')?'avoid':'wait';
+  const vl = v.toLowerCase(); const boxClass = vl.includes('strong buy')?'strongbuy':vl.includes('avoid')?'avoid':vl.includes('buy')?'buy':'wait';
 
   const vsIpo = ipoPrice ? Math.round((currentPrice-ipoPrice)/ipoPrice*1000)/10 : null;
   const vsOpen = day1Open ? Math.round((currentPrice-day1Open)/day1Open*1000)/10 : null;
