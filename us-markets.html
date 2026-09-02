@@ -252,9 +252,10 @@ async function loadLockupData() {
       const lockupExpired = daysToLockup <= 0;
       const urgentLockup = !lockupExpired && daysToLockup <= 30;
 
-      const currentPrice = prices[ipo.ticker] || null;
-      const gainFromIpo = currentPrice && ipo.ipoPrice ? Math.round((currentPrice-ipo.ipoPrice)/ipo.ipoPrice*1000)/10 : null;
-      const gainFromOpen = currentPrice && ipo.day1Open ? Math.round((currentPrice-ipo.day1Open)/ipo.day1Open*1000)/10 : null;
+      // Only show prices for listed stocks
+      const currentPrice = (!notListedYet && prices[ipo.ticker]) ? prices[ipo.ticker] : null;
+      const gainFromIpo = (currentPrice && ipo.ipoPrice && !notListedYet) ? Math.round((currentPrice-ipo.ipoPrice)/ipo.ipoPrice*1000)/10 : null;
+      const gainFromOpen = (currentPrice && ipo.day1Open && !notListedYet) ? Math.round((currentPrice-ipo.day1Open)/ipo.day1Open*1000)/10 : null;
 
       // Signal logic
       let signal = '', signalClass = 'hold', signalIcon = '';
@@ -280,7 +281,7 @@ async function loadLockupData() {
         signalClass = 'hold';
       }
 
-      const cardClass = lockupExpired?'expired':urgentLockup?'urgent':'';
+      const cardClass = (lockupExpired&&ipo.score>=65)?'expired':urgentLockup?'urgent':'';
 
       return `<div class="lockup-card ${cardClass}">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;">
@@ -291,11 +292,11 @@ async function loadLockupData() {
           ${ipo.score!==null?`<div style="font-size:18px;font-weight:700;color:${ipo.score>=65?'var(--green)':ipo.score>=50?'var(--amber)':'var(--red)'};">${ipo.score}</div>`:'<div style="color:var(--t3);font-size:12px;">TBD</div>'}
         </div>
         <div class="lockup-metrics">
-          <div class="lm-cell"><div class="lm-lbl">IPO Price</div><div class="lm-val">${ipo.ipoPrice?'$'+ipo.ipoPrice:'TBD'}</div></div>
-          <div class="lm-cell"><div class="lm-lbl">Day-1 Open</div><div class="lm-val">${ipo.day1Open?'$'+ipo.day1Open:'TBD'}</div></div>
-          <div class="lm-cell"><div class="lm-lbl">Current Price</div><div class="lm-val" style="color:${gainFromIpo>0?'var(--green)':gainFromIpo<0?'var(--red)':'var(--t1)'};">${currentPrice?'$'+currentPrice:'—'}</div></div>
-          <div class="lm-cell"><div class="lm-lbl">vs IPO Price</div><div class="lm-val" style="color:${gainFromIpo>0?'var(--green)':gainFromIpo<0?'var(--red)':'var(--t3)'};">${gainFromIpo!==null?(gainFromIpo>0?'+':'')+gainFromIpo+'%':'—'}</div></div>
-          <div class="lm-cell"><div class="lm-lbl">vs Day-1 Open</div><div class="lm-val" style="color:${gainFromOpen>0?'var(--green)':gainFromOpen<0?'var(--red)':'var(--t3)'};">${gainFromOpen!==null?(gainFromOpen>0?'+':'')+gainFromOpen+'%':'—'}</div></div>
+          <div class="lm-cell"><div class="lm-lbl">IPO Price</div><div class="lm-val">${notListedYet?'TBD':ipo.ipoPrice?'$'+ipo.ipoPrice:'TBD'}</div></div>
+          <div class="lm-cell"><div class="lm-lbl">Day-1 Open</div><div class="lm-val">${notListedYet?'TBD':ipo.day1Open?'$'+ipo.day1Open:'—'}</div></div>
+          <div class="lm-cell"><div class="lm-lbl">Current Price</div><div class="lm-val" style="color:${gainFromIpo>0?'var(--green)':gainFromIpo<0?'var(--red)':'var(--t1)'};">${notListedYet?'Not listed yet':currentPrice?'$'+currentPrice:'Click Refresh'}</div></div>
+          <div class="lm-cell"><div class="lm-lbl">vs IPO Price</div><div class="lm-val" style="color:${gainFromIpo>0?'var(--green)':gainFromIpo<0?'var(--red)':'var(--t3)'};">${notListedYet?'—':gainFromIpo!==null?(gainFromIpo>0?'+':'')+gainFromIpo+'%':'—'}</div></div>
+          <div class="lm-cell"><div class="lm-lbl">vs Day-1 Open</div><div class="lm-val" style="color:${gainFromOpen>0?'var(--green)':gainFromOpen<0?'var(--red)':'var(--t3)'};">${notListedYet?'—':gainFromOpen!==null?(gainFromOpen>0?'+':'')+gainFromOpen+'%':'—'}</div></div>
           <div class="lm-cell"><div class="lm-lbl">Lock-up Date</div><div class="lm-val" style="font-size:10px;">${lockupStr}</div></div>
         </div>
         ${!notListedYet?`<div class="lockup-bar">
