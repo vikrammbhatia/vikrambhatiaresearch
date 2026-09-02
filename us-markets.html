@@ -117,10 +117,13 @@ body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-s
   <div id="tab-lockup" class="tab-content active">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
       <div>
-        <div style="font-size:13px;color:var(--t2);">All data fetched live via web search on Refresh. No hardcoded prices.</div>
-        <div style="font-size:11px;color:var(--t3);margin-top:3px;">Pulsing amber = within 30 days of lock-up expiry · Green border = lock-up expired</div>
+        <div style="font-size:13px;color:var(--t2);">Current prices refreshed on each click. IPO details cached permanently in Google Sheet.</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:3px;">Pulsing amber = within 30 days of lock-up expiry · Green border = lock-up expired · <strong style="color:var(--blue);">First time?</strong> Go to Google Sheet → US Markets Dashboard → Seed lock-up tracker</div>
       </div>
-      <button class="refresh-btn" id="lockupRefreshBtn" onclick="loadLockupData()">Refresh</button>
+      <div style="display:flex;gap:8px;">
+        <button style="background:var(--blue-bg);border:1px solid var(--blue-bd);color:var(--blue);padding:6px 12px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;" onclick="discoverNewIpos()">Find New IPOs</button>
+        <button class="refresh-btn" id="lockupRefreshBtn" onclick="loadLockupData()">Refresh</button>
+      </div>
     </div>
     <div id="lockupContent"><div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg">Click Refresh to fetch live data...</div></div></div>
     <div class="last-updated" id="lockupUpdated"></div>
@@ -161,14 +164,11 @@ function switchTab(tab,el){
 }
 
 // ── TRACKED IPOs — names and tickers only, all data fetched live ─
+// Only confirmed listed stocks — lock-up tracking makes sense here
 const TRACKED_IPOS = [
-  {name:"Anthropic",              ticker:"ANTH",  exchange:"NASDAQ", sector:"AI / Technology"},
-  {name:"Klarna",                 ticker:"KLAR",  exchange:"NYSE",   sector:"Fintech / BNPL"},
-  {name:"Databricks",             ticker:"DBR",   exchange:"NASDAQ", sector:"Data / AI"},
-  {name:"Stripe",                 ticker:"STRP",  exchange:"NYSE",   sector:"Payments / Fintech"},
-  {name:"Chime",                  ticker:"CHYM",  exchange:"NASDAQ", sector:"Neobank / Fintech"},
   {name:"SpaceX",                 ticker:"SPCE2", exchange:"NASDAQ", sector:"Aerospace / AI Infra"},
   {name:"Cerebras Systems",       ticker:"CBRS",  exchange:"NASDAQ", sector:"AI Chips / Hardware"},
+  {name:"Klarna",                 ticker:"KLAR",  exchange:"NYSE",   sector:"Fintech / BNPL"},
   {name:"Lyntris Inc",            ticker:"LYNX",  exchange:"NYSE",   sector:"Defense Technology"},
   {name:"Reddit",                 ticker:"RDDT",  exchange:"NYSE",   sector:"Social Media"},
   {name:"Medline Industries",     ticker:"MDL",   exchange:"NYSE",   sector:"Healthcare"},
@@ -178,121 +178,178 @@ const TRACKED_IPOS = [
   {name:"Venture Global LNG",     ticker:"VG",    exchange:"NYSE",   sector:"Energy / LNG"},
 ];
 
-async function loadLockupData(){
+// Upcoming IPOs shown separately below the tracker
+const UPCOMING_IPOS = [
+  {name:"Anthropic",  ticker:"ANTH",  exchange:"NASDAQ", sector:"AI / Technology"},
+  {name:"Databricks", ticker:"DBR",   exchange:"NASDAQ", sector:"Data / AI"},
+  {name:"Stripe",     ticker:"STRP",  exchange:"NYSE",   sector:"Payments / Fintech"},
+  {name:"Chime",      ticker:"CHYM",  exchange:"NASDAQ", sector:"Neobank / Fintech"},
+];
+
+async function loadLockupData(forceRefresh=false){
   const btn=document.getElementById('lockupRefreshBtn');
-  btn.disabled=true; btn.textContent='Fetching...';
+  btn.disabled=true;
   const el=document.getElementById('lockupContent');
-  el.innerHTML='<div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg">Fetching IPO dates, prices and lock-up status via web search...</div></div>';
+
   try {
-    const names=TRACKED_IPOS.map(i=>i.name).join(',');
-    const res=await fetch(AS_URL+'?t='+T+'&action=us_lockup_data&companies='+encodeURIComponent(names)+'&v='+Date.now(),{redirect:'follow'});
-    let live={};
-    if(res.ok){try{live=await res.json();}catch(e){}}
-    const today=new Date();
-    const cards=TRACKED_IPOS.map(ipo=>{
-      const d=live[ipo.name]||{};
-      const ipoDate=d.ipoDate||null, ipoPrice=d.ipoPrice||null, day1Open=d.day1Open||null;
-      const currentPrice=d.currentPrice||null, score=d.score||null, expectedDate=d.expectedDate||null;
-      const listingDate=ipoDate?new Date(ipoDate):null;
-      const lockupDate=listingDate?new Date(listingDate.getTime()+180*24*60*60*1000):null;
-      const lockupStr=lockupDate?lockupDate.toLocaleDateString('en-CA'):'—';
-      const daysToListing=listingDate?Math.ceil((listingDate-today)/(864e5)):null;
-      const daysToLockup=lockupDate?Math.ceil((lockupDate-today)/(864e5)):null;
-      const daysSince=listingDate?Math.ceil((today-listingDate)/(864e5)):0;
-      const progress=Math.min(100,Math.max(0,(daysSince/180)*100));
-      const isUpcoming=!ipoDate||(daysToListing!==null&&daysToListing>0);
-      const expired=daysToLockup!==null&&daysToLockup<=0;
-      const urgent=!expired&&daysToLockup!==null&&daysToLockup<=30;
-      const gainIpo=currentPrice&&ipoPrice?Math.round((currentPrice-ipoPrice)/ipoPrice*1000)/10:null;
-      const gainOpen=currentPrice&&day1Open?Math.round((currentPrice-day1Open)/day1Open*1000)/10:null;
-      let signal='',sc='hold';
-      if(isUpcoming){signal=expectedDate?'Expected: '+expectedDate:'Not yet listed — click Refresh';}
-      else if(expired){
-        if(score>=65&&gainOpen!==null&&gainOpen<-5){signal='Buy Signal — Post-lockup dip on quality stock';sc='buy';}
-        else if(score>=65){signal='Lock-up expired — Monitor for pullback entry';sc='buy';}
-        else{signal='Lock-up expired — Low score, avoid';}
-      } else if(urgent){signal='Lock-up expires in '+daysToLockup+' days — Prepare for selling pressure';sc='watch';}
-      else if(daysToLockup!==null){signal='Lock-up expires '+lockupStr+' ('+daysToLockup+' days)';}
-      else{signal='Click Refresh to fetch data';}
-      const cc=(expired&&score>=65)?'expired':urgent?'urgent':'';
-      const scl=score>=65?'var(--green)':score>=50?'var(--amber)':'var(--red)';
-      const gc=gainIpo>0?'var(--green)':gainIpo<0?'var(--red)':'var(--t3)';
-      const oc=gainOpen>0?'var(--green)':gainOpen<0?'var(--red)':'var(--t3)';
-      return `<div class="lockup-card ${cc}">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
-          <div><div class="lockup-name">${esc(ipo.name)}</div>
-          <div class="lockup-ticker">${esc(ipo.ticker)} · ${esc(ipo.exchange)} · ${esc(ipo.sector)}</div></div>
-          <div style="text-align:right;">${score!==null?`<div style="font-size:18px;font-weight:700;color:${scl};">${score}</div><div style="font-size:9px;color:var(--t3);">IPO score</div>`:'<div style="color:var(--t3);font-size:11px;">Score TBD</div>'}</div>
-        </div>
-        <div class="lockup-metrics">
-          <div class="lm-cell"><div class="lm-lbl">IPO Price</div><div class="lm-val">${isUpcoming?'TBD':ipoPrice?'$'+ipoPrice:'—'}</div></div>
-          <div class="lm-cell"><div class="lm-lbl">Day-1 Open</div><div class="lm-val">${isUpcoming?'TBD':day1Open?'$'+day1Open:'—'}</div></div>
-          <div class="lm-cell"><div class="lm-lbl">Current Price</div><div class="lm-val" style="color:${gc};">${isUpcoming?'Not listed':currentPrice?'$'+currentPrice:'—'}</div></div>
-          <div class="lm-cell"><div class="lm-lbl">vs IPO Price</div><div class="lm-val" style="color:${gc};">${gainIpo!==null?(gainIpo>0?'+':'')+gainIpo+'%':'—'}</div></div>
-          <div class="lm-cell"><div class="lm-lbl">vs Day-1 Open</div><div class="lm-val" style="color:${oc};">${gainOpen!==null?(gainOpen>0?'+':'')+gainOpen+'%':'—'}</div></div>
-          <div class="lm-cell"><div class="lm-lbl">Lock-up Expiry</div><div class="lm-val" style="font-size:10px;">${lockupStr}</div></div>
-        </div>
-        ${!isUpcoming&&listingDate?`<div class="lockup-bar">
-          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-bottom:3px;">
-            <span>Listed ${ipoDate}</span><span>${expired?'Lock-up expired':Math.round(progress)+'% of lock-up elapsed'}</span>
-          </div>
-          <div class="lbar-track"><div class="lbar-fill" style="width:${progress}%;background:${expired?'var(--green)':urgent?'var(--amber)':'var(--or)'}"></div></div>
-        </div>`:''}
-        <div class="lockup-signal ${sc}">${signal}</div>
-      </div>`;
-    }).join('');
-    el.innerHTML=`<div class="lockup-grid">${cards}</div>`;
+    // Step 1: Load cached data instantly
+    const cacheRes = await fetch(AS_URL+'?t='+T+'&action=us_lockup_list&v='+Date.now(),{redirect:'follow'});
+    let rows = [];
+    if(cacheRes.ok){ try{ rows=await cacheRes.json(); }catch(e){} }
+
+    if(rows.length>0){
+      // Show cached data immediately while prices refresh in background
+      renderLockupCards(rows, el);
+      document.getElementById('lockupUpdated').textContent = 'Showing cached data — refreshing prices...';
+    } else {
+      el.innerHTML='<div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg">No data yet. Go to Google Sheet -> US Markets Dashboard -> Seed lock-up tracker first, then click Refresh.</div></div>';
+      btn.disabled=false; btn.textContent='Refresh';
+      return;
+    }
+
+    // Step 2: Refresh prices in background (only fetches current prices — cheap)
+    btn.textContent='Refreshing prices...';
+    const refreshRes = await fetch(AS_URL+'?t='+T+'&action=us_lockup_refresh&v='+Date.now(),{redirect:'follow'});
+    if(refreshRes.ok){
+      let updated=[];
+      try{ updated=await refreshRes.json(); }catch(e){}
+      if(Array.isArray(updated)&&updated.length>0){
+        renderLockupCards(updated, el);
+      }
+    }
     lockupLoaded=true;
-    document.getElementById('lockupUpdated').textContent='Live data updated: '+new Date().toLocaleTimeString();
-  } catch(e){el.innerHTML=`<div style="color:var(--red);padding:1rem;">Error: ${esc(e.message)}</div>`;}
-  finally{btn.disabled=false;btn.textContent='Refresh';}
+    document.getElementById('lockupUpdated').textContent='Prices updated: '+new Date().toLocaleTimeString()+' (IPO details cached permanently)';
+  } catch(e){
+    el.innerHTML=`<div style="color:var(--red);padding:1rem;">Error: ${esc(e.message)}</div>`;
+  } finally {
+    btn.disabled=false; btn.textContent='Refresh';
+  }
 }
 
-// ── ETF DASHBOARD ────────────────────────────────────────────
-const ETF_LIST = [
-  {ticker:'IPO',  name:'Renaissance IPO ETF',                  theme:'IPO & Growth',       color:'var(--or)'},
-  {ticker:'FPX',  name:'First Trust US Equity Opportunities',  theme:'IPO & Growth',       color:'var(--or)'},
-  {ticker:'IPOS', name:'Renaissance International IPO ETF',    theme:'IPO & Growth',       color:'var(--or)'},
-  {ticker:'ARKK', name:'ARK Innovation ETF',                   theme:'IPO & Growth',       color:'var(--or)'},
-  {ticker:'INDA', name:'iShares MSCI India ETF',               theme:'India',              color:'var(--amber)'},
-  {ticker:'INDY', name:'iShares India 50 ETF',                 theme:'India',              color:'var(--amber)'},
-  {ticker:'EPI',  name:'WisdomTree India Earnings ETF',        theme:'India',              color:'var(--amber)'},
-  {ticker:'NFTY', name:'First Trust India NIFTY 50 ETF',       theme:'India',              color:'var(--amber)'},
-  {ticker:'SMIN', name:'iShares MSCI India Small-Cap ETF',     theme:'India',              color:'var(--amber)'},
-  {ticker:'UAE',  name:'iShares MSCI UAE ETF',                 theme:'Gulf & Middle East', color:'var(--blue)'},
-  {ticker:'KSA',  name:'iShares MSCI Saudi Arabia ETF',        theme:'Gulf & Middle East', color:'var(--blue)'},
-  {ticker:'GULF', name:'WisdomTree Middle East Dividend ETF',   theme:'Gulf & Middle East', color:'var(--blue)'},
-  {ticker:'QAT',  name:'iShares MSCI Qatar ETF',               theme:'Gulf & Middle East', color:'var(--blue)'},
-  {ticker:'AIQ',  name:'Global X AI & Technology ETF',         theme:'AI & Technology',    color:'var(--purple)'},
-  {ticker:'BOTZ', name:'Global X Robotics & AI ETF',           theme:'AI & Technology',    color:'var(--purple)'},
-  {ticker:'CHAT', name:'Roundhill Generative AI & Technology', theme:'AI & Technology',    color:'var(--purple)'},
-  {ticker:'SOXX', name:'iShares Semiconductor ETF',            theme:'AI & Technology',    color:'var(--purple)'},
-  {ticker:'ITA',  name:'iShares US Aerospace & Defense ETF',   theme:'Defence & Energy',   color:'#4ade80'},
-  {ticker:'XAR',  name:'SPDR Aerospace & Defense ETF',         theme:'Defence & Energy',   color:'#4ade80'},
-  {ticker:'XLE',  name:'Energy Select Sector SPDR ETF',        theme:'Defence & Energy',   color:'#4ade80'},
-  {ticker:'ICLN', name:'iShares Global Clean Energy ETF',      theme:'Defence & Energy',   color:'#4ade80'},
-  {ticker:'FINX', name:'Global X FinTech ETF',                 theme:'Fintech & Finance',  color:'#f472b6'},
-  {ticker:'IPAY', name:'ETFMG Prime Mobile Payments ETF',      theme:'Fintech & Finance',  color:'#f472b6'},
-  {ticker:'ARKF', name:'ARK Fintech Innovation ETF',           theme:'Fintech & Finance',  color:'#f472b6'},
-  {ticker:'XBI',  name:'SPDR S&P Biotech ETF',                 theme:'Healthcare & Biotech',color:'#34d399'},
-  {ticker:'IBB',  name:'iShares Biotechnology ETF',            theme:'Healthcare & Biotech',color:'#34d399'},
-  {ticker:'ARKG', name:'ARK Genomic Revolution ETF',           theme:'Healthcare & Biotech',color:'#34d399'},
-  {ticker:'QQQ',  name:'Invesco QQQ (Nasdaq 100)',             theme:'Broad Market',       color:'var(--t2)'},
-  {ticker:'SPY',  name:'SPDR S&P 500 ETF Trust',              theme:'Broad Market',       color:'var(--t2)'},
-  {ticker:'VTI',  name:'Vanguard Total Stock Market ETF',      theme:'Broad Market',       color:'var(--t2)'},
-  {ticker:'VWO',  name:'Vanguard Emerging Markets ETF',        theme:'Broad Market',       color:'var(--t2)'},
-];
+async function discoverNewIpos(){
+  const btn=document.getElementById('lockupRefreshBtn');
+  btn.disabled=true; btn.textContent='Discovering new IPOs...';
+  const el=document.getElementById('lockupContent');
+  el.innerHTML='<div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg">Searching for new US IPOs from the last 6 months — this may take 30-60 seconds...</div></div>';
+  try {
+    const res=await fetch(AS_URL+'?t='+T+'&action=us_lockup_discover&v='+Date.now(),{redirect:'follow'});
+    const result=await res.json();
+    if(result.added>0){
+      alert('Found '+result.discovered+' IPOs, added '+result.added+' new ones to your tracker.');
+    } else {
+      alert('No new IPOs found. Your tracker is up to date.');
+    }
+    loadLockupData();
+  } catch(e){
+    alert('Error: '+e.message);
+    btn.disabled=false; btn.textContent='Refresh';
+  }
+}
+
+function renderLockupCards(rows, el){
+  const today=new Date();
+  // Split listed vs upcoming
+  const listed=[], upcoming=[];
+  rows.forEach(r=>{
+    const ipoDate=r['IPO Date']||null;
+    const notListed=!ipoDate||new Date(ipoDate)>today;
+    if(notListed) upcoming.push(r);
+    else listed.push(r);
+  });
+
+  const makeCard = (r, isUpcoming) => {
+    const name=r['Company Name']||'', ticker=r['Ticker']||'', exchange=r['Exchange']||'', sector=r['Sector']||'';
+    const ipoDate=r['IPO Date']||null, ipoPrice=parseFloat(r['IPO Price ($)'])||null;
+    const day1Open=parseFloat(r['Day-1 Open ($)'])||null, currentPrice=parseFloat(r['Current Price ($)'])||null;
+    const score=parseFloat(r['Score'])||null, notes=r['Notes']||'';
+
+    if(isUpcoming){
+      return `<div class="lockup-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div><div class="lockup-name">${esc(name)}</div>
+          <div class="lockup-ticker">${esc(ticker)} · ${esc(exchange)} · ${esc(sector)}</div></div>
+          <span style="font-size:10px;background:var(--blue-bg);border:1px solid var(--blue-bd);color:var(--blue);padding:2px 8px;border-radius:10px;">Upcoming</span>
+        </div>
+        <div class="lockup-metrics" style="margin-top:10px;">
+          <div class="lm-cell"><div class="lm-lbl">IPO Price</div><div class="lm-val">TBD</div></div>
+          <div class="lm-cell"><div class="lm-lbl">Status</div><div class="lm-val" style="font-size:10px;">${esc(notes||'Not yet listed')}</div></div>
+          <div class="lm-cell"><div class="lm-lbl">Exchange</div><div class="lm-val">${esc(exchange)}</div></div>
+        </div>
+        <div class="lockup-signal hold">Not yet listed — see Pre-IPO Watchlist tab for details</div>
+      </div>`;
+    }
+
+    const listingDate=new Date(ipoDate);
+    const lockupDate=new Date(listingDate.getTime()+180*24*60*60*1000);
+    const lockupStr=lockupDate.toLocaleDateString('en-CA');
+    const daysToLockup=Math.ceil((lockupDate-today)/(864e5));
+    const daysSince=Math.ceil((today-listingDate)/(864e5));
+    const progress=Math.min(100,Math.max(0,(daysSince/180)*100));
+    const expired=daysToLockup<=0, urgent=!expired&&daysToLockup<=30;
+
+    const gainIpo=currentPrice&&ipoPrice?Math.round((currentPrice-ipoPrice)/ipoPrice*1000)/10:null;
+    const gainOpen=currentPrice&&day1Open?Math.round((currentPrice-day1Open)/day1Open*1000)/10:null;
+
+    let signal='',sc='hold';
+    if(expired){
+      if(score>=65&&gainOpen!==null&&gainOpen<-5){signal='Buy Signal — Post-lockup dip on quality stock';sc='buy';}
+      else if(score>=65){signal='Lock-up expired — Monitor for pullback entry';sc='buy';}
+      else{signal='Lock-up expired'+(score?(' — Score '+score+'/100+, avoid'):'');}
+    } else if(urgent){signal='Lock-up expires in '+daysToLockup+' days — Prepare for selling pressure';sc='watch';}
+    else{signal='Lock-up expires '+lockupStr+' ('+daysToLockup+' days)';}
+
+    const cardClass=(expired&&score>=65)?'expired':urgent?'urgent':'';
+    const scl=score>=65?'var(--green)':score>=50?'var(--amber)':'var(--red)';
+    const gc=gainIpo>0?'var(--green)':gainIpo<0?'var(--red)':'var(--t3)';
+    const oc=gainOpen>0?'var(--green)':gainOpen<0?'var(--red)':'var(--t3)';
+    const priceUpdated=r['Price Updated']||'';
+
+    return `<div class="lockup-card ${cardClass}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+        <div><div class="lockup-name">${esc(name)}</div>
+        <div class="lockup-ticker">${esc(ticker)} · ${esc(exchange)} · ${esc(sector)}</div></div>
+        <div style="text-align:right;">${score!==null?`<div style="font-size:18px;font-weight:700;color:${scl};">${score}</div><div style="font-size:9px;color:var(--t3);">IPO score</div>`:'<div style="color:var(--t3);font-size:11px;">Score TBD</div>'}</div>
+      </div>
+      <div class="lockup-metrics">
+        <div class="lm-cell"><div class="lm-lbl">IPO Price</div><div class="lm-val">${ipoPrice?'$'+ipoPrice:'—'}</div></div>
+        <div class="lm-cell"><div class="lm-lbl">Day-1 Open</div><div class="lm-val">${day1Open?'$'+day1Open:'—'}</div></div>
+        <div class="lm-cell"><div class="lm-lbl">Current Price</div><div class="lm-val" style="color:${gc};">${currentPrice?'$'+currentPrice:'—'}</div></div>
+        <div class="lm-cell"><div class="lm-lbl">vs IPO Price</div><div class="lm-val" style="color:${gc};">${gainIpo!==null?(gainIpo>0?'+':'')+gainIpo+'%':'—'}</div></div>
+        <div class="lm-cell"><div class="lm-lbl">vs Day-1 Open</div><div class="lm-val" style="color:${oc};">${gainOpen!==null?(gainOpen>0?'+':'')+gainOpen+'%':'—'}</div></div>
+        <div class="lm-cell"><div class="lm-lbl">Lock-up Expiry</div><div class="lm-val" style="font-size:10px;">${lockupStr}</div></div>
+      </div>
+      <div class="lockup-bar">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-bottom:3px;">
+          <span>Listed ${ipoDate}${priceUpdated?' · Price: '+priceUpdated:''}</span>
+          <span>${expired?'Lock-up expired':Math.round(progress)+'% elapsed'}</span>
+        </div>
+        <div class="lbar-track"><div class="lbar-fill" style="width:${progress}%;background:${expired?'var(--green)':urgent?'var(--amber)':'var(--or)'}"></div></div>
+      </div>
+      <div class="lockup-signal ${sc}">${signal}</div>
+    </div>`;
+  };
+
+  const listedHtml = listed.map(r=>makeCard(r,false)).join('');
+  const upcomingHtml = upcoming.map(r=>makeCard(r,true)).join('');
+
+  el.innerHTML = `<div class="lockup-grid">${listedHtml}</div>`
+    + (upcomingHtml?`<div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--blue);margin:1.5rem 0 10px;">Upcoming IPOs</div><div class="lockup-grid">${upcomingHtml}</div>`:'');
+}
+
 
 async function loadEtfData(){
   const btn=document.getElementById('etfRefreshBtn');
-  btn.disabled=true; btn.textContent='Fetching...';
+  btn.disabled=true; btn.textContent='Loading...';
   const el=document.getElementById('etfContent');
-  el.innerHTML='<div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg">Fetching live ETF prices...</div></div>';
+  el.innerHTML='<div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg">Loading ETF data (cached data shown instantly, stale prices refreshed automatically)...</div></div>';
+
   try {
     const tickers=ETF_LIST.map(e=>e.ticker).join(',');
-    const res=await fetch(AS_URL+'?t='+T+'&action=us_etf_prices&tickers='+encodeURIComponent(tickers)+'&v='+Date.now(),{redirect:'follow'});
+    // Single call — backend decides what's stale and only fetches those
+    const res=await fetch(AS_URL+'?t='+T+'&action=us_etf_refresh&tickers='+encodeURIComponent(tickers)+'&v='+Date.now(),{redirect:'follow'});
     let prices={};
     if(res.ok){try{prices=await res.json();}catch(e){}}
+
     const themes=[...new Set(ETF_LIST.map(e=>e.theme))];
     const html=themes.map(theme=>{
       const etfs=ETF_LIST.filter(e=>e.theme===theme);
@@ -301,16 +358,17 @@ async function loadEtfData(){
         const d=prices[etf.ticker]||{};
         const price=d.price||null, c1d=d.change1d!==undefined?d.change1d:null;
         const c1m=d.change1m!==undefined?d.change1m:null, c3m=d.change3m!==undefined?d.change3m:null;
-        return `<div class="etf-card">
+        const stale=d.lastFetched&&!String(d.lastFetched).includes(new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short'}).replace(' ','-'));
+        return `<div class="etf-card" title="${stale?'Data from '+d.lastFetched:'Live data'}">
           <div class="etf-theme" style="color:${color};">${theme}</div>
           <div class="etf-ticker">${etf.ticker}</div>
           <div class="etf-name">${esc(etf.name)}</div>
-          <div class="etf-price">${price?'$'+price:'—'}</div>
+          <div class="etf-price" style="${stale?'color:var(--t3);':''}">${price?'$'+price:'—'}${stale?' <span style="font-size:9px;">cached</span>':''}</div>
           <div class="etf-changes">
             ${c1d!==null?`<span class="etf-chg ${chgClr(c1d)}">1D ${chgTxt(c1d)}</span>`:''}
             ${c1m!==null?`<span class="etf-chg ${chgClr(c1m)}">1M ${chgTxt(c1m)}</span>`:''}
             ${c3m!==null?`<span class="etf-chg ${chgClr(c3m)}">3M ${chgTxt(c3m)}</span>`:''}
-            ${c1d===null&&c1m===null?'<span class="etf-chg neu">Click Refresh</span>':''}
+            ${price===null?'<span class="etf-chg neu">Click Refresh</span>':''}
           </div>
         </div>`;
       }).join('');
@@ -318,43 +376,30 @@ async function loadEtfData(){
     }).join('<div class="div"></div>');
     el.innerHTML=html;
     etfLoaded=true;
-    document.getElementById('etfUpdated').textContent='Updated: '+new Date().toLocaleTimeString();
+    document.getElementById('etfUpdated').textContent='Updated: '+new Date().toLocaleTimeString()+' (only stale data was re-fetched)';
   } catch(e){el.innerHTML=`<div style="color:var(--red);padding:1rem;">Error: ${esc(e.message)}</div>`;}
   finally{btn.disabled=false;btn.textContent='Refresh';}
 }
 
-// ── PRE-IPO WATCHLIST ─────────────────────────────────────────
-const WATCHLIST = [
-  {name:"Anthropic",  sector:"Artificial Intelligence",     status:"filed",    statusLabel:"S-1 Filed",    exchange:"NASDAQ", underwriters:"Goldman Sachs, Morgan Stanley, JPMorgan"},
-  {name:"Klarna",     sector:"Fintech / Buy Now Pay Later", status:"roadshow", statusLabel:"In Roadshow",  exchange:"NYSE",   underwriters:"Goldman Sachs, JPMorgan, Morgan Stanley"},
-  {name:"Databricks", sector:"Data / AI / MLOps",           status:"rumoured", statusLabel:"Expected 2026",exchange:"NASDAQ", underwriters:"Morgan Stanley, Goldman Sachs"},
-  {name:"Stripe",     sector:"Payments Infrastructure",     status:"rumoured", statusLabel:"Expected 2026",exchange:"NYSE",   underwriters:"Goldman Sachs, JPMorgan"},
-  {name:"Chime",      sector:"Neobank / Fintech",           status:"rumoured", statusLabel:"Expected 2026",exchange:"NASDAQ", underwriters:"Goldman Sachs"},
-  {name:"Figma",      sector:"Design / Collaboration SaaS", status:"rumoured", statusLabel:"Expected 2026",exchange:"NASDAQ", underwriters:"TBD"},
-  {name:"Canva",      sector:"Design / Creative Cloud",     status:"rumoured", statusLabel:"Expected 2026",exchange:"NYSE",   underwriters:"TBD"},
-  {name:"Discord",    sector:"Gaming / Community Platform", status:"rumoured", statusLabel:"Expected 2026",exchange:"NYSE",   underwriters:"TBD"},
-  {name:"Plaid",      sector:"Open Banking / Fintech",      status:"rumoured", statusLabel:"Expected 2027",exchange:"NASDAQ", underwriters:"TBD"},
-  {name:"OpenAI",     sector:"Artificial Intelligence",     status:"watching", statusLabel:"Watching",     exchange:"NASDAQ", underwriters:"TBD"},
-  {name:"Scale AI",   sector:"AI Data / Infrastructure",    status:"watching", statusLabel:"Watching",     exchange:"NASDAQ", underwriters:"TBD"},
-  {name:"Waymo",      sector:"Autonomous Vehicles / AI",    status:"watching", statusLabel:"Watching",     exchange:"NASDAQ", underwriters:"TBD"},
-  {name:"Starlink",   sector:"Satellite Internet",          status:"watching", statusLabel:"Watching",     exchange:"NASDAQ", underwriters:"TBD"},
-  {name:"Revolut",    sector:"Neobank / Global Fintech",    status:"watching", statusLabel:"Watching",     exchange:"NYSE",   underwriters:"TBD"},
-];
 
 async function loadPreIpoData(){
   const btn=document.getElementById('preipoRefreshBtn');
-  btn.disabled=true; btn.textContent='Fetching...';
+  btn.disabled=true; btn.textContent='Loading...';
   const el=document.getElementById('preipoContent');
-  el.innerHTML='<div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg">Fetching latest valuations and news via web search...</div></div>';
+
   try {
-    const res=await fetch(AS_URL+'?t='+T+'&action=us_preipo_watch&v='+Date.now(),{redirect:'follow'});
+    // Single call — backend only refreshes companies older than 3 days
+    const res=await fetch(AS_URL+'?t='+T+'&action=us_preipo_refresh&v='+Date.now(),{redirect:'follow'});
     let liveData={};
     if(res.ok){try{liveData=await res.json();}catch(e){}}
+
     const html=`<div class="preipo-grid">${WATCHLIST.map(co=>{
       const live=liveData[co.name]||{};
       const valuation=live.valuation||'Click Refresh';
       const date=live.expectedDate||'Click Refresh';
-      const news=live.latestNews||'Click Refresh to fetch latest news via AI web search.';
+      const news=live.latestNews||'Click Refresh to fetch latest news.';
+      const lastFetched=live.lastFetched||null;
+      const isStale=!lastFetched;
       return `<div class="preipo-card">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
           <div><div class="preipo-name">${esc(co.name)}</div><div class="preipo-sector">${esc(co.sector)}</div></div>
@@ -366,14 +411,13 @@ async function loadPreIpoData(){
           <div class="pm-cell"><div class="pm-lbl">Exchange</div><div class="pm-val">${esc(co.exchange)}</div></div>
         </div>
         <div class="preipo-news">${esc(news)}</div>
-        <div class="preipo-underwriters">Lead underwriters: ${esc(co.underwriters)}</div>
+        <div class="preipo-underwriters">Lead underwriters: ${esc(co.underwriters)}${lastFetched?' · Last updated: '+lastFetched:''}</div>
       </div>`;
     }).join('')}</div>`;
     el.innerHTML=html;
     preipoLoaded=true;
-    document.getElementById('preipoUpdated').textContent='Updated: '+new Date().toLocaleTimeString();
+    document.getElementById('preipoUpdated').textContent='Updated: '+new Date().toLocaleTimeString()+' (news refreshed every 3 days)';
   } catch(e){
-    // Show static structure on error
     el.innerHTML=`<div class="preipo-grid">${WATCHLIST.map(co=>`<div class="preipo-card">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
         <div><div class="preipo-name">${esc(co.name)}</div><div class="preipo-sector">${esc(co.sector)}</div></div>
@@ -384,13 +428,14 @@ async function loadPreIpoData(){
         <div class="pm-cell"><div class="pm-lbl">Expected IPO</div><div class="pm-val">Click Refresh</div></div>
         <div class="pm-cell"><div class="pm-lbl">Exchange</div><div class="pm-val">${esc(co.exchange)}</div></div>
       </div>
-      <div class="preipo-news">Click Refresh to fetch latest news and valuations.</div>
+      <div class="preipo-news">Click Refresh to fetch latest news.</div>
       <div class="preipo-underwriters">Lead underwriters: ${esc(co.underwriters)}</div>
     </div>`).join('')}</div>`;
     preipoLoaded=true;
   }
   finally{btn.disabled=false;btn.textContent='Refresh';}
 }
+
 </script>
 </body>
 </html>
