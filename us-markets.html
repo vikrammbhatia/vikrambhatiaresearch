@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
+<title>US Markets Dashboard — Vikram Bhatia</title>
+<style>
+:root{
+  --bg1:#0a0a0a;--bg2:#111;--bg3:#161616;--bg4:#1e1e1e;
+  --b1:#1f1f1f;--b2:#2a2a2a;--b3:#333;
+  --t1:#f0f0f0;--t2:#b0b0b0;--t3:#666;
+  --or:#e67e22;--amber:#f59e0b;
+  --green:#22c55e;--green-bg:#052e16;--green-bd:#166534;
+  --red:#ef4444;--red-bg:#1a0000;--red-bd:#7f1d1d;
+  --blue:#60a5fa;--blue-bg:#0d1b3e;--blue-bd:#1e40af;
+  --purple:#a78bfa;--purple-bg:#1e1b4b;--purple-bd:#4338ca;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-serif;font-size:13px;min-height:100vh;}
+.page{max-width:1400px;margin:0 auto;padding:2rem 2.5rem;}
+
+/* HEADER */
+.ph-title{font-size:22px;font-weight:700;color:var(--or);margin-bottom:2px;}
+.ph-sub{font-size:12px;color:var(--t3);margin-bottom:4px;}
+.ph-nav{font-size:11px;color:var(--t3);margin-bottom:2rem;}
+.ph-nav a{color:var(--or);text-decoration:none;margin-right:12px;}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:1.5rem;border-bottom:1px solid var(--b2);padding-bottom:0;}
+.tab{padding:8px 20px;font-size:12px;font-weight:600;cursor:pointer;color:var(--t3);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s;}
+.tab:hover{color:var(--t2);}
+.tab.active{color:var(--or);border-bottom-color:var(--or);}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* SECTION LABEL */
+.slabel{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--or);margin-bottom:10px;margin-top:1.5rem;}
+.slabel:first-child{margin-top:0;}
+
+/* LOADER */
+.loader{text-align:center;padding:2rem;color:var(--t3);}
+.loader-track{height:2px;background:var(--b1);border-radius:1px;overflow:hidden;margin-bottom:8px;}
+.loader-fill{height:100%;background:var(--or);animation:ld 2.4s ease-in-out infinite;}
+@keyframes ld{0%{width:0%}60%{width:75%}100%{width:100%}}
+.loader-msg{font-size:12px;color:var(--t3);}
+
+/* CARDS GRID */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-bottom:1.5rem;}
+.card{background:var(--bg3);border:1px solid var(--b1);border-radius:10px;padding:16px 18px;}
+.card.green{border-color:var(--green-bd);background:var(--green-bg);}
+.card.amber{border-color:#854d0e;background:#1a1200;}
+.card.red{border-color:var(--red-bd);background:var(--red-bg);}
+.card.blue{border-color:var(--blue-bd);background:var(--blue-bg);}
+.card.purple{border-color:var(--purple-bd);background:var(--purple-bg);}
+
+/* LOCK-UP TRACKER */
+.lockup-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;}
+.lockup-card{background:var(--bg3);border:1px solid var(--b1);border-radius:10px;padding:16px 18px;}
+.lockup-card.urgent{border-color:#f59e0b;animation:pulse-amber 2s infinite;}
+.lockup-card.expired{border-color:var(--green-bd);background:var(--green-bg);}
+@keyframes pulse-amber{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0.4);}50%{box-shadow:0 0 0 6px rgba(245,158,11,0);}}
+.lockup-name{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:2px;}
+.lockup-ticker{font-size:11px;color:var(--t3);}
+.lockup-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;}
+.lm-cell{background:var(--bg4);border-radius:5px;padding:6px 8px;}
+.lm-lbl{font-size:9px;text-transform:uppercase;color:var(--t3);margin-bottom:2px;}
+.lm-val{font-size:12px;font-weight:600;}
+.lockup-bar{margin-top:10px;}
+.lbar-track{height:4px;background:var(--b2);border-radius:2px;overflow:hidden;margin-top:4px;}
+.lbar-fill{height:100%;background:var(--or);border-radius:2px;transition:width 0.6s;}
+.lockup-signal{margin-top:10px;padding:6px 10px;border-radius:5px;font-size:11px;font-weight:600;}
+.lockup-signal.buy{background:var(--green-bg);border:1px solid var(--green-bd);color:var(--green);}
+.lockup-signal.watch{background:#1a1200;border:1px solid #854d0e;color:var(--amber);}
+.lockup-signal.hold{background:var(--bg4);border:1px solid var(--b2);color:var(--t3);}
+
+/* ETF DASHBOARD */
+.etf-section{margin-bottom:2rem;}
+.etf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
+.etf-card{background:var(--bg3);border:1px solid var(--b1);border-radius:8px;padding:12px 14px;cursor:pointer;transition:border-color 0.2s;}
+.etf-card:hover{border-color:var(--or);}
+.etf-ticker{font-size:16px;font-weight:700;color:var(--or);margin-bottom:2px;}
+.etf-name{font-size:10px;color:var(--t3);margin-bottom:8px;line-height:1.4;}
+.etf-price{font-size:18px;font-weight:600;margin-bottom:4px;}
+.etf-changes{display:flex;gap:8px;flex-wrap:wrap;}
+.etf-chg{font-size:10px;padding:2px 6px;border-radius:3px;}
+.etf-chg.pos{background:var(--green-bg);color:var(--green);}
+.etf-chg.neg{background:var(--red-bg);color:var(--red);}
+.etf-chg.neu{background:var(--bg4);color:var(--t3);}
+.etf-theme{font-size:9px;text-transform:uppercase;letter-spacing:0.05em;color:var(--t3);margin-bottom:6px;}
+
+/* PRE-IPO WATCH */
+.preipo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px;}
+.preipo-card{background:var(--bg3);border:1px solid var(--b1);border-radius:10px;padding:18px 20px;}
+.preipo-name{font-size:17px;font-weight:700;color:var(--t1);margin-bottom:3px;}
+.preipo-sector{font-size:11px;color:var(--t3);margin-bottom:12px;}
+.preipo-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.pm-cell{background:var(--bg4);border-radius:6px;padding:8px 10px;}
+.pm-lbl{font-size:9px;text-transform:uppercase;color:var(--t3);margin-bottom:3px;}
+.pm-val{font-size:13px;font-weight:600;color:var(--t1);}
+.preipo-status{display:inline-block;font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;margin-bottom:10px;}
+.preipo-status.filed{background:var(--green-bg);border:1px solid var(--green-bd);color:var(--green);}
+.preipo-status.rumoured{background:var(--blue-bg);border:1px solid var(--blue-bd);color:var(--blue);}
+.preipo-status.roadshow{background:#1a1200;border:1px solid #854d0e;color:var(--amber);}
+.preipo-status.listed{background:var(--bg4);border:1px solid var(--b2);color:var(--t2);}
+.preipo-news{font-size:11px;color:var(--t2);line-height:1.6;border-top:1px solid var(--b1);padding-top:10px;}
+.preipo-underwriters{font-size:10px;color:var(--t3);margin-top:6px;}
+
+/* REFRESH BTN */
+.refresh-btn{background:var(--or);color:#fff;border:none;padding:6px 14px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;float:right;}
+.refresh-btn:disabled{opacity:0.6;}
+
+/* DIV */
+.div{height:1px;background:var(--b1);margin:1.5rem 0;}
+
+/* LAST UPDATED */
+.last-updated{font-size:10px;color:var(--t3);text-align:right;margin-top:8px;}
+
+@media(max-width:600px){
+  .page{padding:1rem 0.75rem;}
+  .cards-grid,.lockup-grid,.etf-grid,.preipo-grid{grid-template-columns:1fr;}
+  .tabs{overflow-x:auto;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="ph-title">🇺🇸 US Markets Dashboard</div>
+  <div class="ph-sub">by Vikram Bhatia &nbsp;·&nbsp; Post-IPO tracker · ETF monitor · Pre-IPO watchlist</div>
+  <div class="ph-nav">
+    <a href="/ipo">India IPO Engine</a>
+    <a href="/uae-ipo">UAE IPO Engine</a>
+    <a href="/us-ipo">US IPO Engine</a>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('lockup')">📅 Lock-up Expiry Tracker</div>
+    <div class="tab" onclick="switchTab('etf')">📊 ETF Dashboard</div>
+    <div class="tab" onclick="switchTab('preipo')">🔭 Pre-IPO Watchlist</div>
+  </div>
+
+  <!-- TAB A: LOCK-UP TRACKER -->
+  <div id="tab-lockup" class="tab-content active">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <div>
+        <div style="font-size:13px;color:var(--t2);">Tracks major US IPOs — flags buying opportunities near lock-up expiry (180 days post-listing).</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:3px;">🟡 Pulsing = within 30 days of lock-up expiry · ✅ Green border = lock-up expired (potential buy window)</div>
+      </div>
+      <button class="refresh-btn" id="lockupRefreshBtn" onclick="loadLockupData()">Refresh</button>
+    </div>
+    <div id="lockupContent"><div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg">Loading lock-up data…</div></div></div>
+    <div class="last-updated" id="lockupUpdated"></div>
+  </div>
+
+  <!-- TAB B: ETF DASHBOARD -->
+  <div id="tab-etf" class="tab-content">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <div style="font-size:13px;color:var(--t2);">Real-time ETF prices across IPO, India, Gulf and thematic strategies.</div>
+      <button class="refresh-btn" id="etfRefreshBtn" onclick="loadEtfData()">Refresh</button>
+    </div>
+    <div id="etfContent"><div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg">Loading ETF data…</div></div></div>
+    <div class="last-updated" id="etfUpdated"></div>
+  </div>
+
+  <!-- TAB C: PRE-IPO WATCHLIST -->
+  <div id="tab-preipo" class="tab-content">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <div style="font-size:13px;color:var(--t2);">Tracks anticipated mega-IPOs — valuation, timeline, S-1 status and latest news.</div>
+      <button class="refresh-btn" id="preipoRefreshBtn" onclick="loadPreIpoData()">Refresh</button>
+    </div>
+    <div id="preipoContent"><div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg">Loading pre-IPO data…</div></div></div>
+    <div class="last-updated" id="preipoUpdated"></div>
+  </div>
+</div>
+
+<script>
+const AS_URL = 'https://ipo-proxy.vikrammbhatia.workers.dev';
+const T = 'VB2026USIPO';
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  event.target.classList.add('active');
+  if(tab==='lockup' && !lockupLoaded) loadLockupData();
+  if(tab==='etf' && !etfLoaded) loadEtfData();
+  if(tab==='preipo' && !preipoLoaded) loadPreIpoData();
+}
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function chgClr(v){return v>0?'pos':v<0?'neg':'neu';}
+function chgTxt(v){return v>0?'+'+v+'%':v+'%';}
+
+let lockupLoaded=false, etfLoaded=false, preipoLoaded=false;
+
+// ── LOCK-UP TRACKER ─────────────────────────────────────────
+const TRACKED_IPOS = [
+  {name:"Anthropic",         ticker:"ANTH",  exchange:"NASDAQ", ipoDate:"2026-10-15", ipoPrice:45,   day1Open:null,    score:59, sector:"AI / Technology",      listingPremium:23},
+  {name:"Klarna",            ticker:"KLAR",  exchange:"NYSE",   ipoDate:"2026-09-15", ipoPrice:68,   day1Open:78,      score:71, sector:"Fintech / BNPL",       listingPremium:14},
+  {name:"SpaceX",            ticker:"SPCE2", exchange:"NASDAQ", ipoDate:"2026-07-01", ipoPrice:185,  day1Open:220,     score:82, sector:"Aerospace / AI Infra", listingPremium:19},
+  {name:"Lyntris Inc",       ticker:"LYNX",  exchange:"NYSE",   ipoDate:"2026-08-19", ipoPrice:17.5, day1Open:19.2,    score:46, sector:"Defense Technology",   listingPremium:10},
+  {name:"Databricks",        ticker:"DBR",   exchange:"NASDAQ", ipoDate:"2026-11-01", ipoPrice:null, day1Open:null,    score:null, sector:"Data / AI",          listingPremium:null},
+  {name:"Stripe",            ticker:"STRP",  exchange:"NYSE",   ipoDate:"2026-12-01", ipoPrice:null, day1Open:null,    score:null, sector:"Payments / Fintech",  listingPremium:null},
+];
+
+async function loadLockupData() {
+  const btn = document.getElementById('lockupRefreshBtn');
+  btn.disabled=true; btn.textContent='Loading…';
+  const el = document.getElementById('lockupContent');
+
+  try {
+    // Fetch current prices via Claude web search
+    const res = await fetch(AS_URL+'?t='+T+'&action=us_lockup_prices&v='+Date.now(), {redirect:'follow'});
+    let prices = {};
+    if(res.ok) {
+      try { prices = await res.json(); } catch(e) {}
+    }
+
+    const today = new Date();
+    const todayStr = today.toLocaleDateString('en-CA', {timeZone:'America/New_York'});
+
+    const html = TRACKED_IPOS.map(ipo => {
+      const listingDate = ipo.ipoDate ? new Date(ipo.ipoDate) : null;
+      if(!listingDate) return '';
+
+      const lockupDate = new Date(listingDate);
+      lockupDate.setDate(lockupDate.getDate() + 180);
+      const lockupStr = lockupDate.toLocaleDateString('en-CA');
+
+      const daysToListing = Math.ceil((listingDate-today)/(1000*60*60*24));
+      const daysToLockup = Math.ceil((lockupDate-today)/(1000*60*60*24));
+      const daysSinceListing = Math.ceil((today-listingDate)/(1000*60*60*24));
+      const lockupProgress = Math.min(100, Math.max(0, (daysSinceListing/180)*100));
+
+      const notListedYet = daysToListing > 0;
+      const lockupExpired = daysToLockup <= 0;
+      const urgentLockup = !lockupExpired && daysToLockup <= 30;
+
+      const currentPrice = prices[ipo.ticker] || null;
+      const gainFromIpo = currentPrice && ipo.ipoPrice ? Math.round((currentPrice-ipo.ipoPrice)/ipo.ipoPrice*1000)/10 : null;
+      const gainFromOpen = currentPrice && ipo.day1Open ? Math.round((currentPrice-ipo.day1Open)/ipo.day1Open*1000)/10 : null;
+
+      // Signal logic
+      let signal = '', signalClass = 'hold', signalIcon = '';
+      if(notListedYet) {
+        signal = `Lists in ${daysToListing} days`;
+        signalClass = 'hold';
+      } else if(lockupExpired) {
+        if(ipo.score>=65 && gainFromOpen!==null && gainFromOpen<-5) {
+          signal = '🟢 Buy Signal — Post-lockup dip on quality stock';
+          signalClass = 'buy';
+        } else if(ipo.score>=65) {
+          signal = '✓ Lock-up expired — Monitor for pullback entry';
+          signalClass = 'buy';
+        } else {
+          signal = 'Lock-up expired — Low score, avoid';
+          signalClass = 'hold';
+        }
+      } else if(urgentLockup) {
+        signal = `⚠ Lock-up expires in ${daysToLockup} days — Prepare for selling pressure`;
+        signalClass = 'watch';
+      } else {
+        signal = `Lock-up expires ${lockupStr} (${daysToLockup} days)`;
+        signalClass = 'hold';
+      }
+
+      const cardClass = lockupExpired?'expired':urgentLockup?'urgent':'';
+
+      return `<div class="lockup-card ${cardClass}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div class="lockup-name">${esc(ipo.name)}</div>
+            <div class="lockup-ticker">${esc(ipo.ticker)} · ${esc(ipo.exchange)} · ${esc(ipo.sector)}</div>
+          </div>
+          ${ipo.score!==null?`<div style="font-size:18px;font-weight:700;color:${ipo.score>=65?'var(--green)':ipo.score>=50?'var(--amber)':'var(--red)'};">${ipo.score}</div>`:'<div style="color:var(--t3);font-size:12px;">TBD</div>'}
+        </div>
+        <div class="lockup-metrics">
+          <div class="lm-cell"><div class="lm-lbl">IPO Price</div><div class="lm-val">${ipo.ipoPrice?'$'+ipo.ipoPrice:'TBD'}</div></div>
+          <div class="lm-cell"><div class="lm-lbl">Day-1 Open</div><div class="lm-val">${ipo.day1Open?'$'+ipo.day1Open:'TBD'}</div></div>
+          <div class="lm-cell"><div class="lm-lbl">Current Price</div><div class="lm-val" style="color:${gainFromIpo>0?'var(--green)':gainFromIpo<0?'var(--red)':'var(--t1)'};">${currentPrice?'$'+currentPrice:'—'}</div></div>
+          <div class="lm-cell"><div class="lm-lbl">vs IPO Price</div><div class="lm-val" style="color:${gainFromIpo>0?'var(--green)':gainFromIpo<0?'var(--red)':'var(--t3)'};">${gainFromIpo!==null?(gainFromIpo>0?'+':'')+gainFromIpo+'%':'—'}</div></div>
+          <div class="lm-cell"><div class="lm-lbl">vs Day-1 Open</div><div class="lm-val" style="color:${gainFromOpen>0?'var(--green)':gainFromOpen<0?'var(--red)':'var(--t3)'};">${gainFromOpen!==null?(gainFromOpen>0?'+':'')+gainFromOpen+'%':'—'}</div></div>
+          <div class="lm-cell"><div class="lm-lbl">Lock-up Date</div><div class="lm-val" style="font-size:10px;">${lockupStr}</div></div>
+        </div>
+        ${!notListedYet?`<div class="lockup-bar">
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);">
+            <span>Listed ${ipo.ipoDate}</span><span>${lockupExpired?'Lock-up expired':'Lock-up '+Math.round(lockupProgress)+'% complete'}</span>
+          </div>
+          <div class="lbar-track"><div class="lbar-fill" style="width:${lockupProgress}%;background:${lockupExpired?'var(--green)':urgentLockup?'var(--amber)':'var(--or)'}"></div></div>
+        </div>`:''}
+        <div class="lockup-signal ${signalClass}">${signal}</div>
+      </div>`;
+    }).join('');
+
+    el.innerHTML = `<div class="lockup-grid">${html}</div>`;
+    lockupLoaded = true;
+    document.getElementById('lockupUpdated').textContent = 'Updated: '+new Date().toLocaleTimeString();
+  } catch(e) {
+    el.innerHTML = `<div style="color:var(--red);padding:1rem;">Error: ${esc(e.message)}</div>`;
+  } finally {
+    btn.disabled=false; btn.textContent='Refresh';
+  }
+}
+
+// ── ETF DASHBOARD ────────────────────────────────────────────
+const ETF_LIST = [
+  // IPO-focused
+  {ticker:'IPO',  name:'Renaissance IPO ETF',          theme:'IPO-Focused'},
+  {ticker:'FPX',  name:'First Trust US Equity Opportunities', theme:'IPO-Focused'},
+  // India-focused
+  {ticker:'INDA', name:'iShares MSCI India ETF',        theme:'India'},
+  {ticker:'INDY', name:'iShares India 50 ETF',          theme:'India'},
+  {ticker:'EPI',  name:'WisdomTree India Earnings ETF', theme:'India'},
+  // Gulf/UAE
+  {ticker:'UAE',  name:'iShares MSCI UAE ETF',          theme:'Gulf'},
+  {ticker:'KSA',  name:'iShares MSCI Saudi Arabia ETF', theme:'Gulf'},
+  {ticker:'MES',  name:'iShares MSCI GCC ex-Saudi ETF', theme:'Gulf'},
+  // Thematic
+  {ticker:'AIQ',  name:'Global X AI & Technology ETF',  theme:'AI/Tech'},
+  {ticker:'ITA',  name:'iShares US Aerospace & Defense',theme:'Defence'},
+  {ticker:'FINX', name:'Global X FinTech ETF',          theme:'Fintech'},
+];
+
+async function loadEtfData() {
+  const btn = document.getElementById('etfRefreshBtn');
+  btn.disabled=true; btn.textContent='Loading…';
+  const el = document.getElementById('etfContent');
+
+  try {
+    const tickers = ETF_LIST.map(e=>e.ticker).join(',');
+    const res = await fetch(AS_URL+'?t='+T+'&action=us_etf_prices&tickers='+encodeURIComponent(tickers)+'&v='+Date.now(), {redirect:'follow'});
+    let priceData = {};
+    if(res.ok) {
+      try { priceData = await res.json(); } catch(e) {}
+    }
+
+    // Group by theme
+    const themes = [...new Set(ETF_LIST.map(e=>e.theme))];
+    const themeColors = {'IPO-Focused':'var(--or)','India':'var(--amber)','Gulf':'var(--blue)','AI/Tech':'var(--purple)','Defence':'#4ade80','Fintech':'#f472b6'};
+
+    const html = themes.map(theme => {
+      const etfs = ETF_LIST.filter(e=>e.theme===theme);
+      const cards = etfs.map(etf => {
+        const d = priceData[etf.ticker] || {};
+        const price = d.price||null;
+        const chg1d = d.change1d!==undefined?d.change1d:null;
+        const chg1m = d.change1m!==undefined?d.change1m:null;
+        const chg3m = d.change3m!==undefined?d.change3m:null;
+
+        return `<div class="etf-card">
+          <div class="etf-theme" style="color:${themeColors[theme]||'var(--or)'};">${theme}</div>
+          <div class="etf-ticker">${etf.ticker}</div>
+          <div class="etf-name">${esc(etf.name)}</div>
+          <div class="etf-price">${price?'$'+price:'Loading…'}</div>
+          <div class="etf-changes">
+            ${chg1d!==null?`<span class="etf-chg ${chgClr(chg1d)}">1D ${chgTxt(chg1d)}</span>`:''}
+            ${chg1m!==null?`<span class="etf-chg ${chgClr(chg1m)}">1M ${chgTxt(chg1m)}</span>`:''}
+            ${chg3m!==null?`<span class="etf-chg ${chgClr(chg3m)}">3M ${chgTxt(chg3m)}</span>`:''}
+            ${chg1d===null&&chg1m===null?'<span class="etf-chg neu">Data pending</span>':''}
+          </div>
+        </div>`;
+      }).join('');
+      return `<div class="slabel" style="color:${themeColors[theme]||'var(--or)'};">${theme} ETFs</div><div class="etf-grid">${cards}</div>`;
+    }).join('<div class="div"></div>');
+
+    el.innerHTML = html;
+    etfLoaded = true;
+    document.getElementById('etfUpdated').textContent = 'Updated: '+new Date().toLocaleTimeString();
+  } catch(e) {
+    el.innerHTML = `<div style="color:var(--red);padding:1rem;">Error: ${esc(e.message)}</div>`;
+  } finally {
+    btn.disabled=false; btn.textContent='Refresh';
+  }
+}
+
+// ── PRE-IPO WATCHLIST ────────────────────────────────────────
+const WATCHLIST = [
+  {name:"Anthropic",   sector:"Artificial Intelligence",  status:"filed",    statusLabel:"S-1 Filed",      exchange:"NASDAQ", expectedValuation:"$2T", expectedDate:"Oct 2026",  underwriters:"Goldman Sachs, Morgan Stanley, JPMorgan"},
+  {name:"SpaceX",      sector:"Aerospace / AI Infrastructure", status:"listed", statusLabel:"Listed",        exchange:"NASDAQ", expectedValuation:"$2T+",expectedDate:"Jul 2026", underwriters:"Goldman Sachs, Morgan Stanley, Citigroup"},
+  {name:"Klarna",      sector:"Fintech / Buy Now Pay Later",status:"roadshow", statusLabel:"In Roadshow",   exchange:"NYSE",   expectedValuation:"$15B",expectedDate:"Sep 2026", underwriters:"Goldman Sachs, JPMorgan, Morgan Stanley"},
+  {name:"Databricks",  sector:"Data / AI / MLOps",        status:"rumoured",  statusLabel:"Rumoured 2026",  exchange:"NASDAQ", expectedValuation:"$62B",expectedDate:"Late 2026",underwriters:"TBD"},
+  {name:"Stripe",      sector:"Payments Infrastructure",  status:"rumoured",  statusLabel:"Rumoured 2026",  exchange:"NYSE",   expectedValuation:"$70B",expectedDate:"Late 2026",underwriters:"TBD"},
+  {name:"Chime",       sector:"Neobank / Fintech",        status:"rumoured",  statusLabel:"Rumoured 2026",  exchange:"NASDAQ", expectedValuation:"$25B",expectedDate:"2026-2027",underwriters:"Goldman Sachs"},
+];
+
+async function loadPreIpoData() {
+  const btn = document.getElementById('preipoRefreshBtn');
+  btn.disabled=true; btn.textContent='Loading…';
+  const el = document.getElementById('preipoContent');
+
+  try {
+    // Fetch latest news/valuation updates via Claude web search
+    const res = await fetch(AS_URL+'?t='+T+'&action=us_preipo_watch&v='+Date.now(), {redirect:'follow'});
+    let liveData = {};
+    if(res.ok) {
+      try { liveData = await res.json(); } catch(e) {}
+    }
+
+    const html = `<div class="preipo-grid">${WATCHLIST.map(co => {
+      const live = liveData[co.name] || {};
+      const valuation = live.valuation || co.expectedValuation;
+      const date = live.expectedDate || co.expectedDate;
+      const news = live.latestNews || 'Click Refresh to fetch latest news via AI web search.';
+      const s1Status = live.s1Status || null;
+
+      return `<div class="preipo-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+          <div>
+            <div class="preipo-name">${esc(co.name)}</div>
+            <div class="preipo-sector">${esc(co.sector)}</div>
+          </div>
+          <span class="preipo-status ${co.status}">${esc(co.statusLabel)}</span>
+        </div>
+        <div class="preipo-metrics">
+          <div class="pm-cell"><div class="pm-lbl">Est. Valuation</div><div class="pm-val" style="color:var(--or);">${esc(valuation)}</div></div>
+          <div class="pm-cell"><div class="pm-lbl">Expected IPO</div><div class="pm-val">${esc(date)}</div></div>
+          <div class="pm-cell"><div class="pm-lbl">Exchange</div><div class="pm-val">${esc(co.exchange)}</div></div>
+        </div>
+        <div class="preipo-news">${esc(news)}</div>
+        <div class="preipo-underwriters">Lead underwriters: ${esc(co.underwriters)}</div>
+      </div>`;
+    }).join('')}</div>`;
+
+    el.innerHTML = html;
+    preipoLoaded = true;
+    document.getElementById('preipoUpdated').textContent = 'Updated: '+new Date().toLocaleTimeString();
+  } catch(e) {
+    el.innerHTML = `<div style="color:var(--red);padding:1rem;">Error loading. Using static data.</div>`;
+    // Show static data anyway
+    renderStaticPreIpo();
+  } finally {
+    btn.disabled=false; btn.textContent='Refresh';
+  }
+}
+
+function renderStaticPreIpo() {
+  const el = document.getElementById('preipoContent');
+  el.innerHTML = `<div class="preipo-grid">${WATCHLIST.map(co=>`<div class="preipo-card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+      <div><div class="preipo-name">${esc(co.name)}</div><div class="preipo-sector">${esc(co.sector)}</div></div>
+      <span class="preipo-status ${co.status}">${esc(co.statusLabel)}</span>
+    </div>
+    <div class="preipo-metrics">
+      <div class="pm-cell"><div class="pm-lbl">Est. Valuation</div><div class="pm-val" style="color:var(--or);">${esc(co.expectedValuation)}</div></div>
+      <div class="pm-cell"><div class="pm-lbl">Expected IPO</div><div class="pm-val">${esc(co.expectedDate)}</div></div>
+      <div class="pm-cell"><div class="pm-lbl">Exchange</div><div class="pm-val">${esc(co.exchange)}</div></div>
+    </div>
+    <div class="preipo-news">Click Refresh to fetch latest news and valuation updates via AI web search.</div>
+    <div class="preipo-underwriters">Lead underwriters: ${esc(co.underwriters)}</div>
+  </div>`).join('')}</div>`;
+  preipoLoaded = true;
+}
+
+// Load first tab on page load
+window.addEventListener('load', ()=>{
+  loadLockupData();
+  renderStaticPreIpo(); // pre-load pre-IPO with static data
+});
+</script>
+</body>
+</html>
