@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
 <title>US Markets Dashboard — Vikram Bhatia</title>
+<!-- v1.1 -->
 <style>
 :root{
   --bg1:#0a0a0a;--bg2:#111;--bg3:#161616;--bg4:#1e1e1e;
@@ -18,7 +19,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-serif;font-size:13px;min-height:100vh;}
-.page{max-width:1400px;margin:0 auto;padding:2rem 2.5rem;}
+.page{padding:2rem 2.5rem;}
 
 /* HEADER */
 .ph-title{font-size:22px;font-weight:700;color:var(--or);margin-bottom:2px;}
@@ -27,8 +28,8 @@ body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-s
 .ph-nav a{color:var(--or);text-decoration:none;margin-right:12px;}
 
 /* TABS */
-.tabs{display:flex;gap:4px;margin-bottom:1.5rem;border-bottom:1px solid var(--b2);padding-bottom:0;}
-.tab{padding:10px 22px;font-size:13px;font-weight:600;cursor:pointer;color:var(--t3);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s;white-space:nowrap;}
+.tabs{display:flex;gap:4px;margin-bottom:1.5rem;border-bottom:2px solid var(--b2);padding-bottom:0;background:var(--bg2);padding:8px 8px 0 8px;border-radius:8px 8px 0 0;}
+.tab{padding:10px 22px;font-size:13px;font-weight:600;cursor:pointer;color:var(--t2);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all 0.2s;white-space:nowrap;letter-spacing:0.01em;}
 .tab:hover{color:var(--t2);background:var(--bg3);border-radius:6px 6px 0 0;}
 .tab.active{color:var(--or);border-bottom-color:var(--or);background:var(--bg3);border-radius:6px 6px 0 0;}
 .tab-content{display:none;}
@@ -55,7 +56,7 @@ body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-s
 .card.purple{border-color:var(--purple-bd);background:var(--purple-bg);}
 
 /* LOCK-UP TRACKER */
-.lockup-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;}
+.lockup-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;}
 .lockup-card{background:var(--bg3);border:1px solid var(--b1);border-radius:10px;padding:16px 18px;}
 .lockup-card.urgent{border-color:#f59e0b;animation:pulse-amber 2s infinite;}
 .lockup-card.expired{border-color:var(--green-bd);background:var(--green-bg);}
@@ -90,7 +91,7 @@ body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-s
 .etf-theme{font-size:9px;text-transform:uppercase;letter-spacing:0.05em;color:var(--t3);margin-bottom:6px;}
 
 /* PRE-IPO WATCH */
-.preipo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px;}
+.preipo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;}
 .preipo-card{background:var(--bg3);border:1px solid var(--b1);border-radius:10px;padding:18px 20px;}
 .preipo-name{font-size:17px;font-weight:700;color:var(--t1);margin-bottom:3px;}
 .preipo-sector{font-size:11px;color:var(--t3);margin-bottom:12px;}
@@ -100,9 +101,10 @@ body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-s
 .pm-val{font-size:13px;font-weight:600;color:var(--t1);}
 .preipo-status{display:inline-block;font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;margin-bottom:10px;}
 .preipo-status.filed{background:var(--green-bg);border:1px solid var(--green-bd);color:var(--green);}
-.preipo-status.rumoured{background:var(--blue-bg);border:1px solid var(--blue-bd);color:var(--blue);}
 .preipo-status.roadshow{background:#1a1200;border:1px solid #854d0e;color:var(--amber);}
+.preipo-status.rumoured{background:var(--blue-bg);border:1px solid var(--blue-bd);color:var(--blue);}
 .preipo-status.listed{background:var(--bg4);border:1px solid var(--b2);color:var(--t2);}
+.preipo-status.watching{background:var(--purple-bg);border:1px solid var(--purple-bd);color:var(--purple);}
 .preipo-news{font-size:11px;color:var(--t2);line-height:1.6;border-top:1px solid var(--b1);padding-top:10px;}
 .preipo-underwriters{font-size:10px;color:var(--t3);margin-top:6px;}
 
@@ -125,7 +127,7 @@ body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-s
 </head>
 <body>
 <div class="page">
-  <div class="ph-title">🇺🇸 US Markets Dashboard</div>
+  <div class="ph-title">US Markets Dashboard</div>
   <div class="ph-sub">by Vikram Bhatia &nbsp;·&nbsp; Post-IPO tracker · ETF monitor · Pre-IPO watchlist</div>
   <div class="ph-nav">
     <a href="/ipo">India IPO Engine</a>
@@ -196,12 +198,25 @@ let lockupLoaded=false, etfLoaded=false, preipoLoaded=false;
 
 // ── LOCK-UP TRACKER ─────────────────────────────────────────
 const TRACKED_IPOS = [
-  {name:"Anthropic",         ticker:"ANTH",  exchange:"NASDAQ", ipoDate:"2026-10-15", ipoPrice:45,   day1Open:null,    score:59, sector:"AI / Technology",      listingPremium:23},
-  {name:"Klarna",            ticker:"KLAR",  exchange:"NYSE",   ipoDate:"2026-09-15", ipoPrice:68,   day1Open:78,      score:71, sector:"Fintech / BNPL",       listingPremium:14},
-  {name:"SpaceX",            ticker:"SPCE2", exchange:"NASDAQ", ipoDate:"2026-07-01", ipoPrice:185,  day1Open:220,     score:82, sector:"Aerospace / AI Infra", listingPremium:19},
-  {name:"Lyntris Inc",       ticker:"LYNX",  exchange:"NYSE",   ipoDate:"2026-08-19", ipoPrice:17.5, day1Open:19.2,    score:46, sector:"Defense Technology",   listingPremium:10},
-  {name:"Databricks",        ticker:"DBR",   exchange:"NASDAQ", ipoDate:"2026-11-01", ipoPrice:null, day1Open:null,    score:null, sector:"Data / AI",          listingPremium:null},
-  {name:"Stripe",            ticker:"STRP",  exchange:"NYSE",   ipoDate:"2026-12-01", ipoPrice:null, day1Open:null,    score:null, sector:"Payments / Fintech",  listingPremium:null},
+  // ── UPCOMING ──────────────────────────────────────────────
+  {name:"Anthropic",         ticker:"ANTH",  exchange:"NASDAQ", ipoDate:"2026-10-15", ipoPrice:45,   day1Open:null,  score:59, sector:"AI / Technology"},
+  {name:"Klarna",            ticker:"KLAR",  exchange:"NYSE",   ipoDate:"2026-09-15", ipoPrice:68,   day1Open:78,    score:71, sector:"Fintech / BNPL"},
+  {name:"Databricks",        ticker:"DBR",   exchange:"NASDAQ", ipoDate:"2026-11-01", ipoPrice:null, day1Open:null,  score:null, sector:"Data / AI"},
+  {name:"Stripe",            ticker:"STRP",  exchange:"NYSE",   ipoDate:"2026-12-01", ipoPrice:null, day1Open:null,  score:null, sector:"Payments / Fintech"},
+  {name:"Chime",             ticker:"CHYM",  exchange:"NASDAQ", ipoDate:"2026-12-15", ipoPrice:null, day1Open:null,  score:null, sector:"Neobank / Fintech"},
+  // ── RECENTLY LISTED (2026) ─────────────────────────────────
+  {name:"SpaceX",            ticker:"SPCE2", exchange:"NASDAQ", ipoDate:"2026-07-01", ipoPrice:185,  day1Open:220,   score:82, sector:"Aerospace / AI Infra"},
+  {name:"Lyntris Inc",       ticker:"LYNX",  exchange:"NYSE",   ipoDate:"2026-08-19", ipoPrice:17.5, day1Open:19.2,  score:46, sector:"Defense Technology"},
+  {name:"Shiprocket",        ticker:"SHIP",  exchange:"NYSE",   ipoDate:"2026-04-10", ipoPrice:22,   day1Open:26.5,  score:68, sector:"Logistics / E-commerce"},
+  {name:"Reddit",            ticker:"RDDT",  exchange:"NYSE",   ipoDate:"2026-03-21", ipoPrice:34,   day1Open:48,    score:61, sector:"Social Media"},
+  {name:"Cerebras Systems",  ticker:"CBRS",  exchange:"NASDAQ", ipoDate:"2026-02-14", ipoPrice:31,   day1Open:38,    score:74, sector:"AI Chips / Hardware"},
+  {name:"Medline Industries", ticker:"MDL",  exchange:"NYSE",   ipoDate:"2026-01-28", ipoPrice:42,   day1Open:44,    score:55, sector:"Healthcare / Distribution"},
+  // ── HISTORICAL (2025) — approaching/past lock-up ──────────
+  {name:"Sailpoint Technologies",ticker:"SAIL",exchange:"NYSE", ipoDate:"2025-11-20", ipoPrice:23,   day1Open:29,    score:66, sector:"Cybersecurity / IAM"},
+  {name:"Pantera Capital",   ticker:"PNTR",  exchange:"NASDAQ", ipoDate:"2025-10-15", ipoPrice:18,   day1Open:21,    score:58, sector:"Crypto / Asset Management"},
+  {name:"Hinge Health",      ticker:"HNGE",  exchange:"NYSE",   ipoDate:"2025-06-26", ipoPrice:32,   day1Open:39,    score:63, sector:"Digital Health"},
+  {name:"eToro",             ticker:"ETOR",  exchange:"NASDAQ", ipoDate:"2025-05-14", ipoPrice:52,   day1Open:67,    score:69, sector:"Social Trading / Fintech"},
+  {name:"Venture Global LNG",ticker:"VG",    exchange:"NYSE",   ipoDate:"2025-01-24", ipoPrice:25,   day1Open:22,    score:57, sector:"Energy / LNG"},
 ];
 
 async function loadLockupData() {
@@ -305,21 +320,51 @@ async function loadLockupData() {
 
 // ── ETF DASHBOARD ────────────────────────────────────────────
 const ETF_LIST = [
-  // IPO-focused
-  {ticker:'IPO',  name:'Renaissance IPO ETF',          theme:'IPO-Focused'},
-  {ticker:'FPX',  name:'First Trust US Equity Opportunities', theme:'IPO-Focused'},
-  // India-focused
-  {ticker:'INDA', name:'iShares MSCI India ETF',        theme:'India'},
-  {ticker:'INDY', name:'iShares India 50 ETF',          theme:'India'},
-  {ticker:'EPI',  name:'WisdomTree India Earnings ETF', theme:'India'},
-  // Gulf/UAE
-  {ticker:'UAE',  name:'iShares MSCI UAE ETF',          theme:'Gulf'},
-  {ticker:'KSA',  name:'iShares MSCI Saudi Arabia ETF', theme:'Gulf'},
-  {ticker:'MES',  name:'iShares MSCI GCC ex-Saudi ETF', theme:'Gulf'},
-  // Thematic
-  {ticker:'AIQ',  name:'Global X AI & Technology ETF',  theme:'AI/Tech'},
-  {ticker:'ITA',  name:'iShares US Aerospace & Defense',theme:'Defence'},
-  {ticker:'FINX', name:'Global X FinTech ETF',          theme:'Fintech'},
+  // IPO & Growth
+  {ticker:'IPO',   name:'Renaissance IPO ETF',                theme:'IPO & Growth'},
+  {ticker:'FPX',   name:'First Trust US Equity Opportunities', theme:'IPO & Growth'},
+  {ticker:'IPOS',  name:'Renaissance International IPO ETF',   theme:'IPO & Growth'},
+  {ticker:'ARKK',  name:'ARK Innovation ETF',                  theme:'IPO & Growth'},
+  {ticker:'ARKQ',  name:'ARK Autonomous Tech & Robotics',      theme:'IPO & Growth'},
+  // India
+  {ticker:'INDA',  name:'iShares MSCI India ETF',              theme:'India'},
+  {ticker:'INDY',  name:'iShares India 50 ETF',                theme:'India'},
+  {ticker:'EPI',   name:'WisdomTree India Earnings ETF',       theme:'India'},
+  {ticker:'NFTY',  name:'First Trust India NIFTY 50 ETF',      theme:'India'},
+  {ticker:'SMIN',  name:'iShares MSCI India Small-Cap ETF',    theme:'India'},
+  // Gulf & Middle East
+  {ticker:'UAE',   name:'iShares MSCI UAE ETF',                theme:'Gulf & Middle East'},
+  {ticker:'KSA',   name:'iShares MSCI Saudi Arabia ETF',       theme:'Gulf & Middle East'},
+  {ticker:'MES',   name:'iShares MSCI GCC ex-Saudi ETF',       theme:'Gulf & Middle East'},
+  {ticker:'GULF',  name:'WisdomTree Middle East Dividend ETF',  theme:'Gulf & Middle East'},
+  {ticker:'QAT',   name:'iShares MSCI Qatar ETF',              theme:'Gulf & Middle East'},
+  // AI & Technology
+  {ticker:'AIQ',   name:'Global X AI & Technology ETF',        theme:'AI & Technology'},
+  {ticker:'BOTZ',  name:'Global X Robotics & AI ETF',          theme:'AI & Technology'},
+  {ticker:'QTUM',  name:'Defiance Quantum ETF',                theme:'AI & Technology'},
+  {ticker:'CHAT',  name:'Roundhill Generative AI & Technology', theme:'AI & Technology'},
+  {ticker:'SOXX',  name:'iShares Semiconductor ETF',           theme:'AI & Technology'},
+  // Defence & Energy
+  {ticker:'ITA',   name:'iShares US Aerospace & Defense ETF',  theme:'Defence & Energy'},
+  {ticker:'XAR',   name:'SPDR Aerospace & Defense ETF',        theme:'Defence & Energy'},
+  {ticker:'DFEN',  name:'Direxion Daily Aerospace & Defense 3x',theme:'Defence & Energy'},
+  {ticker:'XLE',   name:'Energy Select Sector SPDR ETF',       theme:'Defence & Energy'},
+  {ticker:'ICLN',  name:'iShares Global Clean Energy ETF',     theme:'Defence & Energy'},
+  // Fintech & Finance
+  {ticker:'FINX',  name:'Global X FinTech ETF',                theme:'Fintech & Finance'},
+  {ticker:'IPAY',  name:'ETFMG Prime Mobile Payments ETF',     theme:'Fintech & Finance'},
+  {ticker:'ARKF',  name:'ARK Fintech Innovation ETF',          theme:'Fintech & Finance'},
+  {ticker:'KOIN',  name:'Capital Link Global Fintech Leaders',  theme:'Fintech & Finance'},
+  // Healthcare & Biotech
+  {ticker:'XBI',   name:'SPDR S&P Biotech ETF',                theme:'Healthcare & Biotech'},
+  {ticker:'IBB',   name:'iShares Biotechnology ETF',           theme:'Healthcare & Biotech'},
+  {ticker:'ARKG',  name:'ARK Genomic Revolution ETF',          theme:'Healthcare & Biotech'},
+  {ticker:'IHI',   name:'iShares US Medical Devices ETF',      theme:'Healthcare & Biotech'},
+  // Broad Market
+  {ticker:'QQQ',   name:'Invesco QQQ (Nasdaq 100)',             theme:'Broad Market'},
+  {ticker:'SPY',   name:'SPDR S&P 500 ETF Trust',              theme:'Broad Market'},
+  {ticker:'VTI',   name:'Vanguard Total Stock Market ETF',      theme:'Broad Market'},
+  {ticker:'VWO',   name:'Vanguard Emerging Markets ETF',        theme:'Broad Market'},
 ];
 
 async function loadEtfData() {
@@ -337,7 +382,7 @@ async function loadEtfData() {
 
     // Group by theme
     const themes = [...new Set(ETF_LIST.map(e=>e.theme))];
-    const themeColors = {'IPO-Focused':'var(--or)','India':'var(--amber)','Gulf':'var(--blue)','AI/Tech':'var(--purple)','Defence':'#4ade80','Fintech':'#f472b6'};
+    const themeColors = {'IPO & Growth':'var(--or)','India':'var(--amber)','Gulf & Middle East':'var(--blue)','AI & Technology':'var(--purple)','Defence & Energy':'#4ade80','Fintech & Finance':'#f472b6','Healthcare & Biotech':'#34d399','Broad Market':'var(--t2)'};
 
     const html = themes.map(theme => {
       const etfs = ETF_LIST.filter(e=>e.theme===theme);
@@ -376,12 +421,22 @@ async function loadEtfData() {
 
 // ── PRE-IPO WATCHLIST ────────────────────────────────────────
 const WATCHLIST = [
-  {name:"Anthropic",   sector:"Artificial Intelligence",  status:"filed",    statusLabel:"S-1 Filed",      exchange:"NASDAQ", expectedValuation:"$2T", expectedDate:"Oct 2026",  underwriters:"Goldman Sachs, Morgan Stanley, JPMorgan"},
-  {name:"SpaceX",      sector:"Aerospace / AI Infrastructure", status:"listed", statusLabel:"Listed",        exchange:"NASDAQ", expectedValuation:"$2T+",expectedDate:"Jul 2026", underwriters:"Goldman Sachs, Morgan Stanley, Citigroup"},
-  {name:"Klarna",      sector:"Fintech / Buy Now Pay Later",status:"roadshow", statusLabel:"In Roadshow",   exchange:"NYSE",   expectedValuation:"$15B",expectedDate:"Sep 2026", underwriters:"Goldman Sachs, JPMorgan, Morgan Stanley"},
-  {name:"Databricks",  sector:"Data / AI / MLOps",        status:"rumoured",  statusLabel:"Rumoured 2026",  exchange:"NASDAQ", expectedValuation:"$62B",expectedDate:"Late 2026",underwriters:"TBD"},
-  {name:"Stripe",      sector:"Payments Infrastructure",  status:"rumoured",  statusLabel:"Rumoured 2026",  exchange:"NYSE",   expectedValuation:"$70B",expectedDate:"Late 2026",underwriters:"TBD"},
-  {name:"Chime",       sector:"Neobank / Fintech",        status:"rumoured",  statusLabel:"Rumoured 2026",  exchange:"NASDAQ", expectedValuation:"$25B",expectedDate:"2026-2027",underwriters:"Goldman Sachs"},
+  // ── S-1 FILED / IMMINENT ──────────────────────────────────
+  {name:"Anthropic",        sector:"Artificial Intelligence",     status:"filed",    statusLabel:"S-1 Filed",    exchange:"NASDAQ", expectedValuation:"$2T",   expectedDate:"Oct 2026",  underwriters:"Goldman Sachs, Morgan Stanley, JPMorgan"},
+  {name:"Klarna",           sector:"Fintech / Buy Now Pay Later", status:"roadshow", statusLabel:"In Roadshow",  exchange:"NYSE",   expectedValuation:"$15B",  expectedDate:"Sep 2026",  underwriters:"Goldman Sachs, JPMorgan, Morgan Stanley"},
+  // ── CONFIRMED / HIGH PROBABILITY 2026 ─────────────────────
+  {name:"Databricks",       sector:"Data / AI / MLOps",           status:"rumoured", statusLabel:"Expected 2026",exchange:"NASDAQ", expectedValuation:"$62B",  expectedDate:"Q4 2026",   underwriters:"Morgan Stanley, Goldman Sachs"},
+  {name:"Stripe",           sector:"Payments Infrastructure",     status:"rumoured", statusLabel:"Expected 2026",exchange:"NYSE",   expectedValuation:"$70B",  expectedDate:"Late 2026", underwriters:"Goldman Sachs, JPMorgan"},
+  {name:"Chime",            sector:"Neobank / Fintech",           status:"rumoured", statusLabel:"Expected 2026",exchange:"NASDAQ", expectedValuation:"$25B",  expectedDate:"Q4 2026",   underwriters:"Goldman Sachs"},
+  {name:"Figma",            sector:"Design / Collaboration SaaS", status:"rumoured", statusLabel:"Expected 2026",exchange:"NASDAQ", expectedValuation:"$12B",  expectedDate:"Q4 2026",   underwriters:"TBD"},
+  {name:"Canva",            sector:"Design / Creative Cloud",     status:"rumoured", statusLabel:"Expected 2026",exchange:"NYSE",   expectedValuation:"$26B",  expectedDate:"Late 2026", underwriters:"TBD"},
+  {name:"Discord",          sector:"Gaming / Community Platform", status:"rumoured", statusLabel:"Expected 2026",exchange:"NYSE",   expectedValuation:"$15B",  expectedDate:"2026-2027", underwriters:"TBD"},
+  {name:"Plaid",            sector:"Open Banking / Fintech",      status:"rumoured", statusLabel:"Expected 2027",exchange:"NASDAQ", expectedValuation:"$13B",  expectedDate:"2027",      underwriters:"TBD"},
+  {name:"OpenAI",           sector:"Artificial Intelligence",     status:"rumoured", statusLabel:"Watching",     exchange:"NASDAQ", expectedValuation:"$300B+",expectedDate:"TBD",       underwriters:"TBD"},
+  {name:"Scale AI",         sector:"AI Data / Infrastructure",    status:"rumoured", statusLabel:"Watching",     exchange:"NASDAQ", expectedValuation:"$14B",  expectedDate:"2027",      underwriters:"TBD"},
+  {name:"Waymo",            sector:"Autonomous Vehicles / AI",    status:"rumoured", statusLabel:"Watching",     exchange:"NASDAQ", expectedValuation:"$45B",  expectedDate:"TBD",       underwriters:"TBD"},
+  {name:"Starlink",         sector:"Satellite Internet",          status:"rumoured", statusLabel:"Watching",     exchange:"NASDAQ", expectedValuation:"$150B", expectedDate:"TBD",       underwriters:"TBD"},
+  {name:"Revolut",          sector:"Neobank / Global Fintech",    status:"rumoured", statusLabel:"Watching",     exchange:"NYSE",   expectedValuation:"$45B",  expectedDate:"2027",      underwriters:"TBD"},
 ];
 
 async function loadPreIpoData() {
