@@ -249,12 +249,26 @@ async function discoverNewIpos(){
 function renderLockupCards(rows, el){
   const today=new Date();
   // Split listed vs upcoming
-  const listed=[], upcoming=[];
+  const expiringSoon=[], recentExpired=[], hidden=[], upcoming=[];
   rows.forEach(r=>{
     const ipoDate=r['IPO Date']||null;
-    const notListed=!ipoDate||new Date(ipoDate)>today;
-    if(notListed) upcoming.push(r);
-    else listed.push(r);
+    if(!ipoDate||new Date(ipoDate)>today){ upcoming.push(r); return; }
+
+    const listingDate=new Date(ipoDate);
+    const lockupDate=new Date(listingDate.getTime()+180*24*60*60*1000);
+    const daysToLockup=Math.ceil((lockupDate-today)/(864e5));
+    const daysSinceLockup=Math.ceil((today-lockupDate)/(864e5));
+
+    if(daysToLockup>=0 && daysToLockup<=15){
+      // Expiring within next 15 days — show
+      expiringSoon.push(r);
+    } else if(daysToLockup<0 && daysSinceLockup<=15){
+      // Expired within last 15 days — show as buy window
+      recentExpired.push(r);
+    } else {
+      // All others — hide
+      hidden.push(r);
+    }
   });
 
   const makeCard = (r, isUpcoming) => {
@@ -332,8 +346,19 @@ function renderLockupCards(rows, el){
   const listedHtml = listed.map(r=>makeCard(r,false)).join('');
   const upcomingHtml = upcoming.map(r=>makeCard(r,true)).join('');
 
-  el.innerHTML = `<div class="lockup-grid">${listedHtml}</div>`
-    + (upcomingHtml?`<div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--blue);margin:1.5rem 0 10px;">Upcoming IPOs</div><div class="lockup-grid">${upcomingHtml}</div>`:'');
+  const soonHtml    = expiringSoon.map(r=>makeCard(r,false)).join('');
+  const expiredHtml = recentExpired.map(r=>makeCard(r,false)).join('');
+  const upcomingHtml2 = upcoming.map(r=>makeCard(r,true)).join('');
+  const hiddenNames = hidden.map(r=>r['Company Name']).join(', ');
+
+  let html = '';
+  if(soonHtml)    html += `<div class="slabel" style="color:var(--amber);">Expiring Within 15 Days — Prepare for selling pressure</div><div class="lockup-grid">${soonHtml}</div>`;
+  if(expiredHtml) html += `<div class="slabel" style="color:var(--green);margin-top:1.5rem;">Expired Within Last 15 Days — Buy Window</div><div class="lockup-grid">${expiredHtml}</div>`;
+  if(upcomingHtml2) html += `<div class="slabel" style="color:var(--blue);margin-top:1.5rem;">Upcoming IPOs — Not Yet Listed</div><div class="lockup-grid">${upcomingHtml2}</div>`;
+  if(!soonHtml && !expiredHtml) html += `<div style="color:var(--t3);padding:2rem;text-align:center;background:var(--bg3);border-radius:8px;"><div style="font-size:16px;margin-bottom:8px;">No lock-up events in the next 15 days</div><div style="font-size:12px;">Check back as IPOs approach their 180-day mark. ${hidden.length} stocks tracked — next event approaching soon.</div></div>`;
+  if(hiddenNames) html += `<div style="font-size:11px;color:var(--t3);margin-top:1rem;padding:8px 12px;background:var(--bg3);border-radius:6px;">Tracking ${hidden.length} other stocks not in the 15-day window: ${esc(hiddenNames)}</div>`;
+
+  el.innerHTML = html;
 }
 
 
