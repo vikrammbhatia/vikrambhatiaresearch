@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
-<title>US IPO Research Engine — Vikram Bhatia</title>
+<title>USA IPO Portal — Vikram Bhatia Research</title>
 <style>
 :root{
   --bg1:#0a0a0a;--bg2:#111;--bg3:#161616;--bg4:#1e1e1e;
@@ -204,15 +204,68 @@ body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-s
   .pos-risk-grid{grid-template-columns:1fr;}
   .factor-grid{grid-template-columns:repeat(2,1fr);}
 }
+
+/* ── PLATFORM NAV ── */
+.platform-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10,13,18,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #1e2530;
+  padding: 0 2.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 58px;
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 12px;
+  text-decoration: none;
+}
+.vb-mark { width: 32px; height: 32px; flex-shrink: 0; }
+.vb-mark svg { width: 100%; height: 100%; }
+.brand-name { font-size: 12px; font-weight: 600; color: #eef0f3; letter-spacing:-0.01em; line-height:1.2; }
+.brand-sub  { font-size: 10px; color: #8892a0; }
+.nav-links  { display: flex; align-items: center; gap: 2px; }
+.nav-link {
+  font-size: 12px; font-weight: 500; color: #8892a0;
+  text-decoration: none; padding: 6px 11px; border-radius: 6px;
+  transition: color 0.15s, background 0.15s; white-space: nowrap;
+}
+.nav-link:hover { color: #eef0f3; background: #161b22; }
+.nav-link.active { color: #e67e22; }
+@media(max-width:768px){
+  .platform-nav { padding: 0 1rem; }
+  .nav-links { display: none; }
+}
 </style>
 </head>
 <body>
+<nav class="platform-nav">
+  <a class="nav-brand" href="/">
+    <div class="vb-mark">
+      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="36" height="36" rx="8" fill="#111418"/>
+        <path d="M7 9 L14 27 L18 18 L22 27 L29 9" stroke="#e67e22" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <circle cx="18" cy="18" r="3" fill="#e67e22" opacity="0.3"/>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <div class="brand-name">Vikram Bhatia</div>
+      <div class="brand-sub">Research Platform</div>
+    </div>
+  </a>
+  <div class="nav-links">
+    <a class="nav-link" href="/ipo">India IPO</a>
+    <a class="nav-link" href="/uae-ipo">UAE IPO</a>
+    <a class="nav-link active" href="/us-ipo">USA IPO</a>
+    <a class="nav-link" href="/us-mr">USA MR</a>
+    <a class="nav-link" href="/us-markets">USA Markets</a>
+  </div>
+</nav>
 <div class="page">
   <div class="main-col">
-    <div class="ph-title">US IPO Research Engine</div>
-    <div class="ph-flag">by Vikram Bhatia</div>
+    <div class="ph-title">USA IPO Portal</div>
+    <div class="ph-flag">NYSE · NASDAQ · New York</div>
     <div class="ph-sub">AI-powered analysis using live data, quantitative scoring and qualitative assessment</div>
-    <div class="ph-nav"><a href="/ipo" style="color:var(--or);text-decoration:none;">India IPO Engine</a> &nbsp;·&nbsp; <a href="/uae-ipo" style="color:var(--or);text-decoration:none;">UAE IPO Engine</a></div>
+    
 
     <div class="search-row">
       <input id="ipoInput" placeholder="Enter US company name e.g. Cerebras Systems" onkeydown="if(event.key==='Enter')analyse()"/>
