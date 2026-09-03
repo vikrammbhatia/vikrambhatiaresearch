@@ -4,511 +4,317 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Vikram Bhatia Research Platform</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --night:      #0a0d12;
-  --surface:    #111418;
-  --surface2:   #161b22;
-  --border:     #1e2530;
-  --border2:    #2a3340;
-  --orange:     #e67e22;
-  --orange-dim: #c0651a;
-  --orange-glow:rgba(230,126,34,0.12);
-  --green:      #22c55e;
-  --red:        #ef4444;
-  --text:       #eef0f3;
-  --muted:      #8892a0;
-  --faint:      #3d4a5a;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:    #080c14;
+  --bg2:   #0d1220;
+  --bg3:   #111827;
+  --bg4:   #1a2235;
+  --bdr:   rgba(255,255,255,0.06);
+  --bdr2:  rgba(255,255,255,0.10);
+  --or:    #e67e22;
+  --or2:   #c0651a;
+  --or-bg: rgba(230,126,34,0.08);
+  --green: #10b981;
+  --blue:  #3b82f6;
+  --text:  #f0f2f5;
+  --t2:    #9aa3b2;
+  --t3:    #5a6478;
+  --t4:    #3a4255;
 }
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:14px;line-height:1.6;min-height:100vh;}
 
-html { scroll-behavior: smooth; }
-
-body {
-  background: var(--night);
-  color: var(--text);
-  font-family: 'Inter', system-ui, sans-serif;
-  font-size: 14px;
-  line-height: 1.6;
-  min-height: 100vh;
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(8,12,20,0.97);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--bdr);
+  padding:0 2.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+  height:60px;
 }
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.vb-mark{width:34px;height:34px;flex-shrink:0;border-radius:7px;overflow:hidden;}
+.vb-mark svg{width:100%;height:100%;display:block;}
+.brand-name{font-size:13px;font-weight:600;color:var(--text);letter-spacing:-0.02em;line-height:1.25;}
+.brand-sub{font-size:10px;color:var(--t3);}
+.nav-links{display:flex;align-items:center;gap:1px;}
+.nav-lnk{font-size:12px;font-weight:500;color:var(--t2);text-decoration:none;padding:6px 11px;border-radius:6px;transition:color 0.15s,background 0.15s;white-space:nowrap;}
+.nav-lnk:hover{color:var(--text);background:rgba(255,255,255,0.05);}
+.nav-lnk.active{color:var(--or);background:var(--or-bg);}
 
-/* ── NAV ── */
-nav {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(10,13,18,0.92);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  padding: 0 2.5rem;
-  display: flex; align-items: center; justify-content: space-between;
-  height: 58px;
+/* HERO */
+.hero{
+  padding:5rem 2.5rem 3.5rem;
+  max-width:1160px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 400px;gap:5rem;align-items:center;
 }
-
-.nav-brand {
-  display: flex; align-items: center; gap: 12px;
-  text-decoration: none;
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;font-weight:500;color:var(--or);
+  letter-spacing:0.05em;margin-bottom:1.5rem;
 }
-
-.vb-mark {
-  width: 36px; height: 36px;
-  position: relative; flex-shrink: 0;
+.eyebrow-line{width:20px;height:1px;background:var(--or);}
+h1{
+  font-size:clamp(2rem,3.5vw,2.8rem);
+  font-weight:700;line-height:1.15;letter-spacing:-0.03em;
+  color:var(--text);margin-bottom:1.25rem;
 }
-
-.vb-mark svg { width: 100%; height: 100%; }
-
-.brand-text { line-height: 1.2; }
-.brand-name { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
-.brand-sub  { font-size: 10px; color: var(--muted); font-weight: 400; }
-
-.nav-links {
-  display: flex; align-items: center; gap: 2px;
+h1 em{font-style:normal;color:var(--or);}
+.hero-p{font-size:15px;color:var(--t2);line-height:1.75;max-width:460px;margin-bottom:2.5rem;}
+.cta-row{display:flex;gap:10px;flex-wrap:wrap;}
+.btn-p{
+  background:var(--or);color:#fff;font-size:13px;font-weight:600;
+  padding:10px 22px;border-radius:7px;text-decoration:none;
+  transition:background 0.15s;border:none;cursor:pointer;
 }
-
-.nav-link {
-  font-size: 12px; font-weight: 500; color: var(--muted);
-  text-decoration: none; padding: 6px 12px; border-radius: 6px;
-  transition: color 0.15s, background 0.15s;
-  white-space: nowrap;
+.btn-p:hover{background:var(--or2);}
+.btn-g{
+  background:transparent;color:var(--text);font-size:13px;font-weight:500;
+  padding:10px 22px;border-radius:7px;border:1px solid var(--bdr2);
+  text-decoration:none;transition:border-color 0.15s,color 0.15s;
 }
+.btn-g:hover{border-color:var(--or);color:var(--or);}
 
-.nav-link:hover { color: var(--text); background: var(--surface2); }
-.nav-link.active { color: var(--orange); }
-
-/* ── HERO ── */
-.hero {
-  padding: 5rem 2.5rem 4rem;
-  max-width: 1200px; margin: 0 auto;
-  display: grid; grid-template-columns: 1fr 420px; gap: 4rem; align-items: center;
+/* HERO PANEL */
+.hero-panel{
+  background:var(--bg3);
+  border:1px solid var(--bdr2);
+  border-radius:14px;padding:22px;
 }
+.panel-title{font-size:11px;color:var(--t3);margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--bdr);}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--bdr);}
+.stat-row:last-child{border-bottom:none;padding-bottom:0;}
+.stat-lbl{font-size:12px;color:var(--t2);}
+.stat-val{font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;}
+.or{color:var(--or);}
+.gr{color:var(--green);}
 
-.hero-left {}
+/* DIVIDER */
+.div-line{height:1px;background:var(--bdr);margin:0;}
 
-.hero-eyebrow {
-  font-size: 11px; font-weight: 500; color: var(--orange);
-  letter-spacing: 0.06em; margin-bottom: 1.2rem;
-  display: flex; align-items: center; gap: 8px;
+/* SECTION */
+.section{padding:3.5rem 2.5rem;max-width:1160px;margin:0 auto;}
+.sec-head{margin-bottom:2rem;}
+.sec-title{font-size:1.4rem;font-weight:700;letter-spacing:-0.02em;color:var(--text);margin-bottom:4px;}
+.sec-sub{font-size:13px;color:var(--t3);}
+
+/* PORTAL BENTO */
+.bento{
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  gap:10px;
 }
-
-.hero-eyebrow::before {
-  content: ''; display: block;
-  width: 24px; height: 1px; background: var(--orange);
+.pc{
+  background:var(--bg3);
+  border:1px solid var(--bdr);
+  border-radius:12px;
+  padding:22px 24px;
+  text-decoration:none;color:inherit;
+  display:flex;flex-direction:column;
+  position:relative;overflow:hidden;
+  transition:border-color 0.2s,background 0.2s;
 }
-
-h1 {
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 700; line-height: 1.15;
-  letter-spacing: -0.03em; color: var(--text);
-  margin-bottom: 1.2rem;
+.pc::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--or),transparent);
+  opacity:0;transition:opacity 0.2s;
 }
+.pc:hover{border-color:var(--bdr2);background:var(--bg4);}
+.pc:hover::after{opacity:1;}
+.pc.s5{grid-column:span 5;}
+.pc.s4{grid-column:span 4;}
+.pc.s3{grid-column:span 3;}
+.pc.s6{grid-column:span 6;}
+.pc.s7{grid-column:span 7;}
+.pc.s2{grid-column:span 2;}
+.pc-flag{font-size:20px;margin-bottom:14px;}
+.pc-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:5px;letter-spacing:-0.01em;}
+.pc-desc{font-size:12px;color:var(--t3);line-height:1.65;flex:1;}
+.pc-foot{margin-top:16px;padding-top:14px;border-top:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;}
+.tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;}
+.tag-ipo{background:rgba(230,126,34,0.1);color:var(--or);}
+.tag-mr {background:rgba(16,185,129,0.1);color:var(--green);}
+.tag-mkt{background:rgba(59,130,246,0.1);color:var(--blue);}
+.pc-arrow{font-size:15px;color:var(--t4);transition:color 0.2s,transform 0.2s;}
+.pc:hover .pc-arrow{color:var(--or);transform:translate(3px,-3px);}
 
-h1 span { color: var(--orange); }
-
-.hero-sub {
-  font-size: 16px; color: var(--muted); line-height: 1.7;
-  max-width: 480px; margin-bottom: 2.5rem;
+/* METHODOLOGY */
+.method{
+  background:var(--bg2);
+  border-top:1px solid var(--bdr);
+  border-bottom:1px solid var(--bdr);
+  padding:3rem 2.5rem;
 }
-
-.hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-
-.btn-primary {
-  background: var(--orange); color: #fff;
-  font-size: 13px; font-weight: 600;
-  padding: 10px 22px; border-radius: 7px;
-  text-decoration: none; border: none; cursor: pointer;
-  transition: background 0.15s;
+.method-inner{
+  max-width:1160px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:2.5rem;
 }
+.m-num{font-size:2rem;font-weight:700;color:var(--or);font-variant-numeric:tabular-nums;line-height:1;}
+.m-lbl{font-size:12px;color:var(--t3);margin-top:6px;line-height:1.5;}
 
-.btn-primary:hover { background: var(--orange-dim); }
-
-.btn-ghost {
-  background: transparent; color: var(--text);
-  font-size: 13px; font-weight: 500;
-  padding: 10px 22px; border-radius: 7px;
-  border: 1px solid var(--border2);
-  text-decoration: none; cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
+/* FOOTER */
+.footer{
+  border-top:1px solid var(--bdr);
+  padding:1.75rem 2.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+  max-width:1160px;margin:0 auto;
 }
+.footer-l{font-size:11px;color:var(--t3);}
+.footer-r{font-size:11px;color:var(--t4);}
 
-.btn-ghost:hover { border-color: var(--orange); color: var(--orange); }
-
-/* Hero right — live stats */
-.hero-stats {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px; padding: 24px;
-}
-
-.hero-stats-title {
-  font-size: 11px; color: var(--muted);
-  margin-bottom: 16px; padding-bottom: 12px;
-  border-bottom: 1px solid var(--border);
-}
-
-.stat-row {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 10px 0; border-bottom: 1px solid var(--border);
-}
-
-.stat-row:last-child { border-bottom: none; }
-
-.stat-label { font-size: 12px; color: var(--muted); }
-.stat-value { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
-.stat-value.green { color: var(--green); }
-.stat-value.orange { color: var(--orange); }
-
-/* ── SECTION ── */
-section { padding: 4rem 2.5rem; max-width: 1200px; margin: 0 auto; }
-
-.section-header {
-  margin-bottom: 2.5rem;
-}
-
-.section-title {
-  font-size: 1.5rem; font-weight: 700;
-  letter-spacing: -0.02em; color: var(--text);
-  margin-bottom: 6px;
-}
-
-.section-sub { font-size: 13px; color: var(--muted); }
-
-/* ── PORTAL GRID (bento) ── */
-.portal-grid {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: auto;
-  gap: 12px;
-}
-
-.portal-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px 26px;
-  text-decoration: none;
-  color: inherit;
-  display: flex; flex-direction: column;
-  transition: border-color 0.2s, background 0.2s;
-  position: relative; overflow: hidden;
-}
-
-.portal-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0;
-  height: 2px;
-  background: var(--orange);
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.portal-card:hover {
-  border-color: var(--border2);
-  background: var(--surface2);
-}
-
-.portal-card:hover::before { opacity: 1; }
-
-/* Bento layout */
-.portal-card.span-5 { grid-column: span 5; }
-.portal-card.span-4 { grid-column: span 4; }
-.portal-card.span-3 { grid-column: span 3; }
-.portal-card.span-7 { grid-column: span 7; }
-
-.portal-flag {
-  font-size: 22px; margin-bottom: 14px;
-}
-
-.portal-name {
-  font-size: 15px; font-weight: 600;
-  color: var(--text); margin-bottom: 4px;
-  letter-spacing: -0.01em;
-}
-
-.portal-desc {
-  font-size: 12px; color: var(--muted);
-  line-height: 1.6; flex: 1;
-}
-
-.portal-meta {
-  margin-top: 16px; padding-top: 14px;
-  border-top: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-}
-
-.portal-tag {
-  font-size: 10px; font-weight: 600;
-  padding: 3px 8px; border-radius: 4px;
-  letter-spacing: 0.04em;
-}
-
-.tag-ipo { background: rgba(230,126,34,0.12); color: var(--orange); }
-.tag-mr  { background: rgba(34,197,94,0.1);  color: var(--green); }
-.tag-mkt { background: rgba(96,165,250,0.1); color: #60a5fa; }
-
-.portal-arrow {
-  font-size: 16px; color: var(--faint);
-  transition: color 0.2s, transform 0.2s;
-}
-
-.portal-card:hover .portal-arrow {
-  color: var(--orange); transform: translate(3px,-3px);
-}
-
-/* ── METHODOLOGY STRIP ── */
-.method-strip {
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  padding: 3rem 2.5rem;
-  margin-top: 1rem;
-}
-
-.method-inner {
-  max-width: 1200px; margin: 0 auto;
-  display: grid; grid-template-columns: repeat(4,1fr); gap: 2rem;
-}
-
-.method-item {}
-.method-num  { font-size: 28px; font-weight: 700; color: var(--orange); font-variant-numeric: tabular-nums; }
-.method-lbl  { font-size: 12px; color: var(--muted); margin-top: 2px; }
-
-/* ── FOOTER ── */
-footer {
-  border-top: 1px solid var(--border);
-  padding: 2rem 2.5rem;
-  display: flex; align-items: center; justify-content: space-between;
-  max-width: 1200px; margin: 0 auto;
-}
-
-.footer-left  { font-size: 12px; color: var(--muted); }
-.footer-right { font-size: 11px; color: var(--faint); }
-
-/* ── VB WORDMARK ── */
-@keyframes pulse-ring {
-  0%   { opacity:0.6; transform: scale(1); }
-  50%  { opacity:0.2; transform: scale(1.15); }
-  100% { opacity:0.6; transform: scale(1); }
-}
-
-/* ── DIVIDER ── */
-.divider {
-  height: 1px; background: var(--border);
-  margin: 0 2.5rem;
-}
-
-/* ── RESPONSIVE ── */
-@media (max-width: 900px) {
-  .hero { grid-template-columns: 1fr; gap: 2.5rem; padding: 3rem 1.5rem 2rem; }
-  .hero-stats { display: none; }
-  .portal-card.span-5,.portal-card.span-4,.portal-card.span-3,.portal-card.span-7 { grid-column: span 12; }
-  .method-inner { grid-template-columns: repeat(2,1fr); }
-  nav { padding: 0 1.5rem; }
-  .nav-links { display: none; }
-  section { padding: 3rem 1.5rem; }
+@media(max-width:900px){
+  nav{padding:0 1rem;}
+  .nav-links{display:none;}
+  .hero{grid-template-columns:1fr;gap:2rem;padding:3rem 1.5rem 2rem;}
+  .hero-panel{display:none;}
+  .bento .pc{grid-column:span 12!important;}
+  .method-inner{grid-template-columns:repeat(2,1fr);}
+  .section{padding:2.5rem 1.5rem;}
+  .method{padding:2.5rem 1.5rem;}
+  .footer{padding:1.5rem;}
 }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a class="nav-brand" href="/">
     <div class="vb-mark">
       <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="36" height="36" rx="8" fill="#111418"/>
-        <path d="M7 9 L14 27 L18 18 L22 27 L29 9" stroke="#e67e22" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-        <circle cx="18" cy="18" r="3" fill="#e67e22" opacity="0.3"/>
+        <rect width="36" height="36" rx="7" fill="#0f1623"/>
+        <text x="4" y="26" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="700" fill="#e67e22" letter-spacing="-1">VB</text>
       </svg>
     </div>
-    <div class="brand-text">
+    <div>
       <div class="brand-name">Vikram Bhatia</div>
       <div class="brand-sub">Research Platform</div>
     </div>
   </a>
   <div class="nav-links">
-    <a class="nav-link" href="/ipo">India IPO Portal</a>
-    <a class="nav-link" href="/uae-ipo">UAE IPO Portal</a>
-    <a class="nav-link" href="/us-ipo">USA IPO Portal</a>
-    <a class="nav-link" href="/us-mr">USA MR Portal</a>
-    <a class="nav-link" href="/us-markets">USA Markets</a>
-    <a class="nav-link" href="/nfo">NFO Portal</a>
+    <a class="nav-lnk active" href="/">Home</a>
+    <a class="nav-lnk" href="/ipo">India IPO Portal</a>
+    <a class="nav-lnk" href="/uae-ipo">UAE IPO Portal</a>
+    <a class="nav-lnk" href="/us-ipo">USA IPO Portal</a>
+    <a class="nav-lnk" href="/india-mr">India MR Portal</a>
+    <a class="nav-lnk" href="/us-mr">USA MR Portal</a>
+    <a class="nav-lnk" href="/us-markets">USA Markets</a>
   </div>
 </nav>
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-left">
-    <div class="hero-eyebrow">AI-Powered Research</div>
-    <h1>Investment research<br>for the <span>modern investor</span></h1>
-    <p class="hero-sub">
-      Quantitative scoring, live market data, and AI-powered analysis
-      across Indian, UAE, and US markets — in one unified platform.
+  <div>
+    <div class="eyebrow"><span class="eyebrow-line"></span>AI-Powered Investment Research</div>
+    <h1>One platform.<br><em>Three markets.</em><br>Sharper decisions.</h1>
+    <p class="hero-p">
+      Quantitative scoring, live market data and AI-driven analysis
+      across Indian, UAE and US markets — built for the modern NRI investor.
     </p>
-    <div class="hero-actions">
-      <a class="btn-primary" href="/ipo">India IPO Portal</a>
-      <a class="btn-ghost" href="/us-mr">US MR Strategy</a>
+    <div class="cta-row">
+      <a class="btn-p" href="/ipo">India IPO Portal</a>
+      <a class="btn-g" href="/us-mr">USA MR Portal</a>
     </div>
   </div>
-
-  <div class="hero-stats">
-    <div class="hero-stats-title">Platform · Live Activity</div>
-    <div class="stat-row">
-      <span class="stat-label">India IPOs analysed</span>
-      <span class="stat-value orange">47</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-label">Direction accuracy (India)</span>
-      <span class="stat-value green">89%</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-label">UAE IPOs analysed</span>
-      <span class="stat-value orange">3</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-label">US IPOs analysed</span>
-      <span class="stat-value orange">5</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-label">US MR — Active cycle</span>
-      <span class="stat-value green">Cycle 1 · 5 positions</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-label">Markets covered</span>
-      <span class="stat-value orange">NSE · DFM · ADX · NYSE · NASDAQ</span>
-    </div>
+  <div class="hero-panel">
+    <div class="panel-title">Platform — live activity</div>
+    <div class="stat-row"><span class="stat-lbl">India IPOs analysed</span><span class="stat-val or">47</span></div>
+    <div class="stat-row"><span class="stat-lbl">Direction accuracy (India)</span><span class="stat-val gr">89%</span></div>
+    <div class="stat-row"><span class="stat-lbl">UAE IPOs analysed</span><span class="stat-val or">3</span></div>
+    <div class="stat-row"><span class="stat-lbl">USA IPOs analysed</span><span class="stat-val or">5</span></div>
+    <div class="stat-row"><span class="stat-lbl">India MR — active cycles</span><span class="stat-val gr">Running</span></div>
+    <div class="stat-row"><span class="stat-lbl">USA MR — Cycle 1</span><span class="stat-val gr">5 positions live</span></div>
+    <div class="stat-row"><span class="stat-lbl">Markets covered</span><span class="stat-val or">NSE · DFM · NYSE · NASDAQ</span></div>
   </div>
 </div>
 
-<div class="divider"></div>
+<div class="div-line"></div>
 
 <!-- PORTALS -->
-<section>
-  <div class="section-header">
-    <div class="section-title">Research Portals</div>
-    <div class="section-sub">Six engines, three markets, one platform.</div>
+<div class="section">
+  <div class="sec-head">
+    <div class="sec-title">Research Portals</div>
+    <div class="sec-sub">Six engines. Three markets. One platform.</div>
   </div>
 
-  <div class="portal-grid">
+  <div class="bento">
 
-    <!-- India IPO — large -->
-    <a class="portal-card span-5" href="/ipo">
-      <div class="portal-flag">🇮🇳</div>
-      <div class="portal-name">India IPO Portal</div>
-      <div class="portal-desc">
-        22-factor two-phase scoring model for NSE and BSE IPOs.
-        Live GMP, subscription data, anchor investor analysis,
-        and AI-powered qualitative assessment.
-      </div>
-      <div class="portal-meta">
-        <span class="portal-tag tag-ipo">IPO Research</span>
-        <span class="portal-arrow">↗</span>
-      </div>
+    <!-- India IPO — wide -->
+    <a class="pc s5" href="/ipo">
+      <div class="pc-flag">🇮🇳</div>
+      <div class="pc-name">India IPO Portal</div>
+      <div class="pc-desc">22-factor two-phase scoring model covering NSE and BSE IPOs. Live GMP, subscription data, QIB/HNI/retail breakdown, anchor investor analysis and Claude-powered qualitative assessment.</div>
+      <div class="pc-foot"><span class="tag tag-ipo">IPO Research</span><span class="pc-arrow">↗</span></div>
     </a>
 
     <!-- UAE IPO -->
-    <a class="portal-card span-4" href="/uae-ipo">
-      <div class="portal-flag">🇦🇪</div>
-      <div class="portal-name">UAE IPO Portal</div>
-      <div class="portal-desc">
-        20-factor model for DFM and ADX listings.
-        Government backing analysis, EV/EBITDA vs peers,
-        and Gulf sector tailwinds.
-      </div>
-      <div class="portal-meta">
-        <span class="portal-tag tag-ipo">IPO Research</span>
-        <span class="portal-arrow">↗</span>
-      </div>
+    <a class="pc s4" href="/uae-ipo">
+      <div class="pc-flag">🇦🇪</div>
+      <div class="pc-name">UAE IPO Portal</div>
+      <div class="pc-desc">20-factor model for DFM and ADX listings. Government and sovereign backing analysis, EV/EBITDA vs peers, free float, EBITDA margin and Gulf sector tailwinds.</div>
+      <div class="pc-foot"><span class="tag tag-ipo">IPO Research</span><span class="pc-arrow">↗</span></div>
     </a>
 
     <!-- USA IPO -->
-    <a class="portal-card span-3" href="/us-ipo">
-      <div class="portal-flag">🇺🇸</div>
-      <div class="portal-name">USA IPO Portal</div>
-      <div class="portal-desc">
-        23-factor S-1 scoring with buy-at-open
-        recommendation and post-lockup analysis.
-      </div>
-      <div class="portal-meta">
-        <span class="portal-tag tag-ipo">IPO Research</span>
-        <span class="portal-arrow">↗</span>
-      </div>
+    <a class="pc s3" href="/us-ipo">
+      <div class="pc-flag">🇺🇸</div>
+      <div class="pc-name">USA IPO Portal</div>
+      <div class="pc-desc">23-factor S-1 scoring with buy-at-open recommendation and post-lockup secondary analysis.</div>
+      <div class="pc-foot"><span class="tag tag-ipo">IPO Research</span><span class="pc-arrow">↗</span></div>
     </a>
 
-    <!-- US MR — large -->
-    <a class="portal-card span-7" href="/us-mr">
-      <div class="portal-flag">📈</div>
-      <div class="portal-name">USA MR Portal</div>
-      <div class="portal-desc">
-        Rules-based mean reversion strategy for S&P 500 stocks.
-        Daily scanner using Yahoo Finance data — RSI, 20-day high,
-        200-day MA, volume signals, earnings filter.
-        $2,000 per position · 8% target · 5% stop · 30-day time stop.
-      </div>
-      <div class="portal-meta">
-        <span class="portal-tag tag-mr">MR Strategy</span>
-        <span class="portal-arrow">↗</span>
-      </div>
+    <!-- India MR — wide -->
+    <a class="pc s6" href="/india-mr">
+      <div class="pc-flag">📊</div>
+      <div class="pc-name">India MR Portal</div>
+      <div class="pc-desc">Rules-based mean reversion strategy on NSE stocks. Multi-cycle tracking with sector blackouts, banking caps, time-stop discipline and macro checks before each new cycle. 20+ cycles of validated framework.</div>
+      <div class="pc-foot"><span class="tag tag-mr">MR Strategy</span><span class="pc-arrow">↗</span></div>
     </a>
 
-    <!-- US Markets -->
-    <a class="portal-card span-3" href="/us-markets">
-      <div class="portal-flag">🔭</div>
-      <div class="portal-name">USA Markets Dashboard</div>
-      <div class="portal-desc">
-        Lock-up expiry tracker, ETF dashboard,
-        and pre-IPO watchlist for US markets.
-      </div>
-      <div class="portal-meta">
-        <span class="portal-tag tag-mkt">Markets</span>
-        <span class="portal-arrow">↗</span>
-      </div>
+    <!-- USA MR -->
+    <a class="pc s6" href="/us-mr">
+      <div class="pc-flag">📈</div>
+      <div class="pc-name">USA MR Portal</div>
+      <div class="pc-desc">Rules-based mean reversion for S&P 500 stocks. Yahoo Finance scanner — RSI, 20-day high, 200-day MA, volume signals and earnings filter. $2,000 per position, 8% target, 5% stop, 30-day time stop.</div>
+      <div class="pc-foot"><span class="tag tag-mr">MR Strategy</span><span class="pc-arrow">↗</span></div>
+    </a>
+
+    <!-- USA Markets -->
+    <a class="pc s4" href="/us-markets">
+      <div class="pc-flag">🔭</div>
+      <div class="pc-name">USA Markets Dashboard</div>
+      <div class="pc-desc">Lock-up expiry tracker, ETF dashboard across 8 themes, and pre-IPO watchlist for the US market.</div>
+      <div class="pc-foot"><span class="tag tag-mkt">Markets</span><span class="pc-arrow">↗</span></div>
     </a>
 
     <!-- NFO -->
-    <a class="portal-card span-2" href="/nfo" style="grid-column:span 2;">
-      <div class="portal-flag">🏦</div>
-      <div class="portal-name">NFO Portal</div>
-      <div class="portal-desc">
-        Indian mutual fund NFO research engine.
-      </div>
-      <div class="portal-meta">
-        <span class="portal-tag tag-ipo">NFO Research</span>
-        <span class="portal-arrow">↗</span>
-      </div>
+    <a class="pc s2" href="/nfo">
+      <div class="pc-flag">🏦</div>
+      <div class="pc-name">NFO Portal</div>
+      <div class="pc-desc">Indian mutual fund NFO research and scoring engine.</div>
+      <div class="pc-foot"><span class="tag tag-ipo">NFO</span><span class="pc-arrow">↗</span></div>
     </a>
 
   </div>
-</section>
+</div>
 
-<div class="method-strip">
+<div class="method">
   <div class="method-inner">
-    <div class="method-item">
-      <div class="method-num">22+</div>
-      <div class="method-lbl">Scoring factors per IPO across all three markets</div>
-    </div>
-    <div class="method-item">
-      <div class="method-num">89%</div>
-      <div class="method-lbl">Direction accuracy on India IPO engine (9 IPOs backtested)</div>
-    </div>
-    <div class="method-item">
-      <div class="method-num">3</div>
-      <div class="method-lbl">Markets covered — India, UAE, and United States</div>
-    </div>
-    <div class="method-item">
-      <div class="method-num">Live</div>
-      <div class="method-lbl">Data via Claude AI web search, Yahoo Finance, BSE, DFM, ADX</div>
-    </div>
+    <div><div class="m-num">22+</div><div class="m-lbl">Scoring factors per IPO across all three markets</div></div>
+    <div><div class="m-num">89%</div><div class="m-lbl">Direction accuracy on India IPO engine (backtested)</div></div>
+    <div><div class="m-num">3</div><div class="m-lbl">Markets — India, UAE and United States</div></div>
+    <div><div class="m-num">Live</div><div class="m-lbl">Data via Claude AI web search, Yahoo Finance and exchange feeds</div></div>
   </div>
 </div>
 
-<footer>
-  <div class="footer-left">
-    © 2026 Vikram Bhatia Research Platform · For personal investment research only · Not financial advice
-  </div>
-  <div class="footer-right">Built with Claude AI</div>
-</footer>
+<div class="footer">
+  <div class="footer-l">© 2026 Vikram Bhatia Research Platform · For personal investment research only · Not financial advice</div>
+  <div class="footer-r">Built with Claude AI</div>
+</div>
 
 </body>
 </html>
