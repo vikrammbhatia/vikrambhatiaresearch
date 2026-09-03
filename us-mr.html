@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
+<title>US MR Strategy — Vikram Bhatia</title>
+<style>
+:root{
+  --bg1:#0a0a0a;--bg2:#111;--bg3:#161616;--bg4:#1e1e1e;
+  --b1:#1f1f1f;--b2:#2a2a2a;
+  --t1:#f0f0f0;--t2:#b0b0b0;--t3:#666;
+  --or:#e67e22;--amber:#f59e0b;
+  --green:#22c55e;--green-bg:#052e16;--green-bd:#166534;
+  --red:#ef4444;--red-bg:#1a0000;--red-bd:#7f1d1d;
+  --blue:#60a5fa;--blue-bg:#0d1b3e;--blue-bd:#1e40af;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-serif;font-size:13px;}
+.page{padding:2rem 2.5rem;}
+.ph-title{font-size:22px;font-weight:700;color:var(--or);margin-bottom:2px;}
+.ph-sub{font-size:12px;color:var(--t3);margin-bottom:4px;}
+.ph-nav{font-size:11px;color:var(--t3);margin-bottom:2rem;}
+.ph-nav a{color:var(--or);text-decoration:none;margin-right:12px;}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:1.5rem;border-bottom:2px solid var(--b2);background:var(--bg2);padding:8px 8px 0;border-radius:8px 8px 0 0;}
+.tab{padding:10px 22px;font-size:13px;font-weight:600;cursor:pointer;color:var(--t2);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all 0.2s;white-space:nowrap;}
+.tab.active{color:var(--or);border-bottom-color:var(--or);}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:1.5rem;}
+.stat-card{background:var(--bg3);border:1px solid var(--b1);border-radius:8px;padding:14px 16px;}
+.stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:0.05em;color:var(--t3);margin-bottom:6px;}
+.stat-val{font-size:22px;font-weight:700;}
+.stat-sub{font-size:11px;color:var(--t3);margin-top:2px;}
+
+/* SIGNAL CARDS */
+.signal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:1.5rem;}
+.signal-card{border-radius:10px;padding:16px 18px;}
+.signal-card.strong-buy{background:var(--green-bg);border:2px solid var(--green-bd);}
+.signal-card.buy{background:#0d2818;border:1px solid var(--green-bd);}
+.signal-card.watch{background:#1a1200;border:1px solid #854d0e;}
+.sc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.sc-ticker{font-size:18px;font-weight:700;}
+.sc-signal{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
+.signal-card.strong-buy .sc-ticker,.signal-card.strong-buy .sc-signal{color:var(--green);}
+.signal-card.buy .sc-ticker,.signal-card.buy .sc-signal{color:#4ade80;}
+.signal-card.watch .sc-ticker,.signal-card.watch .sc-signal{color:var(--amber);}
+.sc-name{font-size:11px;color:var(--t3);margin-bottom:10px;}
+.sc-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px;}
+.sc-m{background:var(--bg4);border-radius:4px;padding:6px 8px;}
+.sc-ml{font-size:9px;text-transform:uppercase;color:var(--t3);margin-bottom:2px;}
+.sc-mv{font-size:12px;font-weight:600;}
+.sc-levels{display:flex;gap:8px;margin-bottom:8px;}
+.sc-level{flex:1;text-align:center;padding:6px;border-radius:5px;font-size:11px;font-weight:600;}
+.sc-entry{background:var(--blue-bg);border:1px solid var(--blue-bd);color:var(--blue);}
+.sc-stop{background:var(--red-bg);border:1px solid var(--red-bd);color:var(--red);}
+.sc-target{background:var(--green-bg);border:1px solid var(--green-bd);color:var(--green);}
+.sc-positives{font-size:11px;color:var(--t2);line-height:1.6;}
+.sc-score{font-size:20px;font-weight:700;text-align:right;}
+.earnings-warn{font-size:10px;background:var(--red-bg);border:1px solid var(--red-bd);color:var(--red);padding:3px 8px;border-radius:4px;margin-top:6px;}
+
+/* POSITIONS */
+.pos-table{width:100%;border-collapse:collapse;}
+.pos-table th{padding:8px 12px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--or);background:var(--bg3);border-bottom:2px solid var(--b2);}
+.pos-table td{padding:10px 12px;border-bottom:1px solid var(--b1);font-size:12px;}
+.pos-table tr:hover td{background:var(--bg3);}
+.badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;}
+.badge.open{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd);}
+.badge.warn{background:#1a1200;color:var(--amber);border:1px solid #854d0e;}
+
+/* RULES */
+.rules-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
+.rule-card{background:var(--bg3);border:1px solid var(--b1);border-radius:8px;padding:14px 16px;}
+.rule-title{font-size:12px;font-weight:700;color:var(--or);margin-bottom:8px;}
+.rule-item{font-size:12px;color:var(--t2);padding:4px 0;border-bottom:1px solid var(--b1);line-height:1.5;}
+.rule-item:last-child{border-bottom:none;}
+.rule-item strong{color:var(--t1);}
+
+/* LOADER */
+.loader{padding:2rem;text-align:center;color:var(--t3);}
+.loader-track{height:2px;background:var(--b1);border-radius:1px;overflow:hidden;margin-bottom:8px;}
+.loader-fill{height:100%;background:var(--or);animation:ld 2.4s ease-in-out infinite;}
+@keyframes ld{0%{width:0%}60%{width:75%}100%{width:100%}}
+
+.slabel{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--or);margin-bottom:10px;margin-top:1.5rem;}
+.slabel:first-child{margin-top:0;}
+.btn{border:none;padding:8px 16px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;}
+.btn-green{background:var(--green);color:#000;}
+.btn-or{background:var(--or);color:#fff;}
+.btn-red{background:var(--red);color:#fff;}
+.btn:disabled{opacity:0.5;}
+.div{height:1px;background:var(--b1);margin:1.5rem 0;}
+.empty{color:var(--t3);text-align:center;padding:3rem;background:var(--bg3);border-radius:8px;}
+@media(max-width:600px){.page{padding:1rem 0.75rem;}.signal-grid,.rules-grid{grid-template-columns:1fr;}.stats-row{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="ph-title">US Mean Reversion Strategy</div>
+  <div class="ph-sub">by Vikram Bhatia &nbsp;·&nbsp; Rules-based · $10,000 corpus · 30-day time stop · Yahoo Finance data</div>
+  <div class="ph-nav">
+    <a href="/ipo">India IPO Engine</a>
+    <a href="/us-ipo">US IPO Engine</a>
+    <a href="/us-markets">US Markets Dashboard</a>
+  </div>
+
+  <!-- CORPUS SUMMARY -->
+  <div class="stats-row" id="corpusSummary">
+    <div class="stat-card"><div class="stat-lbl">Total Corpus</div><div class="stat-val" style="color:var(--or);">$10,000</div><div class="stat-sub">USD</div></div>
+    <div class="stat-card"><div class="stat-lbl">Per Position</div><div class="stat-val" style="color:var(--blue);">$2,000</div><div class="stat-sub">Max 5 positions</div></div>
+    <div class="stat-card"><div class="stat-lbl">Stop Loss</div><div class="stat-val" style="color:var(--red);">-5%</div><div class="stat-sub">-$100 gross / -$108 net</div></div>
+    <div class="stat-card"><div class="stat-lbl">Target</div><div class="stat-val" style="color:var(--green);">+8%</div><div class="stat-sub">+$160 gross / +$152 net</div></div>
+    <div class="stat-card"><div class="stat-lbl">Time Stop</div><div class="stat-val" style="color:var(--amber);">30 days</div><div class="stat-sub">Exit regardless</div></div>
+    <div class="stat-card"><div class="stat-lbl">Est. Round-trip Cost</div><div class="stat-val" style="color:var(--t2);">~$8</div><div class="stat-sub">Commission + spread</div></div>
+    <div class="stat-card" id="openPositionsStat"><div class="stat-lbl">Open Positions</div><div class="stat-val">—</div><div class="stat-sub">Loading...</div></div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('scanner',this)">MR Scanner</div>
+    <div class="tab" onclick="switchTab('positions',this)">Open Positions</div>
+    <div class="tab" onclick="switchTab('rules',this)">Strategy Rules</div>
+  </div>
+
+  <!-- TAB: SCANNER -->
+  <div id="tab-scanner" class="tab-content active">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <div>
+        <div style="font-size:13px;color:var(--t2);">Scans S&P 500 + ETFs for MR entry signals using Yahoo Finance data.</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:3px;">Entry criteria: Down 8-20% from 20D high · RSI &lt;35 · Above 200D MA · Volume spike · No earnings within 10 days</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-or" id="loadResultsBtn" onclick="loadScanResults()">Load Last Scan</button>
+        <button class="btn btn-green" id="runScanBtn" onclick="runScan()">Run New Scan</button>
+      </div>
+    </div>
+    <div id="scannerContent"><div class="empty">Click "Load Last Scan" to see previous results, or "Run New Scan" to scan now (takes 2-3 minutes).</div></div>
+    <div style="font-size:10px;color:var(--t3);margin-top:8px;text-align:right;" id="scanUpdated"></div>
+  </div>
+
+  <!-- TAB: POSITIONS -->
+  <div id="tab-positions" class="tab-content">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <div style="font-size:13px;color:var(--t2);">Track open MR positions. Log trades manually after executing on Emirates NBD / WIO.</div>
+      <button class="btn btn-green" onclick="showLogTrade()">+ Log Trade</button>
+    </div>
+    <div id="positionsContent"><div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg">Loading positions...</div></div></div>
+  </div>
+
+  <!-- TAB: RULES -->
+  <div id="tab-rules" class="tab-content">
+    <div class="rules-grid">
+      <div class="rule-card">
+        <div class="rule-title">Entry Rules — All Must Be Met</div>
+        <div class="rule-item"><strong>1. Pullback:</strong> Stock down 8-20% from 20-day high</div>
+        <div class="rule-item"><strong>2. Oversold:</strong> RSI below 35</div>
+        <div class="rule-item"><strong>3. Uptrend:</strong> Price above 200-day moving average</div>
+        <div class="rule-item"><strong>4. Volume:</strong> Today's volume ≥1.5× 20-day average</div>
+        <div class="rule-item"><strong>5. Earnings clear:</strong> No earnings in next 10 days</div>
+        <div class="rule-item"><strong>6. VIX filter:</strong> VIX below 30 (avoid high volatility)</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-title">Exit Rules — First Triggered Wins</div>
+        <div class="rule-item"><strong>Target hit:</strong> Stock up +8% from entry → Sell all (+$160 gross / +$152 net)</div>
+        <div class="rule-item"><strong>Stop loss:</strong> Stock down -5% from entry → Sell all (-$100 gross / -$108 net)</div>
+        <div class="rule-item"><strong>Time stop:</strong> 30 days elapsed → Sell regardless of P&L</div>
+        <div class="rule-item"><strong>Earnings:</strong> Exit before earnings announcement</div>
+        <div class="rule-item"><strong>No averaging down:</strong> Never add to losing position</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-title">Position Sizing — Fixed Rules</div>
+        <div class="rule-item"><strong>Corpus:</strong> $10,000 total</div>
+        <div class="rule-item"><strong>Per trade:</strong> $2,000 maximum</div>
+        <div class="rule-item"><strong>Max positions:</strong> 5 open at once</div>
+        <div class="rule-item"><strong>Max risk (gross):</strong> $100 per trade (5% of $2,000)</div>
+        <div class="rule-item"><strong>Max risk (net):</strong> ~$108 per trade (incl. ~$8 costs)</div>
+        <div class="rule-item"><strong>No leverage:</strong> Spot positions only</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-title">Stock Universe</div>
+        <div class="rule-item"><strong>S&P 500 stocks</strong> — large cap, liquid</div>
+        <div class="rule-item"><strong>Excluded:</strong> Financials, biotech, utilities</div>
+        <div class="rule-item"><strong>Also scanned:</strong> Major ETFs (QQQ, SPY, XLK etc.)</div>
+        <div class="rule-item"><strong>Execution:</strong> Emirates NBD / WIO app</div>
+        <div class="rule-item"><strong>Order type:</strong> Limit orders only, set in UAE morning</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-title">Daily Workflow</div>
+        <div class="rule-item"><strong>UAE Morning (8-9 AM):</strong> US market just closed. Review scanner results.</div>
+        <div class="rule-item"><strong>If signal found:</strong> Place limit buy order for US open (9:30 PM UAE)</div>
+        <div class="rule-item"><strong>Set simultaneously:</strong> Stop loss + target sell orders</div>
+        <div class="rule-item"><strong>Check positions:</strong> Once daily in morning only</div>
+        <div class="rule-item"><strong>Weekly scan:</strong> Run full scan every Monday</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-title">Tax & Broker Notes</div>
+        <div class="rule-item"><strong>Tax:</strong> Zero capital gains tax as UAE resident</div>
+        <div class="rule-item"><strong>Dividends:</strong> 30% US withholding applies</div>
+        <div class="rule-item"><strong>Emirates NBD:</strong> ENBD X app, 11,000+ US stocks</div>
+        <div class="rule-item"><strong>WIO:</strong> 2,000+ US stocks, fractional shares from $1</div>
+        <div class="rule-item"><strong>Settlement:</strong> T+2 for US stocks</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOG TRADE MODAL -->
+<div id="logTradeModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;">
+  <div style="background:var(--bg2);border:1px solid var(--b2);border-radius:12px;padding:24px;width:420px;max-width:95vw;">
+    <div style="font-size:16px;font-weight:700;color:var(--or);margin-bottom:16px;">Log New MR Trade</div>
+    <label style="font-size:11px;color:var(--t3);">Ticker</label>
+    <input id="lt_ticker" placeholder="e.g. AAPL" style="width:100%;background:var(--bg3);border:1px solid var(--b2);color:var(--t1);padding:8px;border-radius:5px;margin:4px 0 12px;font-size:13px;"/>
+    <label style="font-size:11px;color:var(--t3);">Entry Price ($)</label>
+    <input id="lt_price" type="number" placeholder="e.g. 185.50" style="width:100%;background:var(--bg3);border:1px solid var(--b2);color:var(--t1);padding:8px;border-radius:5px;margin:4px 0 12px;font-size:13px;"/>
+    <label style="font-size:11px;color:var(--t3);">Shares</label>
+    <input id="lt_shares" type="number" placeholder="e.g. 10" style="width:100%;background:var(--bg3);border:1px solid var(--b2);color:var(--t1);padding:8px;border-radius:5px;margin:4px 0 12px;font-size:13px;"/>
+    <label style="font-size:11px;color:var(--t3);">RSI at Entry</label>
+    <input id="lt_rsi" type="number" placeholder="e.g. 32" style="width:100%;background:var(--bg3);border:1px solid var(--b2);color:var(--t1);padding:8px;border-radius:5px;margin:4px 0 12px;font-size:13px;"/>
+    <div style="display:flex;gap:10px;margin-top:8px;">
+      <button class="btn btn-green" style="flex:1;" onclick="submitLogTrade()">Log Trade</button>
+      <button class="btn" style="flex:1;background:var(--bg3);color:var(--t2);" onclick="document.getElementById('logTradeModal').style.display='none'">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const AS_URL='https://ipo-proxy.vikrammbhatia.workers.dev';
+const T='VB2026USIPO';
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function switchTab(tab,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  if(el) el.classList.add('active');
+  if(tab==='positions') loadPositions();
+}
+
+// ── SCANNER ──────────────────────────────────────────────────
+async function loadScanResults(){
+  const btn=document.getElementById('loadResultsBtn');
+  btn.disabled=true; btn.textContent='Loading...';
+  try {
+    const res=await fetch(AS_URL+'?action=us_mr_results&v='+Date.now(),{redirect:'follow'});
+    const d=await res.json();
+    renderScanResults(d);
+    if(d.lastScan) document.getElementById('scanUpdated').textContent='Last scan: '+d.lastScan;
+  } catch(e){
+    document.getElementById('scannerContent').innerHTML=`<div class="empty">Error loading results: ${esc(e.message)}</div>`;
+  }
+  btn.disabled=false; btn.textContent='Load Last Scan';
+}
+
+async function runScan(){
+  const btn=document.getElementById('runScanBtn');
+  btn.disabled=true; btn.textContent='Scanning... (2-3 min)';
+  document.getElementById('scannerContent').innerHTML='<div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg" id="scanMsg">Fetching price data from Yahoo Finance for 80+ stocks...</div></div>';
+  const msgs=['Calculating RSI and moving averages...','Checking earnings calendars...','Applying MR entry rules...','Ranking signals by score...'];
+  let mi=0; const iv=setInterval(()=>{const el=document.getElementById('scanMsg');if(el)el.textContent=msgs[mi++%msgs.length];},8000);
+  try {
+    const res=await fetch(AS_URL+'?t='+T+'&action=us_mr_scan&v='+Date.now(),{redirect:'follow'});
+    const d=await res.json();
+    clearInterval(iv);
+    renderScanResults(d);
+    document.getElementById('scanUpdated').textContent='Scan completed: '+new Date().toLocaleTimeString()+' · VIX: '+(d.vix||'—');
+  } catch(e){
+    clearInterval(iv);
+    document.getElementById('scannerContent').innerHTML=`<div class="empty">Scan error: ${esc(e.message)}</div>`;
+  }
+  btn.disabled=false; btn.textContent='Run New Scan';
+  // Refresh open positions stat
+  loadPositionsStat();
+}
+
+function renderScanResults(d){
+  const results=d.results||[];
+  if(!results.length){
+    document.getElementById('scannerContent').innerHTML='<div class="empty">No MR signals found in this scan. Market may not have enough oversold quality stocks right now. Try again tomorrow.</div>';
+    return;
+  }
+  const strongBuy=results.filter(r=>r.signal==='STRONG BUY');
+  const buy=results.filter(r=>r.signal==='BUY');
+  const watch=results.filter(r=>r.signal==='WATCH');
+
+  let html='';
+  if(strongBuy.length){
+    html+=`<div class="slabel" style="color:var(--green);">Strong Buy Signals (${strongBuy.length})</div>`;
+    html+=`<div class="signal-grid">${strongBuy.map(r=>signalCard(r)).join('')}</div>`;
+  }
+  if(buy.length){
+    html+=`<div class="slabel" style="color:#4ade80;margin-top:1.5rem;">Buy Signals (${buy.length})</div>`;
+    html+=`<div class="signal-grid">${buy.map(r=>signalCard(r)).join('')}</div>`;
+  }
+  if(watch.length){
+    html+=`<div class="slabel" style="color:var(--amber);margin-top:1.5rem;">Watch List (${watch.length}) — Not yet actionable</div>`;
+    html+=`<div class="signal-grid">${watch.map(r=>signalCard(r)).join('')}</div>`;
+  }
+  document.getElementById('scannerContent').innerHTML=html;
+}
+
+function signalCard(r){
+  const cls=r.signal==='STRONG BUY'?'strong-buy':r.signal==='BUY'?'buy':'watch';
+  const earningsWarn=r.daysToEarnings!==null&&r.daysToEarnings<=10
+    ?`<div class="earnings-warn">⚠ Earnings in ${r.daysToEarnings} days — wait for post-earnings entry</div>`:'';
+  const pos=Array.isArray(r.positives)?r.positives:String(r.notes||'').split(' | ').filter(Boolean);
+  return `<div class="signal-card ${cls}">
+    <div class="sc-header">
+      <div>
+        <div class="sc-ticker">${esc(r.ticker)}</div>
+        <div class="sc-name">${esc(r.name||'')} · ${r.above200ma?'<span style="color:var(--green);">Above 200D MA</span>':'<span style="color:var(--red);">Below 200D MA</span>'}</div>
+      </div>
+      <div>
+        <div class="sc-score" style="color:${cls==='strong-buy'?'var(--green)':cls==='buy'?'#4ade80':'var(--amber)'};">${r.score}</div>
+        <div class="sc-signal">${r.signal}</div>
+      </div>
+    </div>
+    <div class="sc-metrics">
+      <div class="sc-m"><div class="sc-ml">Price</div><div class="sc-mv">$${r.price}</div></div>
+      <div class="sc-m"><div class="sc-ml">RSI</div><div class="sc-mv" style="color:${r.rsi<=30?'var(--green)':'var(--amber)'};">${r.rsi}</div></div>
+      <div class="sc-m"><div class="sc-ml">Below 20D High</div><div class="sc-mv" style="color:var(--amber);">-${r.pctBelow20D}%</div></div>
+      <div class="sc-m"><div class="sc-ml">Volume</div><div class="sc-mv" style="color:${r.volRatio>=1.5?'var(--green)':'var(--t2)'};">${r.volRatio}×</div></div>
+      <div class="sc-m"><div class="sc-ml">Stop Loss</div><div class="sc-mv" style="color:var(--red);">$${r.stopLoss}</div></div>
+      <div class="sc-m"><div class="sc-ml">Target</div><div class="sc-mv" style="color:var(--green);">$${r.target}</div></div>
+    </div>
+    <div class="sc-levels">
+      <div class="sc-level sc-entry">Entry: $${r.price}</div>
+      <div class="sc-level sc-stop">Stop: $${r.stopLoss}</div>
+      <div class="sc-level sc-target">Target: $${r.target}</div>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:8px;font-size:11px;">
+      <div style="flex:1;text-align:center;padding:5px;background:var(--bg4);border-radius:4px;">
+        <div style="color:var(--t3);">Net Gain at Target</div>
+        <div style="color:var(--green);font-weight:600;">+$${r.netGainUSD||'~152'}</div>
+      </div>
+      <div style="flex:1;text-align:center;padding:5px;background:var(--bg4);border-radius:4px;">
+        <div style="color:var(--t3);">Net Loss at Stop</div>
+        <div style="color:var(--red);font-weight:600;">-$${r.netLossUSD||'~108'}</div>
+      </div>
+      <div style="flex:1;text-align:center;padding:5px;background:var(--bg4);border-radius:4px;">
+        <div style="color:var(--t3);">Est. Costs</div>
+        <div style="color:var(--t2);font-weight:600;">~$${r.estCosts||8}</div>
+      </div>
+    </div>
+    ${pos.length?`<div class="sc-positives">${pos.map(p=>'✓ '+esc(p)).join('<br>')}</div>`:''}
+    ${earningsWarn}
+    ${r.earningsDate?`<div style="font-size:10px;color:var(--t3);margin-top:4px;">Next earnings: ${r.earningsDate}</div>`:''}
+    <button class="btn btn-green" style="width:100%;margin-top:10px;font-size:11px;" onclick="prefillLogTrade('${r.ticker}','${r.price}')">+ Log Trade</button>
+  </div>`;
+}
+
+// ── POSITIONS ────────────────────────────────────────────────
+async function loadPositions(){
+  const el=document.getElementById('positionsContent');
+  el.innerHTML='<div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg">Loading positions...</div></div>';
+  try {
+    const res=await fetch(AS_URL+'?action=us_mr_positions&v='+Date.now(),{redirect:'follow'});
+    const positions=await res.json();
+    loadPositionsStat(positions);
+    if(!positions.length){
+      el.innerHTML='<div class="empty">No open positions. Run the scanner to find MR entry signals, then log trades here after executing on your broker.</div>';
+      return;
+    }
+    const rows=positions.map(p=>{
+      const urgentTime=p.daysLeft!==null&&p.daysLeft<=5;
+      return `<tr>
+        <td><strong>${esc(p.ticker)}</strong><br><span style="font-size:10px;color:var(--t3);">${esc(p.tradeId)}</span></td>
+        <td>${p.entryDate}</td>
+        <td>$${p.entryPrice}</td>
+        <td>${p.shares} shares<br><span style="font-size:10px;color:var(--t3);">$${p.positionSize}</span></td>
+        <td style="color:var(--red);">$${p.stopLoss}</td>
+        <td style="color:var(--green);">$${p.target}</td>
+        <td>${p.daysHeld} days<br>${p.daysLeft!==null?`<span class="badge ${urgentTime?'warn':'open'}">${p.daysLeft}d left</span>`:''}</td>
+        <td><button class="btn btn-red" style="font-size:11px;padding:5px 10px;" onclick="closeTradePrompt('${p.tradeId}')">Close</button></td>
+      </tr>`;
+    }).join('');
+    el.innerHTML=`<table class="pos-table">
+      <thead><tr><th>Ticker</th><th>Entry Date</th><th>Entry Price</th><th>Size</th><th>Stop Loss</th><th>Target</th><th>Days Held</th><th>Action</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  } catch(e){
+    el.innerHTML=`<div class="empty">Error: ${esc(e.message)}</div>`;
+  }
+}
+
+async function loadPositionsStat(positions){
+  if(!positions){
+    try{
+      const res=await fetch(AS_URL+'?action=us_mr_positions&v='+Date.now(),{redirect:'follow'});
+      positions=await res.json();
+    }catch(e){return;}
+  }
+  const stat=document.getElementById('openPositionsStat');
+  const n=positions.length;
+  const deployed=positions.reduce((s,p)=>s+(p.positionSize||0),0);
+  stat.innerHTML=`<div class="stat-lbl">Open Positions</div><div class="stat-val" style="color:${n>=4?'var(--amber)':'var(--green)'};">${n}/5</div><div class="stat-sub">$${deployed} deployed</div>`;
+}
+
+function showLogTrade(){document.getElementById('logTradeModal').style.display='flex';}
+function prefillLogTrade(ticker,price){
+  document.getElementById('lt_ticker').value=ticker;
+  document.getElementById('lt_price').value=price;
+  showLogTrade();
+}
+
+async function submitLogTrade(){
+  const ticker=document.getElementById('lt_ticker').value.trim().toUpperCase();
+  const price=parseFloat(document.getElementById('lt_price').value);
+  const shares=parseFloat(document.getElementById('lt_shares').value);
+  const rsi=parseFloat(document.getElementById('lt_rsi').value)||null;
+  if(!ticker||!price||!shares){alert('Ticker, price and shares are required.');return;}
+  try {
+    const url=AS_URL+'?t='+T+'&action=us_mr_log&ticker='+encodeURIComponent(ticker)
+      +'&price='+price+'&shares='+shares+(rsi?'&rsi='+rsi:'');
+    const res=await fetch(url,{redirect:'follow'});
+    const d=await res.json();
+    if(d.status==='logged'){
+      alert('Trade logged!\nTrade ID: '+d.tradeId+'\nStop Loss: $'+d.stopLoss+'\nTarget: $'+d.target+'\nTime Stop: '+d.timeStop);
+      document.getElementById('logTradeModal').style.display='none';
+      loadPositions();
+    } else {
+      alert('Error: '+(d.message||JSON.stringify(d)));
+    }
+  } catch(e){alert('Error: '+e.message);}
+}
+
+async function closeTradePrompt(tradeId){
+  const price=prompt('Exit price for '+tradeId+' ($):');
+  if(!price) return;
+  const reason=prompt('Exit reason (Target Hit / Stop Loss Hit / Time Stop / Manual Exit):','Manual Exit');
+  if(!reason) return;
+  try {
+    const url=AS_URL+'?t='+T+'&action=us_mr_close&trade_id='+encodeURIComponent(tradeId)
+      +'&exit_price='+parseFloat(price)+'&reason='+encodeURIComponent(reason);
+    const res=await fetch(url,{redirect:'follow'});
+    const d=await res.json();
+    if(d.status==='closed'){
+      alert('Trade closed!\nGross P&L: $'+d.grossPnl+' ('+d.pnlPct+'%)\nNet P&L (after ~$8 costs): $'+d.netPnl+' ('+d.netPnlPct+'%)\nDays held: '+d.daysHeld);
+      loadPositions();
+    } else {
+      alert('Error: '+(d.message||JSON.stringify(d)));
+    }
+  } catch(e){alert('Error: '+e.message);}
+}
+
+// Load on start
+window.addEventListener('load',()=>{
+  loadPositionsStat();
+});
+</script>
+</body>
+</html>
