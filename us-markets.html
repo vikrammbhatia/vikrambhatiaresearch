@@ -379,7 +379,9 @@ function renderLockupCards(rows, el){
       </div>`;
     }).join('');
     html += `<div class="slabel">All Tracked IPOs — No Lock-up Events in Next 15 Days</div>${trackedRows}`;
-  } else if(hidden.length) {
+  }
+  // Always show the full tracking table below the 15-day cards
+  if(hidden.length) {
     // Show all tracked stocks in a compact table
     const sortedHidden = [...hidden].sort((a,b)=>{
       const da=new Date(a['IPO Date']||'2099-01-01').getTime()+180*864e5;
