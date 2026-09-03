@@ -352,8 +352,78 @@ function renderLockupCards(rows, el){
   if(soonHtml)    html += `<div class="slabel" style="color:var(--amber);">Expiring Within 15 Days — Prepare for selling pressure</div><div class="lockup-grid">${soonHtml}</div>`;
   if(expiredHtml) html += `<div class="slabel" style="color:var(--green);margin-top:1.5rem;">Expired Within Last 15 Days — Buy Window</div><div class="lockup-grid">${expiredHtml}</div>`;
   if(upcomingHtml2) html += `<div class="slabel" style="color:var(--blue);margin-top:1.5rem;">Upcoming IPOs — Not Yet Listed</div><div class="lockup-grid">${upcomingHtml2}</div>`;
-  if(!soonHtml && !expiredHtml) html += `<div style="color:var(--t3);padding:2rem;text-align:center;background:var(--bg3);border-radius:8px;"><div style="font-size:16px;margin-bottom:8px;">No lock-up events in the next 15 days</div><div style="font-size:12px;">Check back as IPOs approach their 180-day mark. ${hidden.length} stocks tracked — next event approaching soon.</div></div>`;
-  if(hiddenNames) html += `<div style="font-size:11px;color:var(--t3);margin-top:1rem;padding:8px 12px;background:var(--bg3);border-radius:6px;">Tracking ${hidden.length} other stocks not in the 15-day window: ${esc(hiddenNames)}</div>`;
+  if(!soonHtml && !expiredHtml) {
+    // No events in 15-day window — show all tracked stocks with their upcoming expiry dates
+    const allTracked = [...hidden].sort((a,b)=>{
+      const la=new Date(a['IPO Date']).getTime()+180*864e5;
+      const lb=new Date(b['IPO Date']).getTime()+180*864e5;
+      return la-lb;
+    });
+    const trackedRows = allTracked.map(r=>{
+      const lockup=new Date(new Date(r['IPO Date']).getTime()+180*864e5);
+      const days=Math.ceil((lockup-today)/(864e5));
+      const expired=days<0;
+      const currentPrice=parseFloat(r['Current Price ($)'])||null;
+      const ipoPrice=parseFloat(r['IPO Price ($)'])||null;
+      const gain=currentPrice&&ipoPrice?Math.round((currentPrice-ipoPrice)/ipoPrice*1000)/10:null;
+      const clr=days<0?'var(--t3)':days<=30?'var(--amber)':'var(--t2)';
+      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg3);border:1px solid var(--b1);border-radius:6px;margin-bottom:6px;">
+        <div>
+          <div style="font-size:13px;font-weight:600;">${esc(r['Company Name']||'')} <span style="font-size:10px;color:var(--t3);">${esc(r['Ticker']||'')}</span></div>
+          <div style="font-size:11px;color:var(--t3);">Listed ${r['IPO Date']} · Lock-up: ${lockup.toLocaleDateString('en-CA')}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:13px;font-weight:600;color:${clr};">${expired?'Expired '+Math.abs(days)+' days ago':days+' days'}</div>
+          ${currentPrice?`<div style="font-size:11px;color:${gain>0?'var(--green)':gain<0?'var(--red)':'var(--t3)'};">$${currentPrice} ${gain!==null?(gain>0?'+':'')+gain+'%':''}</div>`:'<div style="font-size:11px;color:var(--t3);">No price yet</div>'}
+        </div>
+      </div>`;
+    }).join('');
+    html += `<div class="slabel">All Tracked IPOs — No Lock-up Events in Next 15 Days</div>${trackedRows}`;
+  } else if(hidden.length) {
+    // Show all tracked stocks in a compact table
+    const sortedHidden = [...hidden].sort((a,b)=>{
+      const da=new Date(a['IPO Date']||'2099-01-01').getTime()+180*864e5;
+      const db=new Date(b['IPO Date']||'2099-01-01').getTime()+180*864e5;
+      return da-db;
+    });
+    const tableRows = sortedHidden.map(r=>{
+      const ipoDate=r['IPO Date']||null;
+      if(!ipoDate){return '';}
+      const lockup=new Date(new Date(ipoDate).getTime()+180*864e5);
+      const days=Math.ceil((lockup-today)/(864e5));
+      const expired=days<0;
+      const currentPrice=parseFloat(r['Current Price ($)'])||null;
+      const ipoPrice=parseFloat(r['IPO Price ($)'])||null;
+      const gain=currentPrice&&ipoPrice?Math.round((currentPrice-ipoPrice)/ipoPrice*1000)/10:null;
+      const daysClr=expired?'var(--t3)':days<=30?'var(--amber)':days<=60?'var(--or)':'var(--t2)';
+      const gainClr=gain>0?'var(--green)':gain<0?'var(--red)':'var(--t3)';
+      return `<tr style="border-bottom:1px solid var(--b1);">
+        <td style="padding:7px 10px;font-weight:500;">${esc(r['Company Name']||'')}</td>
+        <td style="padding:7px 10px;color:var(--t3);">${esc(r['Ticker']||'')}</td>
+        <td style="padding:7px 10px;color:var(--t3);">${esc(r['Sector']||'')}</td>
+        <td style="padding:7px 10px;">${ipoDate}</td>
+        <td style="padding:7px 10px;">${lockup.toLocaleDateString('en-CA')}</td>
+        <td style="padding:7px 10px;font-weight:600;color:${daysClr};">${expired?'Expired '+Math.abs(days)+'d ago':days+'d'}</td>
+        <td style="padding:7px 10px;">${ipoPrice?'$'+ipoPrice:'—'}</td>
+        <td style="padding:7px 10px;font-weight:600;color:${gainClr};">${currentPrice?'$'+currentPrice:'—'} ${gain!==null?'('+(gain>0?'+':'')+gain+'%)':''}</td>
+      </tr>`;
+    }).join('');
+    html += `<div class="slabel" style="margin-top:1.5rem;">All Tracked IPOs — Outside 15-Day Window</div>
+    <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;background:var(--bg3);border-radius:8px;overflow:hidden;font-size:12px;">
+      <thead><tr style="background:var(--bg4);">
+        <th style="padding:8px 10px;text-align:left;color:var(--or);font-size:10px;text-transform:uppercase;">Company</th>
+        <th style="padding:8px 10px;text-align:left;color:var(--or);font-size:10px;text-transform:uppercase;">Ticker</th>
+        <th style="padding:8px 10px;text-align:left;color:var(--or);font-size:10px;text-transform:uppercase;">Sector</th>
+        <th style="padding:8px 10px;text-align:left;color:var(--or);font-size:10px;text-transform:uppercase;">IPO Date</th>
+        <th style="padding:8px 10px;text-align:left;color:var(--or);font-size:10px;text-transform:uppercase;">Lock-up Expiry</th>
+        <th style="padding:8px 10px;text-align:left;color:var(--or);font-size:10px;text-transform:uppercase;">Days</th>
+        <th style="padding:8px 10px;text-align:left;color:var(--or);font-size:10px;text-transform:uppercase;">IPO Price</th>
+        <th style="padding:8px 10px;text-align:left;color:var(--or);font-size:10px;text-transform:uppercase;">Current Price</th>
+      </tr></thead>
+      <tbody>${tableRows}</tbody>
+    </table></div>`;
+  }
 
   el.innerHTML = html;
 }
