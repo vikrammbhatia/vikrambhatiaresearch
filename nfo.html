@@ -314,7 +314,7 @@ async function analyse() {
   el.innerHTML = `<div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg">Phase 1 — Fetching fund data and running quantitative scoring…</div></div>`;
 
   try {
-    const res = await fetch(AS_URL + '?action=analyse&fund=' + encodeURIComponent(name) + '&v=' + Date.now(), {redirect:'follow'});
+    const res = await fetch(AS_URL + '?action=nfo_analyse&fund=' + encodeURIComponent(name) + '&v=' + Date.now(), {redirect:'follow'});
     const d = await res.json();
     if (!d.success) throw new Error(d.error || 'Analysis failed');
     _currentNfo = d;
@@ -339,7 +339,7 @@ async function enrichWithClaude(name) {
     banner.innerHTML = `<div class="loader-track" style="margin-bottom:4px;"><div class="loader-fill"></div></div><span style="font-size:11px;color:#1e40af;">Phase 2 — Claude AI enrichment running in background… (~30 seconds)</span>`;
   }
   try {
-    const res = await fetch(AS_URL + '?action=enrichclaude&fund=' + encodeURIComponent(name) + '&v=' + Date.now(), {redirect:'follow'});
+    const res = await fetch(AS_URL + '?action=nfo_enrichclaude&fund=' + encodeURIComponent(name) + '&v=' + Date.now(), {redirect:'follow'});
     const d = await res.json();
     if (d.success) {
       _currentNfo = d;
