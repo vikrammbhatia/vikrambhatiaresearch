@@ -820,14 +820,35 @@ async function loadHistory() {
         </div>
       </div>`;
     }).join('');
-    // Auto-load the most recent IPO on page open
+    // Auto-load the most recent IPO from cache only (no re-analysis)
     if(deduped.length > 0 && !document.getElementById('results').innerHTML.trim()) {
-      loadIpo(deduped[0].name);
+      loadIpoFromCache(deduped[0].name);
     }
   } catch(e) { console.error('History error:', e); el.innerHTML='<div class="no-nfos">Could not load.<br><span style="font-size:10px;">'+e.message+'</span></div>'; }
 }
 
 function loadIpo(name) { document.getElementById('ipoInput').value=name; analyse(); }
+
+async function loadIpoFromCache(name) {
+  // Loads the last analysis from Google Sheet without triggering a new analysis
+  document.getElementById('ipoInput').value = name;
+  const el = document.getElementById('results');
+  el.innerHTML = '<div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div style="font-size:12px;color:var(--t3);margin-top:6px;">Loading cached analysis…</div></div>';
+  try {
+    const res = await fetch(AS_URL + '?action=getipo&ipo=' + encodeURIComponent(name) + '&v=' + Date.now(), {redirect:'follow'});
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const d = await res.json();
+    if (d && (d.scores || d.claudeAnalysis)) {
+      render(d);
+    } else {
+      // Cache miss — fall back to full analyse
+      analyse();
+    }
+  } catch(e) {
+    // If cache fetch fails, fall back to full analyse
+    analyse();
+  }
+}
 function forceRefresh(e) { e.preventDefault(); window._forceRefresh=true; analyse(); }
 function showErr(msg) { const e=document.getElementById('errBox'); e.textContent=msg; e.style.display='block'; }
 function openMobDrawer() {
