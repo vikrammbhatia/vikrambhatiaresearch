@@ -548,7 +548,13 @@ function render(d) {
   }).join('');
 
   // Key positives & risks
-  const pos=cl.keyPositives||[], risks=cl.keyRisks||[];
+  // Handle both array and string formats (sheet stores as semicolon-separated strings)
+  function toArr(v) {
+    if (Array.isArray(v)) return v.filter(s=>String(s).trim().length>2);
+    if (typeof v==='string' && v.trim()) return v.split(/[;|]/).map(s=>s.trim()).filter(s=>s.length>2);
+    return [];
+  }
+  const pos=toArr(cl.keyPositives), risks=toArr(cl.keyRisks);
   const prHtml = `
   <div class="pos-box"><div class="pr-title">✓ Key Positives</div>${pos.length?pos.map(p=>`<div class="pr-item"><div class="pr-dot"></div><span>${esc(p)}</span></div>`).join(''):'<div class="pr-item"><div class="pr-dot"></div><span>No data available.</span></div>'}</div>
   <div class="risk-box"><div class="pr-title">✕ Key Risks</div>${risks.length?risks.map(r=>`<div class="pr-item"><div class="pr-dot"></div><span>${esc(r)}</span></div>`).join(''):'<div class="pr-item"><div class="pr-dot"></div><span>No data available.</span></div>'}</div>`;
@@ -839,7 +845,10 @@ async function loadIpoFromCache(name) {
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const d = await res.json();
     if (d && d.scores && d.scores.composite > 0) {
-      render(d);
+      try { render(d); } catch(renderErr) {
+        console.error('Render error:', renderErr);
+        el.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--t3);"><div style="font-size:12px;margin-bottom:12px;">Display error: ' + esc(renderErr.message) + '</div><button class="btn-go" onclick="analyse()">Analyse ↗</button></div>';
+      }
     } else {
       // Cache returned empty — show prompt to analyse, do NOT auto-trigger
       el.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--t3);">'
