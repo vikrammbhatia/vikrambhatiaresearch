@@ -23,7 +23,7 @@
 html,html{overflow-y:auto;} body{font-family:'DM Sans',sans-serif;background:#1c2333;color:#efefef;font-size:14px;display:flex;min-height:100vh;} 
 .page{display:flex;flex-direction:row;min-height:100vh;width:100%;overflow:visible;}
 .main-col{flex:1;padding:2.5rem 3rem;min-width:0;}
-.side-col{width:320px;min-width:320px;padding:1.5rem;border-left:1px solid var(--b1);height:100vh;position:sticky;top:0;overflow-y:auto;background:#0d0d0d;display:flex;flex-direction:column;}
+.side-col{width:320px;min-width:320px;padding:1.5rem;border-left:1px solid var(--b1);height:100vh;position:sticky;top:0;overflow-y:auto;background:var(--bg3);display:flex;flex-direction:column;}
 .side-col::-webkit-scrollbar{width:5px;} .side-col::-webkit-scrollbar-track{background:#1c1c1c;} .side-col::-webkit-scrollbar-thumb{background:#e67e22;border-radius:3px;}
 .side-col::-webkit-scrollbar-thumb{background:var(--b2);}
 @media(max-width:900px){.side-col{display:none;}.main-col{padding:1.5rem;}}
@@ -150,7 +150,7 @@ html,html{overflow-y:auto;} body{font-family:'DM Sans',sans-serif;background:#1c
 .dtable td:last-child{color:var(--t2);}
 
 /* DISCLAIMER */
-.disclaimer{font-size:11px;color:var(--t3);line-height:1.7;margin-top:1.5rem;padding:14px 16px;background:var(--bg2);border-radius:8px;border:1px solid var(--b1);}
+.disclaimer{font-size:11px;color:var(--t3);line-height:1.7;margin-top:1.5rem;padding:14px 16px;background:var(--bg3);border-radius:8px;border:1px solid var(--b1);}
 .disclaimer strong{color:var(--t2);}
 
 /* CUSTOM TOOLTIP */
@@ -239,7 +239,7 @@ html,html{overflow-y:auto;} body{font-family:'DM Sans',sans-serif;background:#1c
 .vsb-bottom{margin-top:auto;padding:12px 10px;border-top:1px solid rgba(255,255,255,0.06);}
 .vsb-meta{font-size:9.5px;color:#3d4a5a;line-height:1.6;font-family:'Inter',sans-serif;}
 /* Topbar inside portal */
-.vb-topbar{background:#111;border-bottom:1px solid #1e1e1e;padding:0 1.5rem;height:50px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.vb-topbar{background:var(--bg3);border-bottom:1px solid var(--b2);padding:0 1.5rem;height:50px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .vb-topbar-title{font-size:13px;font-weight:700;color:#f0f2f5;font-family:'Inter',sans-serif;}
 .vb-topbar-sub{font-size:10px;color:#5a6478;font-family:'Inter',sans-serif;}
 /* Main column — sits next to sidebar */
