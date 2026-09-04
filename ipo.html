@@ -20,9 +20,9 @@
   --red-bg:#0e0404;--red-bd:#7f1d1d;
   --border:#1e1e1e;--text:var(--t1);--text2:var(--t2);--text3:var(--t3);
 }
-html,body{height:100%;font-family:'DM Sans',sans-serif;background:#1c2333;color:#efefef;font-size:14px;display:flex;min-height:100vh;} .vb-maincol{flex:1;min-width:0;overflow:hidden;}
-.page{display:flex;flex-direction:row;min-height:100vh;width:100%;}
-.main-col{flex:1;padding:2.5rem 3rem;overflow-y:auto;min-width:0;}
+html,html{overflow-y:auto;} body{font-family:'DM Sans',sans-serif;background:#1c2333;color:#efefef;font-size:14px;display:flex;min-height:100vh;} 
+.page{display:flex;flex-direction:row;min-height:100vh;width:100%;overflow:visible;}
+.main-col{flex:1;padding:2.5rem 3rem;min-width:0;}
 .side-col{width:320px;min-width:320px;padding:1.5rem;border-left:1px solid var(--b1);height:100vh;position:sticky;top:0;overflow-y:auto;background:#0d0d0d;display:flex;flex-direction:column;}
 .side-col::-webkit-scrollbar{width:5px;} .side-col::-webkit-scrollbar-track{background:#1c1c1c;} .side-col::-webkit-scrollbar-thumb{background:#e67e22;border-radius:3px;}
 .side-col::-webkit-scrollbar-thumb{background:var(--b2);}
@@ -222,13 +222,8 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:#1c2333;color:
 
 
 
-/* ── OPTION 3: IVORY & CHARCOAL SIDEBAR ── */
-body.has-sidebar{display:flex;min-height:100vh;background:#1c2333;}
-.vb-sidebar{
-  width:210px;flex-shrink:0;background:#1c2333;
-  display:flex;flex-direction:column;
-  position:fixed;top:0;left:0;bottom:0;z-index:200;overflow-y:auto;
-}
+/* ── PLATFORM SIDEBAR ── */
+.vb-sidebar{width:210px;flex-shrink:0;background:#1c2333;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:200;overflow-y:auto;}
 .vsb-brand{padding:18px 14px 14px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px;text-decoration:none;}
 .vsb-vbmark{width:32px;height:32px;border-radius:6px;overflow:hidden;flex-shrink:0;}
 .vsb-vbmark svg{width:100%;height:100%;display:block;}
@@ -243,18 +238,15 @@ body.has-sidebar{display:flex;min-height:100vh;background:#1c2333;}
 .vsb-badge{margin-left:auto;font-size:9px;background:rgba(230,126,34,0.15);color:#e67e22;padding:1px 5px;border-radius:3px;font-weight:600;}
 .vsb-bottom{margin-top:auto;padding:12px 10px;border-top:1px solid rgba(255,255,255,0.06);}
 .vsb-meta{font-size:9.5px;color:#3d4a5a;line-height:1.6;font-family:'Inter',sans-serif;}
-.vb-maincol{margin-left:210px;flex:1;min-width:0;background:#fafaf7;}
 /* Topbar inside portal */
-.vb-topbar{
-  background:#ffffff;border-bottom:1px solid #e8e6e1;
-  padding:0 2rem;height:50px;
-  display:flex;align-items:center;justify-content:space-between;
-  position:sticky;top:0;z-index:100;
-}
-.vb-topbar-title{font-size:13px;font-weight:700;color:#1a2235;font-family:'Inter',sans-serif;}
-.vb-topbar-sub{font-size:10px;color:#9aa3b2;font-family:'Inter',sans-serif;}
+.vb-topbar{background:#111;border-bottom:1px solid #1e1e1e;padding:0 1.5rem;height:50px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.vb-topbar-title{font-size:13px;font-weight:700;color:#f0f2f5;font-family:'Inter',sans-serif;}
+.vb-topbar-sub{font-size:10px;color:#5a6478;font-family:'Inter',sans-serif;}
+/* Main column — sits next to sidebar */
+.vb-maincol{margin-left:210px;flex:1;min-width:0;}
+body.has-sidebar{display:flex;min-height:100vh;background:#1c2333;}
 @media(max-width:900px){.vb-sidebar{display:none;}.vb-maincol{margin-left:0;}}
-/* ── END SIDEBAR ── */
+/* ── END PLATFORM SIDEBAR ── */
 </style>
 </head>
 <body class="has-sidebar">
