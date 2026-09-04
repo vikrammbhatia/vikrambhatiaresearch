@@ -20,11 +20,11 @@
   --red-bg:#0e0404;--red-bd:#7f1d1d;
   --border:#1e1e1e;--text:var(--t1);--text2:var(--t2);--text3:var(--t3);
 }
-html,body{height:100%;font-family:'DM Sans',sans-serif;background:#1c2333;color:#efefef;font-size:14px;display:flex;min-height:100vh;}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:#1c2333;color:#efefef;font-size:14px;display:flex;min-height:100vh;} .vb-maincol{flex:1;min-width:0;overflow:hidden;}
 .page{display:flex;flex-direction:row;min-height:100vh;width:100%;}
 .main-col{flex:1;padding:2.5rem 3rem;overflow-y:auto;min-width:0;}
-.side-col{width:320px;min-width:320px;padding:1.5rem;border-left:1px solid var(--b1);height:100vh;position:sticky;top:0;overflow-y:auto;background:var(--bg2);display:flex;flex-direction:column;}
-.side-col::-webkit-scrollbar{width:3px;}
+.side-col{width:320px;min-width:320px;padding:1.5rem;border-left:1px solid var(--b1);height:100vh;position:sticky;top:0;overflow-y:auto;background:#0d0d0d;display:flex;flex-direction:column;}
+.side-col::-webkit-scrollbar{width:5px;} .side-col::-webkit-scrollbar-track{background:#1c1c1c;} .side-col::-webkit-scrollbar-thumb{background:#e67e22;border-radius:3px;}
 .side-col::-webkit-scrollbar-thumb{background:var(--b2);}
 @media(max-width:900px){.side-col{display:none;}.main-col{padding:1.5rem;}}
 
@@ -223,7 +223,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:#1c2333;color:
 
 
 /* ── OPTION 3: IVORY & CHARCOAL SIDEBAR ── */
-body.has-sidebar{display:flex;min-height:100vh;background:#fafaf7;}
+body.has-sidebar{display:flex;min-height:100vh;background:#1c2333;}
 .vb-sidebar{
   width:210px;flex-shrink:0;background:#1c2333;
   display:flex;flex-direction:column;
@@ -458,15 +458,16 @@ function render(d) {
   else if(vText.includes('neutral'))     vColor='amber';
 
   // Listing premium
-  const lp = d.expectedListingPremium !== null && d.expectedListingPremium !== undefined
-    ? d.expectedListingPremium
-    : (fd.gmp !== null && fd.gmp !== undefined ? fd.gmp : null);
-  const ip = fd.priceBandHigh || fd.priceBandLow || null;
-  const elp = d.expectedListingPrice || (lp!==null&&ip ? Math.round(ip*(1+lp/100)) : null);
+  const lp = (d.expectedListingPremium !== null && d.expectedListingPremium !== undefined && d.expectedListingPremium !== '')
+    ? parseFloat(d.expectedListingPremium)
+    : (fd.gmp !== null && fd.gmp !== undefined && fd.gmp !== '' ? parseFloat(fd.gmp) : null);
+  const ip = parseFloat(fd.priceBandHigh) || parseFloat(fd.priceBandLow) || null;
+  const elp = parseFloat(d.expectedListingPrice) || (lp!==null&&ip ? Math.round(ip*(1+lp/100)) : null);
   const lpClr = lp===null?'var(--t3)':lp>=20?'var(--green)':lp>=10?'var(--amber)':lp>=0?'var(--t2)':'var(--red)';
   const lpTxt = lp!==null ? (lp>=0?'+':'')+lp+'%' : '—';
 
-  const displayAmount = (cl.suggestedAmount||'').replace(/Rs\./g,'₹').replace(/Rs /g,'₹');
+  const rawAmt = String(cl.suggestedAmount||cl.allocationAdvice||'');
+  const displayAmount = rawAmt.replace(/Rs\./g,'₹').replace(/Rs /g,'₹').replace(/INR/g,'₹');
 
   // Cache badge
   const cacheBadge = d.fromCache ? `<div style="font-size:10px;color:var(--t3);margin-top:4px;">⚡ Loaded from cache · <a href="#" onclick="forceRefresh(event)" style="color:var(--or);text-decoration:none;font-weight:500;">Force fresh analysis ↗</a></div>` : '';
@@ -588,10 +589,10 @@ function render(d) {
       </div>
       <div class="slabel" style="margin-top:4px;margin-bottom:8px;">Projected Share Price</div>
       <div class="proj-grid">
-        ${projCell('3 Months',cl.projectedPrice3M)}
-        ${projCell('6 Months',cl.projectedPrice6M)}
-        ${projCell('9 Months',cl.projectedPrice9M)}
-        ${projCell('12 Months',cl.projectedPrice12M)}
+        ${projCell('3 Months', cl.projectedPrice3M || (ip&&cl.projectedReturn3M ? Math.round(ip*(1+parseFloat(cl.projectedReturn3M)/100)) : null))}
+        ${projCell('6 Months', cl.projectedPrice6M || (ip&&cl.projectedReturn6M ? Math.round(ip*(1+parseFloat(cl.projectedReturn6M)/100)) : null))}
+        ${projCell('9 Months', cl.projectedPrice9M || (ip&&cl.projectedReturn3M&&cl.projectedReturn12M ? Math.round(ip*(1+(parseFloat(cl.projectedReturn3M)+parseFloat(cl.projectedReturn12M))/2/100)) : null))}
+        ${projCell('12 Months', cl.projectedPrice12M || (ip&&cl.projectedReturn12M ? Math.round(ip*(1+parseFloat(cl.projectedReturn12M)/100)) : null))}
       </div>
     </div>`;
   }
