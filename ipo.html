@@ -833,20 +833,27 @@ async function loadIpoFromCache(name) {
   // Loads the last analysis from Google Sheet without triggering a new analysis
   document.getElementById('ipoInput').value = name;
   const el = document.getElementById('results');
-  el.innerHTML = '<div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div style="font-size:12px;color:var(--t3);margin-top:6px;">Loading cached analysis…</div></div>';
+  el.innerHTML = '<div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div style="font-size:12px;color:var(--t3);margin-top:6px;">Loading cached analysis for ' + esc(name) + '…</div></div>';
   try {
     const res = await fetch(AS_URL + '?action=getipo&ipo=' + encodeURIComponent(name) + '&v=' + Date.now(), {redirect:'follow'});
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const d = await res.json();
-    if (d && (d.scores || d.claudeAnalysis)) {
+    if (d && d.scores && d.scores.composite > 0) {
       render(d);
     } else {
-      // Cache miss — fall back to full analyse
-      analyse();
+      // Cache returned empty — show prompt to analyse, do NOT auto-trigger
+      el.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--t3);">'
+        + '<div style="font-size:14px;font-weight:600;color:var(--t2);margin-bottom:8px;">' + esc(name) + '</div>'
+        + '<div style="font-size:12px;margin-bottom:16px;">Cached data not found. Click Analyse to run fresh analysis.</div>'
+        + '<button class="btn-go" onclick="analyse()">Analyse ↗</button>'
+        + '</div>';
     }
   } catch(e) {
-    // If cache fetch fails, fall back to full analyse
-    analyse();
+    // On error — show prompt, do NOT auto-trigger analyse
+    el.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--t3);">'
+      + '<div style="font-size:12px;margin-bottom:12px;">Could not load cached data: ' + esc(e.message) + '</div>'
+      + '<button class="btn-go" onclick="analyse()">Analyse ↗</button>'
+      + '</div>';
   }
 }
 function forceRefresh(e) { e.preventDefault(); window._forceRefresh=true; analyse(); }
