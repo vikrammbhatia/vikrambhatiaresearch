@@ -3,57 +3,188 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
 <title>India NFO Analyser — Vikram Bhatia Research</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-/* ── OPTION 3: IVORY & CHARCOAL SIDEBAR ── */
-body.has-sidebar{display:flex;min-height:100vh;background:#fafaf7;}
-.vb-sidebar{
-  width:210px;flex-shrink:0;background:#1c2333;
-  display:flex;flex-direction:column;
-  position:fixed;top:0;left:0;bottom:0;z-index:200;overflow-y:auto;
+:root{
+  --bg:#fafaf7;--surface:#fff;--bdr:#e8e6e1;--bdr2:#d4d1cb;
+  --or:#e67e22;--or2:#c0651a;--or-bg:rgba(230,126,34,0.08);
+  --green:#10b981;--green-bg:#ecfdf5;--green-bd:#6ee7b7;
+  --red:#ef4444;--red-bg:#fef2f2;--red-bd:#fca5a5;
+  --amber:#f59e0b;--amber-bg:#fffbeb;--amber-bd:#fcd34d;
+  --blue:#3b82f6;--blue-bg:#eff6ff;
+  --text:#1a2235;--t2:#5a6478;--t3:#9aa3b2;--t4:#c8cdd6;
+  --sidebar:#1c2333;
 }
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;display:flex;min-height:100vh;}
+
+/* ── SIDEBAR ── */
+.vb-sidebar{width:210px;flex-shrink:0;background:var(--sidebar);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:200;overflow-y:auto;}
 .vsb-brand{padding:18px 14px 14px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px;text-decoration:none;}
 .vsb-vbmark{width:32px;height:32px;border-radius:6px;overflow:hidden;flex-shrink:0;}
 .vsb-vbmark svg{width:100%;height:100%;display:block;}
-.vsb-name{font-size:12px;font-weight:600;color:#f0f2f5;letter-spacing:-0.01em;line-height:1.25;font-family:'Inter',sans-serif;}
-.vsb-sub{font-size:9.5px;color:#5a6478;font-family:'Inter',sans-serif;}
-.vsb-sec{padding:14px 10px 6px;font-size:9px;font-weight:600;color:#3d4a5a;letter-spacing:0.08em;text-transform:uppercase;font-family:'Inter',sans-serif;}
-.vsb-lnk{display:flex;align-items:center;gap:8px;padding:7px 12px;margin:1px 6px;border-radius:6px;font-size:11.5px;font-weight:500;color:#8892a0;text-decoration:none;transition:background 0.15s,color 0.15s;font-family:'Inter',sans-serif;}
+.vsb-name{font-size:12px;font-weight:600;color:#f0f2f5;letter-spacing:-0.01em;line-height:1.25;}
+.vsb-sub{font-size:9.5px;color:#5a6478;}
+.vsb-sec{padding:14px 10px 6px;font-size:9px;font-weight:600;color:#3d4a5a;letter-spacing:0.08em;text-transform:uppercase;}
+.vsb-lnk{display:flex;align-items:center;gap:8px;padding:7px 12px;margin:1px 6px;border-radius:6px;font-size:11.5px;font-weight:500;color:#8892a0;text-decoration:none;transition:background 0.15s,color 0.15s;}
 .vsb-lnk:hover{background:rgba(255,255,255,0.06);color:#d0d6e0;}
 .vsb-lnk.active{background:rgba(230,126,34,0.12);color:#e67e22;}
 .vsb-icon{font-size:13px;width:17px;text-align:center;flex-shrink:0;}
 .vsb-soon{opacity:0.4;pointer-events:none;}
 .vsb-badge{margin-left:auto;font-size:9px;background:rgba(230,126,34,0.15);color:#e67e22;padding:1px 5px;border-radius:3px;font-weight:600;}
 .vsb-bottom{margin-top:auto;padding:12px 10px;border-top:1px solid rgba(255,255,255,0.06);}
-.vsb-meta{font-size:9.5px;color:#3d4a5a;line-height:1.6;font-family:'Inter',sans-serif;}
-.vb-maincol{margin-left:210px;flex:1;min-width:0;background:#fafaf7;}
-/* Topbar inside portal */
-.vb-topbar{
-  background:#ffffff;border-bottom:1px solid #e8e6e1;
-  padding:0 2rem;height:50px;
-  display:flex;align-items:center;justify-content:space-between;
-  position:sticky;top:0;z-index:100;
+.vsb-meta{font-size:9.5px;color:#3d4a5a;line-height:1.6;}
+
+/* ── MAIN ── */
+.vb-maincol{margin-left:210px;flex:1;min-width:0;display:flex;flex-direction:column;}
+.vb-topbar{background:#fff;border-bottom:1px solid var(--bdr);padding:0 1.5rem;height:50px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;flex-shrink:0;}
+.vb-topbar-title{font-size:13px;font-weight:700;color:var(--text);}
+.vb-topbar-sub{font-size:10px;color:var(--t3);}
+
+/* ── LAYOUT ── */
+.layout{display:flex;flex:1;min-height:0;}
+.sidebar-list{width:230px;flex-shrink:0;border-right:1px solid var(--bdr);background:var(--surface);overflow-y:auto;display:flex;flex-direction:column;}
+.sl-header{padding:12px 14px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;}
+.sl-title{font-size:11px;font-weight:600;color:var(--text);}
+.sl-refresh{font-size:10px;color:var(--or);cursor:pointer;text-decoration:none;background:none;border:none;font-family:'Inter',sans-serif;font-weight:500;}
+.sl-item{padding:10px 14px;border-bottom:1px solid #f0eeea;cursor:pointer;transition:background 0.1s;}
+.sl-item:hover{background:#f5f3ef;}
+.sl-item.active{background:var(--or-bg);border-left:3px solid var(--or);}
+.sl-name{font-size:11.5px;font-weight:600;color:var(--text);margin-bottom:2px;line-height:1.4;}
+.sl-meta{font-size:10px;color:var(--t3);}
+.sl-score{font-size:11px;font-weight:700;}
+.sl-empty{padding:2rem 1rem;text-align:center;color:var(--t3);font-size:12px;}
+
+/* ── SEARCH BAR ── */
+.search-area{padding:14px 16px;border-bottom:1px solid var(--bdr);background:var(--surface);}
+.search-row{display:flex;gap:8px;}
+.search-row input{flex:1;background:var(--bg);border:1px solid var(--bdr);color:var(--text);padding:9px 12px;border-radius:7px;font-size:13px;font-family:'Inter',sans-serif;outline:none;}
+.search-row input:focus{border-color:var(--or);}
+.btn-go{background:var(--or);color:#fff;border:none;padding:9px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s;white-space:nowrap;}
+.btn-go:hover{background:var(--or2);}
+
+/* ── CONTENT AREA ── */
+.content-area{flex:1;overflow-y:auto;padding:1.5rem;}
+
+/* ── LOADER ── */
+.loader{padding:2rem;text-align:center;}
+.loader-track{height:2px;background:var(--bdr);border-radius:1px;overflow:hidden;margin-bottom:8px;}
+.loader-fill{height:100%;background:var(--or);animation:ld 2s ease-in-out infinite;}
+@keyframes ld{0%{width:0%}60%{width:75%}100%{width:100%}}
+.loader-msg{font-size:12px;color:var(--t3);}
+
+/* ── HERO CARD ── */
+.hero-card{background:var(--surface);border:1px solid var(--bdr);border-radius:12px;padding:20px 24px;margin-bottom:14px;display:flex;align-items:flex-start;gap:20px;}
+.hero-left{flex:1;min-width:0;}
+.hero-name{font-size:18px;font-weight:700;color:var(--text);margin-bottom:3px;letter-spacing:-0.02em;}
+.hero-amc{font-size:12px;color:var(--t2);margin-bottom:10px;}
+.hero-badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+.badge{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;}
+.badge-cat{background:var(--blue-bg);color:var(--blue);}
+.badge-theme{background:#f5f3ff;color:#5b21b6;}
+.badge-dates{background:#f0fdf4;color:#166534;}
+.badge-closed{background:var(--red-bg);color:var(--red);}
+.badge-mininvest{background:#fef9ee;color:#92400e;}
+.hero-right{text-align:center;flex-shrink:0;}
+.score-ring{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;border:3px solid;}
+.score-num{font-size:22px;font-weight:700;line-height:1;}
+.score-lbl{font-size:9px;color:var(--t3);margin-top:2px;}
+
+/* ── VERDICT BANNER ── */
+.verdict-banner{border-radius:8px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;}
+.verdict-banner.strong-buy{background:#ecfdf5;border:1px solid #6ee7b7;}
+.verdict-banner.consider{background:#eff6ff;border:1px solid #93c5fd;}
+.verdict-banner.watchlist{background:#fffbeb;border:1px solid #fcd34d;}
+.verdict-banner.avoid{background:var(--red-bg);border:1px solid var(--red-bd);}
+.vb-icon{font-size:22px;}
+.vb-verdict{font-size:15px;font-weight:700;}
+.vb-rationale{font-size:12px;color:var(--t2);margin-top:2px;}
+.verdict-banner.strong-buy .vb-verdict{color:#065f46;}
+.verdict-banner.consider .vb-verdict{color:#1e40af;}
+.verdict-banner.watchlist .vb-verdict{color:#92400e;}
+.verdict-banner.avoid .vb-verdict{color:#b91c1c;}
+
+/* ── METRICS GRID ── */
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+.metric{background:var(--surface);border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;}
+.metric-lbl{font-size:9px;text-transform:uppercase;letter-spacing:0.04em;color:var(--t3);margin-bottom:4px;}
+.metric-val{font-size:14px;font-weight:700;color:var(--text);}
+.metric-sub{font-size:10px;color:var(--t3);margin-top:2px;}
+
+/* ── SCORES GRID ── */
+.scores-title{font-size:11px;font-weight:700;color:var(--text);margin-bottom:10px;letter-spacing:-0.01em;}
+.scores-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;}
+.score-item{background:var(--surface);border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;}
+.si-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.si-label{font-size:11px;font-weight:500;color:var(--t2);}
+.si-score{font-size:13px;font-weight:700;}
+.si-bar{height:4px;background:var(--bdr);border-radius:2px;overflow:hidden;}
+.si-fill{height:100%;border-radius:2px;}
+
+/* ── NAV PROJECTIONS ── */
+.proj-title{font-size:11px;font-weight:700;color:var(--text);margin-bottom:10px;}
+.proj-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+.proj-cell{background:var(--surface);border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;text-align:center;}
+.proj-lbl{font-size:9px;text-transform:uppercase;color:var(--t3);margin-bottom:4px;}
+.proj-nav{font-size:15px;font-weight:700;color:var(--text);}
+.proj-return{font-size:10px;font-weight:600;margin-top:2px;}
+
+/* ── AI ANALYSIS ── */
+.ai-box{background:var(--surface);border:1px solid var(--bdr);border-radius:8px;padding:14px 16px;margin-bottom:14px;}
+.ai-title{font-size:11px;font-weight:700;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.ai-title::before{content:'✦';color:var(--or);font-size:10px;}
+.ai-row{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid #f0eeea;}
+.ai-row:last-child{border-bottom:none;}
+.ai-lbl{font-size:10px;font-weight:600;color:var(--t3);width:110px;flex-shrink:0;}
+.ai-val{font-size:12px;color:var(--t2);line-height:1.5;}
+
+/* ── PROS CONS ── */
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.pc-box{background:var(--surface);border:1px solid var(--bdr);border-radius:8px;padding:12px 14px;}
+.pc-title{font-size:10px;font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em;}
+.pc-title.pos{color:#065f46;}
+.pc-title.neg{color:#b91c1c;}
+.pc-item{font-size:11.5px;color:var(--t2);padding:4px 0;border-bottom:1px solid #f5f3ef;line-height:1.5;}
+.pc-item:last-child{border-bottom:none;}
+.pc-item.pos::before{content:'✓ ';color:var(--green);}
+.pc-item.neg::before{content:'✗ ';color:var(--red);}
+
+/* ── ENRICH BUTTON ── */
+.enrich-bar{background:var(--blue-bg);border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.enrich-text{font-size:12px;color:#1e40af;}
+.btn-enrich{background:#3b82f6;color:#fff;border:none;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+
+/* ── CLOSED BANNER ── */
+.closed-banner{background:var(--red-bg);border:1px solid var(--red-bd);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--red);font-weight:500;}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:4rem 2rem;color:var(--t3);}
+.empty-icon{font-size:48px;margin-bottom:12px;}
+.empty-title{font-size:15px;font-weight:600;color:var(--t2);margin-bottom:6px;}
+.empty-sub{font-size:12px;line-height:1.6;}
+
+@media(max-width:900px){
+  .vb-sidebar{display:none;}
+  .vb-maincol{margin-left:0;}
+  .sidebar-list{display:none;}
+  .metrics-grid{grid-template-columns:repeat(2,1fr);}
+  .scores-grid{grid-template-columns:1fr;}
+  .proj-grid{grid-template-columns:repeat(2,1fr);}
+  .pc-grid{grid-template-columns:1fr;}
 }
-.vb-topbar-title{font-size:13px;font-weight:700;color:#1a2235;font-family:'Inter',sans-serif;}
-.vb-topbar-sub{font-size:10px;color:#9aa3b2;font-family:'Inter',sans-serif;}
-@media(max-width:900px){.vb-sidebar{display:none;}.vb-maincol{margin-left:0;}}
-/* ── END SIDEBAR ── */
-body.has-sidebar{display:flex;min-height:100vh;background:#fafaf7;}
-.content{padding:3rem 2rem;}
-.card{background:#fff;border:1px solid #e8e6e1;border-radius:10px;padding:2rem;max-width:560px;}
-.card h2{font-size:18px;font-weight:700;color:#1a2235;margin-bottom:8px;}
-.card p{font-size:13px;color:#5a6478;line-height:1.7;margin-bottom:1.5rem;}
-.btn{background:#e67e22;color:#fff;padding:10px 22px;border-radius:7px;text-decoration:none;font-size:13px;font-weight:600;display:inline-block;}
 </style>
 </head>
-<body class="has-sidebar">
+<body>
+
+<!-- PLATFORM SIDEBAR -->
 <aside class="vb-sidebar">
   <a class="vsb-brand" href="/">
     <div class="vsb-vbmark"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="36" rx="7" fill="#0f1623"/><text x="4" y="26" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="700" fill="#e67e22" letter-spacing="-1">VB</text></svg></div>
     <div><div class="vsb-name">Vikram Bhatia</div><div class="vsb-sub">Research Platform</div></div>
   </a>
+  <div class="vsb-sec">Navigation</div>
   <a class="vsb-lnk" href="/"><span class="vsb-icon">⌂</span>Home</a>
   <div class="vsb-sec">India</div>
   <a class="vsb-lnk" href="/ipo"><span class="vsb-icon">🇮🇳</span>IPO Intelligence</a>
@@ -68,18 +199,332 @@ body.has-sidebar{display:flex;min-height:100vh;background:#fafaf7;}
   <a class="vsb-lnk" href="/us-markets"><span class="vsb-icon">🔭</span>Market Pulse</a>
   <div class="vsb-bottom"><div class="vsb-meta">© 2026 Vikram Bhatia<br>Personal research only</div></div>
 </aside>
+
+<!-- MAIN COLUMN -->
 <div class="vb-maincol">
+
+  <!-- TOPBAR -->
   <div class="vb-topbar">
-    <div><div class="vb-topbar-title">India NFO Analyser</div><div class="vb-topbar-sub">Mutual Funds · New Fund Offerings</div></div>
+    <div>
+      <div class="vb-topbar-title">India NFO Analyser</div>
+      <div class="vb-topbar-sub">Mutual Funds · New Fund Offerings · AI-powered scoring</div>
+    </div>
   </div>
-  <div class="content">
-    <div class="card">
-      <h2>🏦 India NFO Analyser</h2>
-      <p>The NFO Analyser is hosted separately on the platform. Click below to open it — it will open in this same tab.</p>
-      <p style="font-size:12px;color:#9aa3b2;">Note: The NFO engine was built on an earlier deployment. It will be fully integrated into this unified platform in a future update.</p>
-      <a class="btn" href="https://vikrambhatiaresearch.com/nfo" target="_self">Open NFO Analyser ↗</a>
+
+  <!-- INNER LAYOUT -->
+  <div class="layout">
+
+    <!-- NFO LIST SIDEBAR -->
+    <div class="sidebar-list">
+      <div class="sl-header">
+        <div class="sl-title">Open NFOs</div>
+        <button class="sl-refresh" onclick="refreshNfoList()">↻ Refresh</button>
+      </div>
+      <div id="nfoList"><div class="sl-empty">Loading open NFOs…</div></div>
+    </div>
+
+    <!-- SEARCH + CONTENT -->
+    <div style="flex:1;min-width:0;display:flex;flex-direction:column;">
+
+      <!-- SEARCH -->
+      <div class="search-area">
+        <div class="search-row">
+          <input id="nfoInput" placeholder="Enter NFO name e.g. HDFC Defence Fund, SBI Flexi Cap Fund…" onkeydown="if(event.key==='Enter')analyse()"/>
+          <button class="btn-go" id="goBtn" onclick="analyse()">Analyse ↗</button>
+        </div>
+      </div>
+
+      <!-- RESULT -->
+      <div class="content-area" id="resultArea">
+        <div class="empty-state">
+          <div class="empty-icon">🏦</div>
+          <div class="empty-title">India NFO Analyser</div>
+          <div class="empty-sub">Select an open NFO from the list on the left,<br>or type any NFO name above to analyse it.</div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
+
+<script>
+const AS_URL = 'https://ipo-proxy.vikrammbhatia.workers.dev';
+const NFO_TOKEN = 'VB2026IPO';
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── NFO LIST ─────────────────────────────────────────────────
+async function loadNfoList() {
+  const el = document.getElementById('nfoList');
+  try {
+    const res = await fetch(AS_URL + '?action=nfolist&v=' + Date.now(), {redirect:'follow'});
+    const d = await res.json();
+    const nfos = d.nfos || [];
+    if (!nfos.length) {
+      el.innerHTML = '<div class="sl-empty">No open NFOs found.<br><button class="sl-refresh" onclick="refreshNfoList()" style="margin-top:8px;">↻ Fetch from Sharekhan</button></div>';
+      return;
+    }
+    // Sort: with scores first, then alphabetical
+    nfos.sort((a,b) => (b.score||0) - (a.score||0));
+    el.innerHTML = nfos.map(n => {
+      const scoreClr = !n.score ? 'var(--t3)' : n.score>=65?'#065f46':n.score>=50?'#92400e':'#b91c1c';
+      const recLabel = n.recommendation ? ` · ${n.recommendation}` : '';
+      return `<div class="sl-item" onclick="loadNfo('${esc(n.name)}')">
+        <div class="sl-name">${esc(n.name)}</div>
+        <div class="sl-meta" style="display:flex;justify-content:space-between;">
+          <span>${esc(n.category||'')}</span>
+          ${n.score ? `<span class="sl-score" style="color:${scoreClr};">${n.score}</span>` : ''}
+        </div>
+        ${n.closeDate ? `<div style="font-size:9px;color:var(--t3);margin-top:2px;">Closes ${esc(n.closeDate)}</div>` : ''}
+      </div>`;
+    }).join('');
+  } catch(e) {
+    el.innerHTML = `<div class="sl-empty">Error loading list.<br><small>${esc(e.message)}</small></div>`;
+  }
+}
+
+async function refreshNfoList() {
+  const el = document.getElementById('nfoList');
+  el.innerHTML = '<div class="sl-empty">Fetching from Sharekhan…</div>';
+  try {
+    await fetch(AS_URL + '?action=refreshnfolist&v=' + Date.now(), {redirect:'follow'});
+    await loadNfoList();
+  } catch(e) {
+    el.innerHTML = `<div class="sl-empty">Error: ${esc(e.message)}</div>`;
+  }
+}
+
+function loadNfo(name) {
+  document.getElementById('nfoInput').value = name;
+  // Highlight active
+  document.querySelectorAll('.sl-item').forEach(el => el.classList.remove('active'));
+  event && event.currentTarget && event.currentTarget.classList.add('active');
+  analyse();
+}
+
+// ── ANALYSE ──────────────────────────────────────────────────
+let _currentNfo = null;
+
+async function analyse() {
+  const name = document.getElementById('nfoInput').value.trim();
+  if (!name) return;
+  const btn = document.getElementById('goBtn');
+  btn.disabled = true; btn.textContent = 'Analysing…';
+  const el = document.getElementById('resultArea');
+  el.innerHTML = `<div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg">Phase 1 — Fetching fund data and running quantitative scoring…</div></div>`;
+
+  try {
+    const res = await fetch(AS_URL + '?action=analyse&fund=' + encodeURIComponent(name) + '&v=' + Date.now(), {redirect:'follow'});
+    const d = await res.json();
+    if (!d.success) throw new Error(d.error || 'Analysis failed');
+    _currentNfo = d;
+    render(d);
+
+    // If no Claude analysis yet, run Phase 2 in background
+    if (!d.analystVerdict || !d.keyPositives) {
+      enrichWithClaude(name);
+    }
+  } catch(e) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠</div><div class="empty-title">Analysis Error</div><div class="empty-sub">${esc(e.message)}</div></div>`;
+  } finally {
+    btn.disabled = false; btn.textContent = 'Analyse ↗';
+  }
+}
+
+async function enrichWithClaude(name) {
+  const el = document.getElementById('resultArea');
+  // Show enrichment banner
+  const banner = document.getElementById('enrichBanner');
+  if (banner) {
+    banner.innerHTML = `<div class="loader-track" style="margin-bottom:4px;"><div class="loader-fill"></div></div><span style="font-size:11px;color:#1e40af;">Phase 2 — Claude AI enrichment running in background… (~30 seconds)</span>`;
+  }
+  try {
+    const res = await fetch(AS_URL + '?action=enrichclaude&fund=' + encodeURIComponent(name) + '&v=' + Date.now(), {redirect:'follow'});
+    const d = await res.json();
+    if (d.success) {
+      _currentNfo = d;
+      render(d);
+    }
+  } catch(e) {
+    if (banner) banner.innerHTML = '<span style="font-size:11px;color:#92400e;">AI enrichment unavailable — showing quantitative scores only.</span>';
+  }
+}
+
+// ── RENDER ───────────────────────────────────────────────────
+function render(d) {
+  const el = document.getElementById('resultArea');
+
+  const score = parseFloat(d.nfoRating) || 0;
+  const rec = String(d.recommendation || '').toLowerCase();
+  const conf = d.confidence || '—';
+  const horizon = d.investmentHorizon || '—';
+  const amount = d.suggestedAmount ? '₹' + Number(d.suggestedAmount).toLocaleString('en-IN') : '—';
+  const expRet = d.expectedReturn || '—';
+
+  // Score colour
+  const scoreClr = score>=65 ? '#065f46' : score>=50 ? '#92400e' : '#b91c1c';
+  const scoreBdr = score>=65 ? '#6ee7b7' : score>=50 ? '#fcd34d' : '#fca5a5';
+  const scoreBg  = score>=65 ? '#ecfdf5' : score>=50 ? '#fffbeb' : '#fef2f2';
+
+  // Verdict class
+  const verdictCls = rec.includes('strong buy') || rec.includes('strong') ? 'strong-buy'
+    : rec.includes('consider') ? 'consider'
+    : rec.includes('watchlist') ? 'watchlist'
+    : rec.includes('avoid') ? 'avoid' : 'watchlist';
+
+  const verdictIcon = verdictCls==='strong-buy'?'🟢':verdictCls==='consider'?'🔵':verdictCls==='watchlist'?'🟡':'🔴';
+
+  // Sub-scores
+  const subScores = [
+    {label:'AMC Track Record',    key:'amcScore',      wt:'20%'},
+    {label:'Fund Structure',      key:'structureScore', wt:'20%'},
+    {label:'Category Strength',   key:'categoryScore',  wt:'18%'},
+    {label:'Expense Efficiency',  key:'expenseScore',   wt:'15%'},
+    {label:'Theme Outlook',       key:'themeScore',     wt:'12%'},
+    {label:'Expert Sentiment',    key:'sentimentScore', wt:'10%'},
+    {label:'Uniqueness',          key:'uniquenessScore',wt:'5%'},
+    {label:'Risk Score',          key:'riskScore',      wt:'-15%'},
+  ];
+
+  const scoresHtml = subScores.map(s => {
+    const val = parseFloat(d[s.key]) || 0;
+    const isRisk = s.key === 'riskScore';
+    const barClr = isRisk ? (val>=70?'#ef4444':'#f59e0b') : val>=70?'#10b981':val>=50?'#f59e0b':'#ef4444';
+    const valClr = isRisk ? (val>=70?'var(--red)':'var(--amber)') : val>=70?'var(--green)':val>=50?'var(--amber)':'var(--red)';
+    return `<div class="score-item">
+      <div class="si-head">
+        <span class="si-label">${s.label} <span style="color:var(--t4);font-size:9px;">${s.wt}</span></span>
+        <span class="si-score" style="color:${valClr};">${val||'—'}</span>
+      </div>
+      <div class="si-bar"><div class="si-fill" style="width:${val}%;background:${barClr};"></div></div>
+    </div>`;
+  }).join('');
+
+  // NAV projections
+  const launchNav = 10;
+  const projHtml = [
+    {lbl:'3 Months',  nav:d.projNav3M,  ret:null},
+    {lbl:'6 Months',  nav:d.projNav6M,  ret:null},
+    {lbl:'9 Months',  nav:d.projNav9M,  ret:null},
+    {lbl:'12 Months', nav:d.projNav12M, ret:null},
+  ].map(p => {
+    const nav = parseFloat(p.nav);
+    const retPct = nav ? Math.round(((nav-launchNav)/launchNav)*1000)/10 : null;
+    const retClr = retPct > 0 ? 'var(--green)' : retPct < 0 ? 'var(--red)' : 'var(--t3)';
+    return `<div class="proj-cell">
+      <div class="proj-lbl">${p.lbl}</div>
+      <div class="proj-nav">${nav ? '₹'+nav.toFixed(2) : '—'}</div>
+      ${retPct !== null ? `<div class="proj-return" style="color:${retClr};">${retPct>0?'+':''}${retPct}%</div>` : ''}
+    </div>`;
+  }).join('');
+
+  // Key positives / risks
+  const posArr = d.keyPositives ? String(d.keyPositives).split(';').map(s=>s.trim()).filter(Boolean) : [];
+  const negArr = d.keyRisks ? String(d.keyRisks).split(';').map(s=>s.trim()).filter(Boolean) : [];
+
+  const hasAiAnalysis = d.analystVerdict && d.analystRationale;
+  const needsEnrich = !hasAiAnalysis;
+
+  el.innerHTML = `
+    ${d.isNfoClosed ? '<div class="closed-banner">⚠ This NFO subscription period has closed. Analysis shown for reference only.</div>' : ''}
+
+    <!-- HERO -->
+    <div class="hero-card">
+      <div class="hero-left">
+        <div class="hero-name">${esc(d.fundName||d.name||'')}</div>
+        <div class="hero-amc">${esc(d.amc||'')}${d.sebiCategory?` · ${esc(d.sebiCategory)}`:''}${d.processingStatus?` · <span style="font-size:10px;color:var(--t3);">${esc(d.processingStatus)}</span>`:''}</div>
+        <div class="hero-badges">
+          ${d.category?`<span class="badge badge-cat">${esc(d.category)}</span>`:''}
+          ${d.theme&&d.theme!==d.category?`<span class="badge badge-theme">${esc(d.theme)}</span>`:''}
+          ${d.openDate||d.closeDate?`<span class="badge badge-dates">${d.openDate?esc(d.openDate):'?'} → ${d.closeDate?esc(d.closeDate):'?'}</span>`:''}
+          ${d.minimumInvestment?`<span class="badge badge-mininvest">Min ₹${Number(d.minimumInvestment).toLocaleString('en-IN')}</span>`:''}
+          ${d.isNfoClosed?'<span class="badge badge-closed">Closed</span>':''}
+        </div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;">
+          ${d.benchmark?`<div><div style="font-size:9px;color:var(--t3);margin-bottom:1px;">Benchmark</div><div style="font-size:11px;font-weight:500;">${esc(d.benchmark)}</div></div>`:''}
+          ${d.expenseRatio?`<div><div style="font-size:9px;color:var(--t3);margin-bottom:1px;">Expense Ratio</div><div style="font-size:11px;font-weight:500;">${esc(d.expenseRatio)}%</div></div>`:''}
+          ${d.exitLoad?`<div><div style="font-size:9px;color:var(--t3);margin-bottom:1px;">Exit Load</div><div style="font-size:11px;font-weight:500;">${esc(d.exitLoad)}</div></div>`:''}
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="score-ring" style="border-color:${scoreBdr};background:${scoreBg};">
+          <div class="score-num" style="color:${scoreClr};">${score||'—'}</div>
+          <div class="score-lbl">/ 100</div>
+        </div>
+        <div style="font-size:10px;color:var(--t3);margin-top:6px;">Confidence: ${esc(conf)}</div>
+      </div>
+    </div>
+
+    <!-- VERDICT -->
+    <div class="verdict-banner ${verdictCls}">
+      <div class="vb-icon">${verdictIcon}</div>
+      <div>
+        <div class="vb-verdict">${esc(d.recommendation||'Analysing…')}</div>
+        <div class="vb-rationale">${esc(d.analystRationale||'Quantitative analysis complete. AI qualitative enrichment ' + (needsEnrich?'loading…':'done.'))}</div>
+      </div>
+    </div>
+
+    <!-- AI ENRICHMENT STATUS -->
+    <div id="enrichBanner" style="margin-bottom:12px;padding:8px 12px;background:var(--blue-bg);border:1px solid #bfdbfe;border-radius:6px;min-height:28px;">
+      ${hasAiAnalysis
+        ? `<span style="font-size:11px;color:#1e40af;">✓ AI analysis complete · Analyst: ${esc(d.analystVerdict||'')} ${d.claudeOverride?`· Override: ${esc(d.claudeOverride)}`:''}</span>`
+        : `<span style="font-size:11px;color:#1e40af;">Phase 2 — Claude AI enrichment loading… (~30 seconds)</span>`}
+    </div>
+
+    <!-- KEY METRICS -->
+    <div class="metrics-grid">
+      <div class="metric"><div class="metric-lbl">Recommendation</div><div class="metric-val" style="font-size:12px;color:${scoreClr};">${esc(d.recommendation||'—')}</div></div>
+      <div class="metric"><div class="metric-lbl">Investment Horizon</div><div class="metric-val" style="font-size:12px;">${esc(horizon)}</div></div>
+      <div class="metric"><div class="metric-lbl">Suggested Amount</div><div class="metric-val" style="color:var(--or);">${amount}</div></div>
+      <div class="metric"><div class="metric-lbl">Expected Return</div><div class="metric-val" style="color:var(--green);">${esc(expRet)}</div></div>
+    </div>
+
+    <!-- SUB-SCORES -->
+    <div class="scores-title">Scoring Breakdown</div>
+    <div class="scores-grid">${scoresHtml}</div>
+
+    <!-- NAV PROJECTIONS -->
+    <div class="proj-title">Projected NAV (from ₹10 launch NAV)</div>
+    <div class="proj-grid">${projHtml}</div>
+    ${d.projPortfolio12M?`<div style="font-size:11px;color:var(--t2);margin-bottom:14px;">Projected portfolio value in 12 months (on ${amount} investment): <strong>₹${Number(d.projPortfolio12M).toLocaleString('en-IN')}</strong></div>`:''}
+
+    <!-- KEY POSITIVES & RISKS -->
+    ${(posArr.length||negArr.length)?`<div class="pc-grid">
+      <div class="pc-box">
+        <div class="pc-title pos">Key Positives</div>
+        ${posArr.length ? posArr.map(p=>`<div class="pc-item pos">${esc(p)}</div>`).join('') : '<div class="pc-item" style="color:var(--t3);">AI enrichment loading…</div>'}
+      </div>
+      <div class="pc-box">
+        <div class="pc-title neg">Key Risks</div>
+        ${negArr.length ? negArr.map(r=>`<div class="pc-item neg">${esc(r)}</div>`).join('') : '<div class="pc-item" style="color:var(--t3);">AI enrichment loading…</div>'}
+      </div>
+    </div>`:''}
+
+    <!-- AI ANALYSIS DETAIL -->
+    ${hasAiAnalysis?`<div class="ai-box">
+      <div class="ai-title">AI Qualitative Analysis</div>
+      ${d.analystVerdict?`<div class="ai-row"><div class="ai-lbl">Analyst Verdict</div><div class="ai-val" style="font-weight:600;color:${scoreClr};">${esc(d.analystVerdict)}</div></div>`:''}
+      ${d.analystRationale?`<div class="ai-row"><div class="ai-lbl">Rationale</div><div class="ai-val">${esc(d.analystRationale)}</div></div>`:''}
+      ${d.liveVolatility?`<div class="ai-row"><div class="ai-lbl">Live Volatility</div><div class="ai-val">${esc(d.liveVolatility)}%</div></div>`:''}
+      ${d.currentNav?`<div class="ai-row"><div class="ai-lbl">Current NAV</div><div class="ai-val">₹${esc(d.currentNav)}</div></div>`:''}
+      ${d.verificationFlags?`<div class="ai-row"><div class="ai-lbl">Verification</div><div class="ai-val">${esc(d.verificationFlags)}</div></div>`:''}
+    </div>`:''}
+
+    <!-- ENRICH BUTTON if no AI yet -->
+    ${!hasAiAnalysis?`<div class="enrich-bar">
+      <span class="enrich-text">Want deeper AI analysis? Run Claude enrichment manually.</span>
+      <button class="btn-enrich" onclick="enrichWithClaude('${esc(d.fundName||'')}')">Run AI Analysis</button>
+    </div>`:''}
+  `;
+
+  // Reload NFO list to pick up new scores
+  loadNfoList();
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  loadNfoList();
+});
+</script>
 </body>
 </html>
