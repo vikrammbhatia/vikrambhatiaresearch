@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
 <!-- v3.5 -->
-<title>India IPO Portal — Vikram Bhatia Research</title>
+<title>India IPO Intelligence — Vikram Bhatia Research</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -220,89 +220,72 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .mob-close{float:right;background:none;border:none;color:var(--t2);font-size:20px;cursor:pointer;padding:0;line-height:1;}
 @media(max-width:900px){.mob-sidebar-btn{display:flex;align-items:center;justify-content:center;}}
 
-/* ── PLATFORM NAV ── */
-.platform-nav {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(10,13,18,0.95);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid #1e2530;
-  padding: 0 2.5rem;
-  display: flex; align-items: center; justify-content: space-between;
-  height: 58px;
-}
-.nav-brand {
-  display: flex; align-items: center; gap: 12px;
-  text-decoration: none;
-}
-.vb-mark { width: 32px; height: 32px; flex-shrink: 0; }
-.vb-mark svg { width: 100%; height: 100%; }
-.brand-name { font-size: 12px; font-weight: 600; color: #eef0f3; letter-spacing:-0.01em; line-height:1.2; }
-.brand-sub  { font-size: 10px; color: #8892a0; }
-.nav-links  { display: flex; align-items: center; gap: 2px; }
-.nav-link {
-  font-size: 12px; font-weight: 500; color: #8892a0;
-  text-decoration: none; padding: 6px 11px; border-radius: 6px;
-  transition: color 0.15s, background 0.15s; white-space: nowrap;
-}
-.nav-link:hover { color: #eef0f3; background: #161b22; }
-.nav-link.active { color: #e67e22; }
-@media(max-width:768px){
-  .platform-nav { padding: 0 1rem; }
-  .nav-links { display: none; }
-}
 
-/* ── PLATFORM NAV ── */
-.platform-nav {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(8,12,20,0.97);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  padding: 0 2.5rem;
-  display: flex; align-items: center; justify-content: space-between;
-  height: 60px;
+
+/* ── OPTION 3: IVORY & CHARCOAL SIDEBAR ── */
+body.has-sidebar{display:flex;min-height:100vh;background:#fafaf7;}
+.vb-sidebar{
+  width:210px;flex-shrink:0;background:#1c2333;
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;z-index:200;overflow-y:auto;
 }
-.nav-brand { display:flex; align-items:center; gap:10px; text-decoration:none; }
-.vb-mark { width:34px; height:34px; flex-shrink:0; border-radius:7px; overflow:hidden; }
-.vb-mark svg { width:100%; height:100%; display:block; }
-.brand-name { font-size:13px; font-weight:600; color:#f0f2f5; letter-spacing:-0.02em; line-height:1.25; }
-.brand-sub  { font-size:10px; color:#5a6478; }
-.nav-links  { display:flex; align-items:center; gap:1px; }
-.nav-link {
-  font-size:12px; font-weight:500; color:#6b7689;
-  text-decoration:none; padding:6px 11px; border-radius:6px;
-  transition:color 0.15s,background 0.15s; white-space:nowrap;
+.vsb-brand{padding:18px 14px 14px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px;text-decoration:none;}
+.vsb-vbmark{width:32px;height:32px;border-radius:6px;overflow:hidden;flex-shrink:0;}
+.vsb-vbmark svg{width:100%;height:100%;display:block;}
+.vsb-name{font-size:12px;font-weight:600;color:#f0f2f5;letter-spacing:-0.01em;line-height:1.25;font-family:'Inter',sans-serif;}
+.vsb-sub{font-size:9.5px;color:#5a6478;font-family:'Inter',sans-serif;}
+.vsb-sec{padding:14px 10px 6px;font-size:9px;font-weight:600;color:#3d4a5a;letter-spacing:0.08em;text-transform:uppercase;font-family:'Inter',sans-serif;}
+.vsb-lnk{display:flex;align-items:center;gap:8px;padding:7px 12px;margin:1px 6px;border-radius:6px;font-size:11.5px;font-weight:500;color:#8892a0;text-decoration:none;transition:background 0.15s,color 0.15s;font-family:'Inter',sans-serif;}
+.vsb-lnk:hover{background:rgba(255,255,255,0.06);color:#d0d6e0;}
+.vsb-lnk.active{background:rgba(230,126,34,0.12);color:#e67e22;}
+.vsb-icon{font-size:13px;width:17px;text-align:center;flex-shrink:0;}
+.vsb-soon{opacity:0.4;pointer-events:none;}
+.vsb-badge{margin-left:auto;font-size:9px;background:rgba(230,126,34,0.15);color:#e67e22;padding:1px 5px;border-radius:3px;font-weight:600;}
+.vsb-bottom{margin-top:auto;padding:12px 10px;border-top:1px solid rgba(255,255,255,0.06);}
+.vsb-meta{font-size:9.5px;color:#3d4a5a;line-height:1.6;font-family:'Inter',sans-serif;}
+.vb-maincol{margin-left:210px;flex:1;min-width:0;background:#fafaf7;}
+/* Topbar inside portal */
+.vb-topbar{
+  background:#ffffff;border-bottom:1px solid #e8e6e1;
+  padding:0 2rem;height:50px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
 }
-.nav-link:hover { color:#f0f2f5; background:rgba(255,255,255,0.05); }
-.nav-link.active { color:#e67e22; background:rgba(230,126,34,0.08); }
-.nav-link.home-link { color:#f0f2f5; font-weight:600; }
-@media(max-width:900px){ .platform-nav{padding:0 1rem;} .nav-links{display:none;} }
-/* ── END PLATFORM NAV ── */
+.vb-topbar-title{font-size:13px;font-weight:700;color:#1a2235;font-family:'Inter',sans-serif;}
+.vb-topbar-sub{font-size:10px;color:#9aa3b2;font-family:'Inter',sans-serif;}
+@media(max-width:900px){.vb-sidebar{display:none;}.vb-maincol{margin-left:0;}}
+/* ── END SIDEBAR ── */
 </style>
 </head>
-<body>
-<nav class="platform-nav">
-  <a class="nav-brand" href="/">
-    <div class="vb-mark"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="36" rx="7" fill="#0f1623"/><text x="4" y="26" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="700" fill="#e67e22" letter-spacing="-1">VB</text></svg></div>
-    <div>
-      <div class="brand-name">Vikram Bhatia</div>
-      <div class="brand-sub">Research Platform</div>
-    </div>
+<body class="has-sidebar">
+<aside class="vb-sidebar">
+  <a class="vsb-brand" href="/">
+    <div class="vsb-vbmark"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="36" rx="7" fill="#0f1623"/><text x="4" y="26" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="700" fill="#e67e22" letter-spacing="-1">VB</text></svg></div>
+    <div><div class="vsb-name">Vikram Bhatia</div><div class="vsb-sub">Research Platform</div></div>
   </a>
-  <div class="nav-links">
-    <a class="nav-link home-link" href="/">Home</a>
-    <a class="nav-link active" href="/ipo">India IPO Portal</a>
-    <a class="nav-link" href="/uae-ipo">UAE IPO Portal</a>
-    <a class="nav-link" href="/us-ipo">USA IPO Portal</a>
-    <a class="nav-link" href="/india-mr">India MR Portal</a>
-    <a class="nav-link" href="/us-mr">USA MR Portal</a>
-    <a class="nav-link" href="/us-markets">USA Markets</a>
-  </div>
-</nav>
+  <a class="vsb-lnk" href="/"><span class="vsb-icon">⌂</span>Home</a>
+  <div class="vsb-sec">India</div>
+  <a class="vsb-lnk active" href="/ipo"><span class="vsb-icon">🇮🇳</span>IPO Intelligence</a>
+  <a class="vsb-lnk" href="/nfo"><span class="vsb-icon">🏦</span>NFO Analyser</a>
+  <a class="vsb-lnk" href="/india-mr"><span class="vsb-icon">📊</span>MR Compass</a>
+  <div class="vsb-sec">UAE</div>
+  <a class="vsb-lnk" href="/uae-ipo"><span class="vsb-icon">🇦🇪</span>IPO Intelligence</a>
+  <a class="vsb-lnk vsb-soon" href="/uae-mr"><span class="vsb-icon">📊</span>MR Compass<span class="vsb-badge">Soon</span></a>
+  <div class="vsb-sec">USA</div>
+  <a class="vsb-lnk" href="/us-ipo"><span class="vsb-icon">🇺🇸</span>IPO Intelligence</a>
+  <a class="vsb-lnk" href="/us-mr"><span class="vsb-icon">📈</span>MR Compass</a>
+  <a class="vsb-lnk" href="/us-markets"><span class="vsb-icon">🔭</span>Market Pulse</a>
+  <div class="vsb-bottom"><div class="vsb-meta">© 2026 Vikram Bhatia<br>Personal research only</div></div>
+</aside>
+<div class="vb-maincol">
+<div class="vb-topbar">
+  <div><div class="vb-topbar-title">India IPO Intelligence</div><div class="vb-topbar-sub">NSE · BSE</div></div>
+</div>
 <div class="page">
 
   <!-- MAIN -->
   <div class="main-col">
-    <div class="ph-title">India IPO Portal</div>
+    <div class="ph-title">India IPO Intelligence</div>
     <div class="ph-sub-orange">by Vikram Bhatia</div>
     <div class="ph-sub">AI-powered analysis using live data, quantitative scoring and qualitative assessment &nbsp;·&nbsp; </div>
 
@@ -863,5 +846,6 @@ function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'
 
 window.addEventListener('load', ()=>{ loadHistory(); });
 </script>
+</div>
 </body>
 </html>
