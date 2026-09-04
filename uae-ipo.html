@@ -560,6 +560,10 @@ async function loadHistory() {
         </div>
       </div>`;
     }).join('');
+    // Auto-load most recent UAE IPO on page open
+    if(deduped && deduped.length > 0 && !document.getElementById('results').innerHTML.trim()) {
+      loadIpo(deduped[0].name);
+    }
   } catch(e) {
     console.error('UAE loadHistory error:', e);
     el.innerHTML=`<div class="no-nfos">Could not load.<br><span style="font-size:10px;">${e.message}</span></div>`;

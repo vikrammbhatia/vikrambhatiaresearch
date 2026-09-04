@@ -820,6 +820,10 @@ async function loadHistory() {
         </div>
       </div>`;
     }).join('');
+    // Auto-load the most recent IPO on page open
+    if(deduped.length > 0 && !document.getElementById('results').innerHTML.trim()) {
+      loadIpo(deduped[0].name);
+    }
   } catch(e) { console.error('History error:', e); el.innerHTML='<div class="no-nfos">Could not load.<br><span style="font-size:10px;">'+e.message+'</span></div>'; }
 }
 

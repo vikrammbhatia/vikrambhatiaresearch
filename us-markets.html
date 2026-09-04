@@ -586,6 +586,11 @@ async function loadPreIpoData(){
   finally{btn.disabled=false;btn.textContent='Refresh';}
 }
 
+
+window.addEventListener('load', ()=>{
+  // Auto-load lock-up tracker on page open
+  loadLockupData();
+});
 </script>
 </div>
 </body>

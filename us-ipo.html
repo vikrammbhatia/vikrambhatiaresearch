@@ -822,6 +822,11 @@ async function loadHistory() {
         </div>
       </div>`;
     }).join('');
+    // Auto-load most recent US IPO on page open
+    if(typeof items !== 'undefined' && items.length > 0 && !document.getElementById('results').innerHTML.trim()) {
+      const firstName = items[0].ipoName || items[0].name || '';
+      if(firstName) { document.getElementById('ipoInput').value = firstName; analyse(); }
+    }
   } catch(e) {
     console.error('US loadHistory error:', e);
     el.innerHTML=`<div class="no-nfos">Could not load.<br><span style="font-size:10px;">${e.message}</span></div>`;
