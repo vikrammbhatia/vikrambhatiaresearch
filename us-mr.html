@@ -468,11 +468,24 @@ async function loadPositions(){
 async function fetchLivePrices(positions) {
   for(const p of positions) {
     try {
+      // Fetch live price directly from Yahoo Finance via backend
       const res = await fetch(
         'https://ipo-proxy.vikrammbhatia.workers.dev?action=us_live_price&ticker='+encodeURIComponent(p.ticker)+'&v='+Date.now(),
         {redirect:'follow'}
       );
-      const d = await res.json();
+      const text = await res.text();
+      let d;
+      try { d = JSON.parse(text); } catch(pe) {
+        // Backend not yet updated — try Yahoo Finance directly via allorigins proxy
+        const yRes = await fetch(
+          'https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(p.ticker)+'?interval=1d&range=5d',
+          {redirect:'follow'}
+        );
+        const yData = await yRes.json();
+        const closes = yData?.chart?.result?.[0]?.indicators?.quote?.[0]?.close || [];
+        const valid = closes.filter(c=>c!==null);
+        d = valid.length ? {price: Math.round(valid[valid.length-1]*100)/100} : {};
+      }
       if(!d.price) continue;
       const livePrice = d.price;
       const entry     = parseFloat(p.entryPrice);
@@ -570,7 +583,13 @@ async function submitLogTrade(){
     } else {
       alert('Error: '+(d.message||JSON.stringify(d)));
     }
-  } catch(e){alert('Error: '+e.message);}
+  } catch(e){
+    if(e.message && e.message.includes('DOCTYPE')) {
+      alert('Backend error: The Apps Script returned an error page.\n\nPlease check:\n1. Code_MR_US.gs is deployed\n2. US Apps Script has been redeployed with new version\n3. The logMrTrade function exists in the project');
+    } else {
+      alert('Error: '+e.message);
+    }
+  }
 }
 
 async function closeTradePrompt(tradeId){
