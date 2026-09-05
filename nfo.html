@@ -50,15 +50,15 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 .sl-title{font-size:11px;font-weight:600;color:var(--text);}
 .sl-refresh{font-size:10px;color:var(--or);cursor:pointer;text-decoration:none;background:none;border:none;font-family:'Inter',sans-serif;font-weight:500;}
 .sl-item{padding:10px 14px;border-bottom:1px solid #f0eeea;cursor:pointer;transition:background 0.1s;}
-.sl-item:hover{background:#f5f3ef;}
-.sl-item.active{background:var(--or-bg);border-left:3px solid var(--or);}
+.sl-item:hover{background:#232d40;}
+.sl-item.active{background:rgba(230,126,34,0.12);border-left:3px solid var(--or);}
 .sl-name{font-size:11.5px;font-weight:600;color:var(--text);margin-bottom:2px;line-height:1.4;}
 .sl-meta{font-size:10px;color:var(--t3);}
 .sl-score{font-size:11px;font-weight:700;}
 .sl-empty{padding:2rem 1rem;text-align:center;color:var(--t3);font-size:12px;}
 
 /* ── SEARCH BAR ── */
-.search-area{padding:14px 16px;border-bottom:1px solid var(--bdr);background:var(--surface);}
+.search-area{padding:14px 16px;border-bottom:1px solid var(--bdr);background:var(--bg);}
 .search-row{display:flex;gap:8px;}
 .search-row input{flex:1;background:#131d2e;border:1px solid var(--bdr);color:var(--text);padding:9px 12px;border-radius:7px;font-size:13px;font-family:'Inter',sans-serif;outline:none;}
 .search-row input:focus{border-color:var(--or);}
@@ -66,7 +66,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 .btn-go:hover{background:var(--or2);}
 
 /* ── CONTENT AREA ── */
-.content-area{flex:1;overflow-y:auto;padding:1.5rem;}
+.content-area{flex:1;overflow-y:auto;padding:1.5rem;background:var(--bg);}
 
 /* ── LOADER ── */
 .loader{padding:2rem;text-align:center;}
@@ -83,10 +83,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 .hero-badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
 .badge{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;}
 .badge-cat{background:var(--blue-bg);color:var(--blue);}
-.badge-theme{background:#f5f3ff;color:#5b21b6;}
-.badge-dates{background:#f0fdf4;color:#166534;}
+.badge-theme{background:rgba(139,92,246,0.15);color:#a78bfa;}
+.badge-dates{background:rgba(16,185,129,0.15);color:#10b981;}
 .badge-closed{background:var(--red-bg);color:var(--red);}
-.badge-mininvest{background:#fef9ee;color:#92400e;}
+.badge-mininvest{background:rgba(245,158,11,0.15);color:#f59e0b;}
 .hero-right{text-align:center;flex-shrink:0;}
 .score-ring{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;border:3px solid;}
 .score-num{font-size:22px;font-weight:700;line-height:1;}
@@ -152,12 +152,12 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 .pc-item.neg::before{content:'✗ ';color:var(--red);}
 
 /* ── ENRICH BUTTON ── */
-.enrich-bar{background:var(--blue-bg);border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.enrich-text{font-size:12px;color:#1e40af;}
+.enrich-bar{background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);border-radius:8px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.enrich-text{font-size:12px;color:#60a5fa;}
 .btn-enrich{background:#3b82f6;color:#fff;border:none;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
 
 /* ── CLOSED BANNER ── */
-.closed-banner{background:var(--red-bg);border:1px solid var(--red-bd);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--red);font-weight:500;}
+.closed-banner{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--red);font-weight:500;}
 
 /* ── EMPTY STATE ── */
 .empty-state{text-align:center;padding:4rem 2rem;color:var(--t3);}
@@ -466,7 +466,7 @@ function render(d) {
     </div>
 
     <!-- AI ENRICHMENT STATUS -->
-    <div id="enrichBanner" style="margin-bottom:12px;padding:8px 12px;background:var(--blue-bg);border:1px solid #bfdbfe;border-radius:6px;min-height:28px;">
+    <div id="enrichBanner" style="margin-bottom:12px;padding:8px 12px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);border-radius:6px;min-height:28px;">
       ${hasAiAnalysis
         ? `<span style="font-size:11px;color:#1e40af;">✓ AI analysis complete · Analyst: ${esc(d.analystVerdict||'')} ${d.claudeOverride?`· Override: ${esc(d.claudeOverride)}`:''}</span>`
         : `<span style="font-size:11px;color:#1e40af;">Phase 2 — Claude AI enrichment loading… (~30 seconds)</span>`}
@@ -530,14 +530,29 @@ window.addEventListener('load', async () => {
 });
 
 async function loadLastAnalysedNfo() {
+  // Try to load last scored NFO from the list
+  // If none found with score, just show empty state — don't error
   try {
-    // Get list and find first one with a score (already analysed)
-    const res = await fetch(AS_URL + '?action=nfolist&v=' + Date.now(), {redirect:'follow'});
-    const d = await res.json();
-    const nfos = (d.nfos || []).filter(n => n.score > 0);
-    if (nfos.length > 0) {
-      document.getElementById('nfoInput').value = nfos[0].name;
+    const el = document.getElementById('resultArea');
+    // First check nfolist for any already-scored NFOs
+    const listRes = await fetch(AS_URL + '?action=nfolist&v=' + Date.now(), {redirect:'follow'});
+    const listData = await listRes.json();
+    const scored = (listData.nfos || []).filter(n => n.score > 0);
+    if (scored.length > 0) {
+      // Found a scored NFO in open list — load it from cache
+      document.getElementById('nfoInput').value = scored[0].name;
       await analyse();
+      return;
+    }
+    // If no scored open NFOs, try fetching the last analysed NFO from sheet
+    const lastRes = await fetch(AS_URL + '?action=nfo_getlast&v=' + Date.now(), {redirect:'follow'});
+    if (lastRes.ok) {
+      const lastData = await lastRes.json();
+      if (lastData.success && lastData.fundName) {
+        document.getElementById('nfoInput').value = lastData.fundName;
+        render(lastData);
+        return;
+      }
     }
   } catch(e) {
     console.log('Auto-load skipped:', e.message);
