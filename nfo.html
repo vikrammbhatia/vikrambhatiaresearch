@@ -317,6 +317,16 @@ async function analyse() {
   try {
     const res = await fetch(AS_URL + '?action=nfo_analyse&fund=' + encodeURIComponent(name) + '&v=' + Date.now(), {redirect:'follow'});
     const d = await res.json();
+    console.log('NFO RESPONSE:', JSON.stringify({
+      success: d.success,
+      fundName: d.fundName,
+      nfoRating: d.nfoRating,
+      recommendation: d.recommendation,
+      amcScore: d.amcScore,
+      categoryScore: d.categoryScore,
+      riskScore: d.riskScore,
+      error: d.error
+    }));
     if (!d.success) throw new Error(d.error || 'Analysis failed');
     _currentNfo = d;
     render(d);
