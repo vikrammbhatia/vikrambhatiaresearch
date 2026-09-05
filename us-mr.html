@@ -483,9 +483,12 @@ async function submitLogTrade(){
     const res=await fetch(url,{redirect:'follow'});
     const d=await res.json();
     if(d.status==='logged'){
-      alert('Trade logged!\nTrade ID: '+d.tradeId+'\nStop Loss: $'+d.stopLoss+'\nTarget: $'+d.target+'\nTime Stop: '+d.timeStop);
       document.getElementById('logTradeModal').style.display='none';
-      loadPositions();
+      // Switch to Open Positions tab so user sees the logged trade
+      const posTab = document.querySelector('.tab[onclick*="positions"]');
+      if(posTab) switchTab('tab-positions', posTab);
+      await loadPositions();
+      alert('✓ Trade logged!\nTrade ID: '+d.tradeId+'\nStop: $'+d.stopLoss+' · Target: $'+d.target+'\nTime Stop: '+d.timeStop);
     } else {
       alert('Error: '+(d.message||JSON.stringify(d)));
     }
