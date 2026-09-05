@@ -343,23 +343,31 @@ async function analyse() {
 }
 
 async function enrichWithClaude(name) {
-  const el = document.getElementById('resultArea');
-  // Show enrichment banner
   const banner = document.getElementById('enrichBanner');
   if (banner) {
-    banner.innerHTML = `<div class="loader-track" style="margin-bottom:4px;"><div class="loader-fill"></div></div><span style="font-size:11px;color:#1e40af;">Phase 2 — Claude AI enrichment running in background… (~30 seconds)</span>`;
+    banner.innerHTML = `<div class="loader-track" style="margin-bottom:4px;"><div class="loader-fill"></div></div><span style="font-size:11px;color:#60a5fa;">Phase 2 — Claude AI enrichment running… (~60 seconds)</span>`;
   }
   try {
-    const res = await fetch(AS_URL + '?action=nfo_enrichclaude&fund=' + encodeURIComponent(name) + '&v=' + Date.now(), {redirect:'follow'});
+    // 90 second timeout — Apps Script Claude calls can take up to 60s
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 90000);
+    const res = await fetch(AS_URL + '?action=nfo_enrichclaude&fund=' + encodeURIComponent(name) + '&v=' + Date.now(), {redirect:'follow', signal: controller.signal});
+    clearTimeout(timer);
     const d = await res.json();
     if (d.success) {
       _currentNfo = d;
       render(d);
+    } else {
+      if (banner) banner.innerHTML = '<span style="font-size:11px;color:#f59e0b;">AI enrichment returned no data — quantitative scores are complete.</span>';
     }
   } catch(e) {
-    if (banner) banner.innerHTML = '<span style="font-size:11px;color:#92400e;">AI enrichment unavailable — showing quantitative scores only.</span>';
+    const msg = e.name === 'AbortError' ? 'AI enrichment timed out after 90s — quantitative scores are complete. Click Run AI Analysis to retry.' : 'AI enrichment unavailable — ' + e.message;
+    if (banner) banner.innerHTML = `<span style="font-size:11px;color:#f59e0b;">${msg}</span>`;
+    console.log('Enrichment error:', e.message);
   }
 }
+
+
 
 // ── RENDER ───────────────────────────────────────────────────
 function render(d) {
@@ -370,7 +378,11 @@ function render(d) {
   const conf = d.confidence || '—';
   const horizon = d.investmentHorizon || '—';
   const amount = d.suggestedAmount ? '₹' + Number(d.suggestedAmount).toLocaleString('en-IN') : '—';
-  const expRet = d.expectedReturn || '—';
+  const expRetRaw = d.expectedReturn || '';
+  const expRetNum = parseFloat(expRetRaw);
+  const expRet = expRetRaw === '' ? '—' : isNaN(expRetNum) ? expRetRaw :
+    String(expRetRaw).includes('%') ? expRetRaw :
+    (expRetNum < 1 && expRetNum > 0 ? (expRetNum * 100).toFixed(1) + '%' : expRetNum + '%');
 
   // Score colour
   const scoreClr = score>=65 ? '#065f46' : score>=50 ? '#92400e' : '#b91c1c';
