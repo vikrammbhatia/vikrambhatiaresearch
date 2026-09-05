@@ -18,7 +18,7 @@
 body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-serif;font-size:13px;min-height:100vh;}
 .page{display:flex;min-height:100vh;}
 .main-col{flex:1;padding:2rem 2.5rem;min-width:0;}
-.side-col{width:280px;flex-shrink:0;background:var(--bg2);border-left:1px solid var(--b1);padding:1.5rem 1.2rem;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.side-col{width:280px;flex-shrink:0;background:#1c2333;border-left:1px solid var(--b1);padding:1.5rem 1.2rem;position:sticky;top:0;height:100vh;overflow-y:auto;}
 
 /* HEADER */
 .ph-title{font-size:22px;font-weight:700;color:var(--or);margin-bottom:2px;}
@@ -118,7 +118,7 @@ body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-s
 .side-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
 .side-title{font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--or);}
 .refresh-btn{background:var(--or);color:#fff;border:none;padding:4px 10px;border-radius:4px;font-size:10px;cursor:pointer;}
-.nfo-item{background:var(--bg3);border:1px solid var(--b1);border-radius:6px;padding:10px 12px;margin-bottom:8px;}
+.nfo-item{background:#232d40;border:1px solid var(--b1);border-radius:6px;padding:10px 12px;margin-bottom:8px;}
 .nfo-item-name{font-size:12px;font-weight:600;color:var(--t1);line-height:1.3;}
 .nfo-item-cat{font-size:10px;color:var(--t3);margin-top:2px;}
 .no-nfos{font-size:11px;color:var(--t3);text-align:center;padding:1.5rem 0;}
@@ -208,7 +208,7 @@ body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-s
 
 
 /* ── OPTION 3: IVORY & CHARCOAL SIDEBAR ── */
-body.has-sidebar{display:flex;min-height:100vh;background:#fafaf7;}
+body.has-sidebar{display:flex;min-height:100vh;background:#1c2333;}
 .vb-sidebar{
   width:210px;flex-shrink:0;background:#1c2333;
   display:flex;flex-direction:column;
@@ -228,16 +228,16 @@ body.has-sidebar{display:flex;min-height:100vh;background:#fafaf7;}
 .vsb-badge{margin-left:auto;font-size:9px;background:rgba(230,126,34,0.15);color:#e67e22;padding:1px 5px;border-radius:3px;font-weight:600;}
 .vsb-bottom{margin-top:auto;padding:12px 10px;border-top:1px solid rgba(255,255,255,0.06);}
 .vsb-meta{font-size:9.5px;color:#3d4a5a;line-height:1.6;font-family:'Inter',sans-serif;}
-.vb-maincol{margin-left:210px;flex:1;min-width:0;background:#fafaf7;}
+.vb-maincol{margin-left:210px;flex:1;min-width:0;background:#1c2333;}
 /* Topbar inside portal */
 .vb-topbar{
-  background:#ffffff;border-bottom:1px solid #e8e6e1;
+  background:#1c2333;border-bottom:1px solid #2e3a50;
   padding:0 2rem;height:50px;
   display:flex;align-items:center;justify-content:space-between;
   position:sticky;top:0;z-index:100;
 }
-.vb-topbar-title{font-size:13px;font-weight:700;color:#1a2235;font-family:'Inter',sans-serif;}
-.vb-topbar-sub{font-size:10px;color:#9aa3b2;font-family:'Inter',sans-serif;}
+.vb-topbar-title{font-size:13px;font-weight:700;color:#f0f2f5;font-family:'Inter',sans-serif;}
+.vb-topbar-sub{font-size:10px;color:#5a6478;font-family:'Inter',sans-serif;}
 @media(max-width:900px){.vb-sidebar{display:none;}.vb-maincol{margin-left:0;}}
 /* ── END SIDEBAR ── */
 </style>
@@ -800,7 +800,7 @@ async function loadHistory() {
         ?`<div style="background:#7f1d1d;color:#fca5a5;font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;margin-bottom:6px;display:flex;align-items:center;"><span class="urgent-dot red"></span>CLOSES TODAY</div>`
         :listingToday
         ?`<div style="background:#78350f;color:#fde68a;font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;margin-bottom:6px;display:flex;align-items:center;"><span class="urgent-dot amber"></span>LISTING TODAY</div>`:'';
-      return `<div class="nfo-item ${urgentClass}">
+      return `<div class="nfo-item ${urgentClass}" style="cursor:pointer;" onclick="selectHistoryIpo('${esc(item.ipoName||item.name||'')}')">
         ${urgentBanner}
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;margin-bottom:3px;">
           <div class="nfo-item-name">${esc(item.name)}${item.ticker?' <span style=\"font-size:10px;color:var(--t3);\">('+item.ticker+')</span>':''}</div>
@@ -822,15 +822,20 @@ async function loadHistory() {
         </div>
       </div>`;
     }).join('');
-    // Auto-load most recent US IPO on page open
-    if(typeof items !== 'undefined' && items.length > 0 && !document.getElementById('results').innerHTML.trim()) {
-      const firstName = items[0].ipoName || items[0].name || '';
-      if(firstName) { document.getElementById('ipoInput').value = firstName; analyse(); }
+    // Auto-load most recent US IPO from cache on page open
+    if(deduped && deduped.length > 0 && !document.getElementById('results').innerHTML.trim()) {
+      const firstName = deduped[0].ipoName || deduped[0].name || '';
+      if(firstName) selectHistoryIpo(firstName);
     }
   } catch(e) {
     console.error('US loadHistory error:', e);
     el.innerHTML=`<div class="no-nfos">Could not load.<br><span style="font-size:10px;">${e.message}</span></div>`;
   }
+}
+
+function selectHistoryIpo(name) {
+  document.getElementById('ipoInput').value = name;
+  analyse();
 }
 
 window.addEventListener('load', ()=>{ loadHistory(); });
