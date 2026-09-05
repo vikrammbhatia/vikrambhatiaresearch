@@ -9,13 +9,13 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#fafaf7;--surface:#fff;--bdr:#e8e6e1;--bdr2:#d4d1cb;
-  --or:#e67e22;--or2:#c0651a;--or-bg:rgba(230,126,34,0.08);
-  --green:#10b981;--green-bg:#ecfdf5;--green-bd:#6ee7b7;
-  --red:#ef4444;--red-bg:#fef2f2;--red-bd:#fca5a5;
-  --amber:#f59e0b;--amber-bg:#fffbeb;--amber-bd:#fcd34d;
+  --bg:#1c2333;--surface:#232d40;--bdr:#2e3a50;--bdr2:#3a4a62;
+  --or:#e67e22;--or2:#c0651a;--or-bg:rgba(230,126,34,0.12);
+  --green:#10b981;--green-bg:rgba(16,185,129,0.1);--green-bd:#065f46;
+  --red:#ef4444;--red-bg:rgba(239,68,68,0.1);--red-bd:#991b1b;
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,0.1);--amber-bd:#92400e;
   --blue:#3b82f6;--blue-bg:#eff6ff;
-  --text:#1a2235;--t2:#5a6478;--t3:#9aa3b2;--t4:#c8cdd6;
+  --text:#f0f2f5;--t2:#9aa3b2;--t3:#5a6478;--t4:#3d4a5a;
   --sidebar:#1c2333;
 }
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;display:flex;min-height:100vh;}
@@ -39,13 +39,13 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 
 /* ── MAIN ── */
 .vb-maincol{margin-left:210px;flex:1;min-width:0;display:flex;flex-direction:column;}
-.vb-topbar{background:#fff;border-bottom:1px solid var(--bdr);padding:0 1.5rem;height:50px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;flex-shrink:0;}
+.vb-topbar{background:#1c2333;border-bottom:1px solid #2e3a50;padding:0 1.5rem;height:50px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;flex-shrink:0;}
 .vb-topbar-title{font-size:13px;font-weight:700;color:var(--text);}
 .vb-topbar-sub{font-size:10px;color:var(--t3);}
 
 /* ── LAYOUT ── */
 .layout{display:flex;flex:1;min-height:0;}
-.sidebar-list{width:230px;flex-shrink:0;border-right:1px solid var(--bdr);background:var(--surface);overflow-y:auto;display:flex;flex-direction:column;}
+.sidebar-list{width:260px;flex-shrink:0;border-left:1px solid var(--bdr);background:var(--surface);overflow-y:auto;display:flex;flex-direction:column;}
 .sl-header{padding:12px 14px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;}
 .sl-title{font-size:11px;font-weight:600;color:var(--text);}
 .sl-refresh{font-size:10px;color:var(--or);cursor:pointer;text-decoration:none;background:none;border:none;font-family:'Inter',sans-serif;font-weight:500;}
@@ -60,7 +60,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 /* ── SEARCH BAR ── */
 .search-area{padding:14px 16px;border-bottom:1px solid var(--bdr);background:var(--surface);}
 .search-row{display:flex;gap:8px;}
-.search-row input{flex:1;background:var(--bg);border:1px solid var(--bdr);color:var(--text);padding:9px 12px;border-radius:7px;font-size:13px;font-family:'Inter',sans-serif;outline:none;}
+.search-row input{flex:1;background:#131d2e;border:1px solid var(--bdr);color:var(--text);padding:9px 12px;border-radius:7px;font-size:13px;font-family:'Inter',sans-serif;outline:none;}
 .search-row input:focus{border-color:var(--or);}
 .btn-go{background:var(--or);color:#fff;border:none;padding:9px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s;white-space:nowrap;}
 .btn-go:hover{background:var(--or2);}
@@ -214,15 +214,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
   <!-- INNER LAYOUT -->
   <div class="layout">
 
-    <!-- NFO LIST SIDEBAR -->
-    <div class="sidebar-list">
-      <div class="sl-header">
-        <div class="sl-title">Open NFOs</div>
-        <button class="sl-refresh" onclick="refreshNfoList()">↻ Refresh</button>
-      </div>
-      <div id="nfoList"><div class="sl-empty">Loading open NFOs…</div></div>
-    </div>
-
     <!-- SEARCH + CONTENT -->
     <div style="flex:1;min-width:0;display:flex;flex-direction:column;">
 
@@ -244,6 +235,16 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
       </div>
 
     </div>
+
+    <!-- NFO LIST SIDEBAR (RIGHT) -->
+    <div class="sidebar-list">
+      <div class="sl-header">
+        <div class="sl-title">Open NFOs</div>
+        <button class="sl-refresh" onclick="refreshNfoList()">↻ Refresh</button>
+      </div>
+      <div id="nfoList"><div class="sl-empty">Loading open NFOs…</div></div>
+    </div>
+
   </div>
 </div>
 
@@ -522,9 +523,26 @@ function render(d) {
 }
 
 // ── INIT ─────────────────────────────────────────────────────
-window.addEventListener('load', () => {
-  loadNfoList();
+window.addEventListener('load', async () => {
+  await loadNfoList();
+  // Auto-load the last analysed NFO from the list
+  loadLastAnalysedNfo();
 });
+
+async function loadLastAnalysedNfo() {
+  try {
+    // Get list and find first one with a score (already analysed)
+    const res = await fetch(AS_URL + '?action=nfolist&v=' + Date.now(), {redirect:'follow'});
+    const d = await res.json();
+    const nfos = (d.nfos || []).filter(n => n.score > 0);
+    if (nfos.length > 0) {
+      document.getElementById('nfoInput').value = nfos[0].name;
+      await analyse();
+    }
+  } catch(e) {
+    console.log('Auto-load skipped:', e.message);
+  }
+}
 </script>
 </body>
 </html>
