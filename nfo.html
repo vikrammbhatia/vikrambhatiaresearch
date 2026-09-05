@@ -530,21 +530,10 @@ window.addEventListener('load', async () => {
 });
 
 async function loadLastAnalysedNfo() {
-  // Try to load last scored NFO from the list
-  // If none found with score, just show empty state — don't error
+  const el = document.getElementById('resultArea');
+  el.innerHTML = '<div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg">Loading last analysed NFO…</div></div>';
   try {
-    const el = document.getElementById('resultArea');
-    // First check nfolist for any already-scored NFOs
-    const listRes = await fetch(AS_URL + '?action=nfolist&v=' + Date.now(), {redirect:'follow'});
-    const listData = await listRes.json();
-    const scored = (listData.nfos || []).filter(n => n.score > 0);
-    if (scored.length > 0) {
-      // Found a scored NFO in open list — load it from cache
-      document.getElementById('nfoInput').value = scored[0].name;
-      await analyse();
-      return;
-    }
-    // If no scored open NFOs, try fetching the last analysed NFO from sheet
+    // First try: get last analysed NFO directly from sheet
     const lastRes = await fetch(AS_URL + '?action=nfo_getlast&v=' + Date.now(), {redirect:'follow'});
     if (lastRes.ok) {
       const lastData = await lastRes.json();
@@ -554,8 +543,20 @@ async function loadLastAnalysedNfo() {
         return;
       }
     }
+    // Fallback: check nfolist for any already-scored open NFOs
+    const listRes = await fetch(AS_URL + '?action=nfolist&v=' + Date.now(), {redirect:'follow'});
+    const listData = await listRes.json();
+    const scored = (listData.nfos || []).filter(n => n.score > 0);
+    if (scored.length > 0) {
+      document.getElementById('nfoInput').value = scored[0].name;
+      await analyse();
+      return;
+    }
+    // Nothing found — show empty state
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">🏦</div><div class="empty-title">India NFO Analyser</div><div class="empty-sub">Select an open NFO from the list on the right,<br>or type any NFO name above to analyse it.</div></div>';
   } catch(e) {
     console.log('Auto-load skipped:', e.message);
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">🏦</div><div class="empty-title">India NFO Analyser</div><div class="empty-sub">Select an open NFO from the list on the right,<br>or type any NFO name above to analyse it.</div></div>';
   }
 }
 </script>
