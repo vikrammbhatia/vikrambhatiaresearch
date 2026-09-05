@@ -7,18 +7,18 @@
 <title>UAE IPO Intelligence — Vikram Bhatia Research</title>
 <style>
 :root{
-  --bg1:#0a0a0a;--bg2:#111;--bg3:#161616;--bg4:#1e1e1e;
-  --b1:#1f1f1f;--b2:#2a2a2a;--b3:#333;
-  --t1:#f0f0f0;--t2:#b0b0b0;--t3:#666;
+  --bg1:#1c2333;--bg2:#232d40;--bg3:#2a3550;--bg4:#1e2a3a;
+  --b1:#2e3a50;--b2:#3a4a62;--b3:#4a5a72;
+  --t1:#f0f2f5;--t2:#9aa3b2;--t3:#5a6478;
   --or:#e67e22;--amber:#f59e0b;
-  --green:#22c55e;--green-bg:#052e16;--green-bd:#166534;
-  --red:#ef4444;--blue:#2563eb;--blue-bg:#0d1b3e;--blue-bd:#1e40af;
+  --green:#10b981;--green-bg:rgba(16,185,129,0.12);--green-bd:#065f46;
+  --red:#ef4444;--blue:#60a5fa;--blue-bg:rgba(96,165,250,0.12);--blue-bd:#1e40af;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-serif;font-size:13px;min-height:100vh;}
+body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-serif;font-size:13px;min-height:100vh;display:flex;}
 .page{display:flex;min-height:100vh;}
 .main-col{flex:1;padding:2rem 2.5rem;min-width:0;}
-.side-col{width:280px;flex-shrink:0;background:var(--bg2);border-left:1px solid var(--b1);padding:1.5rem 1.2rem;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.side-col{width:280px;flex-shrink:0;background:#1c2333;border-left:1px solid var(--b1);padding:1.5rem 1.2rem;position:sticky;top:0;height:100vh;overflow-y:auto;}
 
 /* HEADER */
 .ph-title{font-size:22px;font-weight:700;color:var(--or);margin-bottom:2px;}
@@ -523,6 +523,7 @@ async function loadHistory() {
     const deduped=Array.from(seen.values());
     if(!deduped.length){el.innerHTML='<div class="no-nfos">No active analyses.</div>';return;}
     el.innerHTML=deduped.map(item=>{
+      const name = item.name||item.ipoName||'';
       const v=String(item.verdict||'').toLowerCase();
       const verdictClr=v.includes('caution')?'var(--amber)':v.includes('avoid')?'var(--red)':v.includes('subscribe')?'var(--green)':'var(--amber)';
       const verdictShort=v.includes('strong subscribe')?'Strong Subscribe':v.includes('caution')?'Caution':v.includes('strong avoid')?'Strong Avoid':v.includes('avoid')?'Avoid':v.includes('subscribe')?'Subscribe':item.verdict||'—';
@@ -538,7 +539,7 @@ async function loadHistory() {
         ?`<div style="background:#7f1d1d;color:#fca5a5;font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;margin-bottom:6px;display:flex;align-items:center;"><span class="urgent-dot red"></span>CLOSES TODAY</div>`
         :listingToday
         ?`<div style="background:#78350f;color:#fde68a;font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;margin-bottom:6px;display:flex;align-items:center;"><span class="urgent-dot amber"></span>LISTING TODAY</div>`:'';
-      return `<div class="nfo-item ${urgentClass}">
+      return `<div class="nfo-item ${urgentClass}" style="cursor:pointer;" onclick="selectHistoryIpo('${esc(item.name||item.ipoName||'')}')">
         ${urgentBanner}
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;margin-bottom:3px;">
           <div class="nfo-item-name">${esc(item.name)}</div>
@@ -560,14 +561,25 @@ async function loadHistory() {
         </div>
       </div>`;
     }).join('');
-    // Auto-load most recent UAE IPO on page open
+    // Auto-load most recent UAE IPO from cache on page open
     if(deduped && deduped.length > 0 && !document.getElementById('results').innerHTML.trim()) {
-      loadIpo(deduped[0].name);
+      const firstName = deduped[0].name || deduped[0].ipoName || '';
+      if(firstName) selectHistoryIpo(firstName);
     }
   } catch(e) {
     console.error('UAE loadHistory error:', e);
     el.innerHTML=`<div class="no-nfos">Could not load.<br><span style="font-size:10px;">${e.message}</span></div>`;
   }
+}
+
+function esc(s){return String(s||'').replace(/'/g,"\'");}
+
+function selectHistoryIpo(name) {
+  // Load from cache — populate input and trigger analyse
+  document.getElementById('ipoInput').value = name;
+  // Highlight active item
+  document.querySelectorAll('.nfo-item').forEach(el => el.style.borderLeft = '');
+  analyse();
 }
 
 window.addEventListener('load', ()=>{ loadHistory(); });
