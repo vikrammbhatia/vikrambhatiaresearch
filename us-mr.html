@@ -100,7 +100,7 @@ body{background:var(--bg1);color:var(--t1);font-family:'Inter','Segoe UI',sans-s
 
 
 /* ── OPTION 3: IVORY & CHARCOAL SIDEBAR ── */
-body.has-sidebar{display:flex;min-height:100vh;background:#fafaf7;}
+body.has-sidebar{display:flex;min-height:100vh;background:#1c2333;}
 .vb-sidebar{
   width:210px;flex-shrink:0;background:#1c2333;
   display:flex;flex-direction:column;
@@ -120,16 +120,16 @@ body.has-sidebar{display:flex;min-height:100vh;background:#fafaf7;}
 .vsb-badge{margin-left:auto;font-size:9px;background:rgba(230,126,34,0.15);color:#e67e22;padding:1px 5px;border-radius:3px;font-weight:600;}
 .vsb-bottom{margin-top:auto;padding:12px 10px;border-top:1px solid rgba(255,255,255,0.06);}
 .vsb-meta{font-size:9.5px;color:#3d4a5a;line-height:1.6;font-family:'Inter',sans-serif;}
-.vb-maincol{margin-left:210px;flex:1;min-width:0;background:#fafaf7;}
+.vb-maincol{margin-left:210px;flex:1;min-width:0;background:#1c2333;}
 /* Topbar inside portal */
 .vb-topbar{
-  background:#ffffff;border-bottom:1px solid #e8e6e1;
+  background:#1c2333;border-bottom:1px solid #2e3a50;
   padding:0 2rem;height:50px;
   display:flex;align-items:center;justify-content:space-between;
   position:sticky;top:0;z-index:100;
 }
-.vb-topbar-title{font-size:13px;font-weight:700;color:#1a2235;font-family:'Inter',sans-serif;}
-.vb-topbar-sub{font-size:10px;color:#9aa3b2;font-family:'Inter',sans-serif;}
+.vb-topbar-title{font-size:13px;font-weight:700;color:#f0f2f5;font-family:'Inter',sans-serif;}
+.vb-topbar-sub{font-size:10px;color:#5a6478;font-family:'Inter',sans-serif;}
 @media(max-width:900px){.vb-sidebar{display:none;}.vb-maincol{margin-left:0;}}
 /* ── END SIDEBAR ── */
 </style>
@@ -514,6 +514,7 @@ async function closeTradePrompt(tradeId){
 // Load on start
 window.addEventListener('load',()=>{
   loadPositionsStat();
+  loadScanResults(); // auto-load last scan on page open
 });
 </script>
 </div>
