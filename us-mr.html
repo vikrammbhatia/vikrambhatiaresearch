@@ -486,7 +486,7 @@ async function submitLogTrade(){
       document.getElementById('logTradeModal').style.display='none';
       // Switch to Open Positions tab so user sees the logged trade
       const posTab = document.querySelector('.tab[onclick*="positions"]');
-      if(posTab) switchTab('tab-positions', posTab);
+      if(posTab) switchTab('positions', posTab);
       await loadPositions();
       alert('✓ Trade logged!\nTrade ID: '+d.tradeId+'\nStop: $'+d.stopLoss+' · Target: $'+d.target+'\nTime Stop: '+d.timeStop);
     } else {
