@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>UAE MR Compass — Vikram Bhatia Research</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#1c2333;--bg2:#232d40;--bg3:#2a3550;
+  --bdr:#2e3a50;--bdr2:#3a4a62;
+  --or:#e67e22;--or2:#c0651a;--or-bg:rgba(230,126,34,0.12);
+  --green:#10b981;--green-bg:rgba(16,185,129,0.12);
+  --red:#ef4444;--red-bg:rgba(239,68,68,0.12);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,0.12);
+  --blue:#60a5fa;--blue-bg:rgba(96,165,250,0.12);
+  --text:#f0f2f5;--t2:#9aa3b2;--t3:#5a6478;--t4:#3d4a5a;
+  --mono:'DM Mono',monospace;
+}
+html{overflow-y:auto;}
+body{font-family:'Inter',sans-serif;font-size:13px;background:var(--bg);color:var(--text);display:flex;min-height:100vh;}
+
+/* ── SIDEBAR ── */
+.vb-sidebar{width:210px;flex-shrink:0;background:#1c2333;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:200;overflow-y:auto;border-right:1px solid var(--bdr);}
+.vsb-brand{padding:18px 14px 14px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px;text-decoration:none;}
+.vsb-vbmark{width:32px;height:32px;border-radius:6px;overflow:hidden;flex-shrink:0;}
+.vsb-vbmark svg{width:100%;height:100%;display:block;}
+.vsb-name{font-size:12px;font-weight:600;color:#f0f2f5;letter-spacing:-0.01em;line-height:1.25;}
+.vsb-sub{font-size:9.5px;color:#5a6478;}
+.vsb-sec{padding:14px 10px 6px;font-size:9px;font-weight:600;color:#3d4a5a;letter-spacing:0.08em;text-transform:uppercase;}
+.vsb-lnk{display:flex;align-items:center;gap:8px;padding:7px 12px;margin:1px 6px;border-radius:6px;font-size:11.5px;font-weight:500;color:#8892a0;text-decoration:none;transition:background 0.15s,color 0.15s;}
+.vsb-lnk:hover{background:rgba(255,255,255,0.06);color:#d0d6e0;}
+.vsb-lnk.active{background:rgba(230,126,34,0.12);color:#e67e22;}
+.vsb-icon{font-size:13px;width:17px;text-align:center;flex-shrink:0;}
+.vsb-soon{opacity:0.4;pointer-events:none;}
+.vsb-badge{margin-left:auto;font-size:9px;background:rgba(230,126,34,0.15);color:#e67e22;padding:1px 5px;border-radius:3px;font-weight:600;}
+.vsb-bottom{margin-top:auto;padding:12px 10px;border-top:1px solid rgba(255,255,255,0.06);}
+.vsb-meta{font-size:9.5px;color:#3d4a5a;line-height:1.6;}
+
+/* ── MAIN ── */
+.main{margin-left:210px;flex:1;min-width:0;}
+.topbar{background:var(--bg);border-bottom:1px solid var(--bdr);padding:0 2rem;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar-title{font-size:13px;font-weight:700;color:var(--text);}
+.topbar-sub{font-size:10px;color:var(--t3);}
+.topbar-badge{font-size:10px;font-weight:600;background:var(--or-bg);color:var(--or);padding:3px 10px;border-radius:20px;border:1px solid rgba(230,126,34,0.3);}
+
+/* ── TABS ── */
+.tab-bar{display:flex;gap:2px;padding:14px 2rem 0;border-bottom:1px solid var(--bdr);}
+.tab{padding:8px 16px;font-size:12px;font-weight:500;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;transition:color 0.15s,border-color 0.15s;white-space:nowrap;}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--or);border-bottom-color:var(--or);}
+.tab-content{display:none;padding:1.5rem 2rem;}
+.tab-content.active{display:block;}
+
+/* ── STAT CARDS ── */
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:1.5rem;}
+.sc{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:16px 18px;position:relative;overflow:hidden;}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.sc.or::before{background:var(--or);}
+.sc.green::before{background:var(--green);}
+.sc.blue::before{background:var(--blue);}
+.sc.amber::before{background:var(--amber);}
+.sc-label{font-size:9px;font-weight:600;color:var(--t3);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;}
+.sc-value{font-size:1.4rem;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;margin-bottom:3px;}
+.sc-sub{font-size:10px;color:var(--t3);}
+.or-c{color:var(--or);}
+.green-c{color:var(--green);}
+.blue-c{color:var(--blue);}
+.amber-c{color:var(--amber);}
+.red-c{color:var(--red);}
+
+/* ── SCANNER ── */
+.scanner-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;}
+.scanner-info{font-size:12px;color:var(--t2);}
+.scanner-info small{display:block;font-size:10px;color:var(--t3);margin-top:3px;}
+.btn-row{display:flex;gap:8px;}
+.btn{padding:8px 16px;border-radius:7px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity 0.15s;}
+.btn:disabled{opacity:0.5;cursor:not-allowed;}
+.btn-or{background:var(--or);color:#fff;}
+.btn-or:hover:not(:disabled){background:var(--or2);}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover:not(:disabled){background:#059669;}
+.btn-ghost{background:var(--bg3);color:var(--text);border:1px solid var(--bdr2);}
+.btn-ghost:hover:not(:disabled){border-color:var(--or);color:var(--or);}
+.btn-red{background:var(--red);color:#fff;}
+
+.warn-banner{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:8px;padding:10px 14px;margin-bottom:1rem;font-size:11px;color:var(--amber);display:flex;gap:10px;align-items:flex-start;}
+.warn-banner strong{color:#fcd34d;}
+
+/* ── SCAN RESULTS ── */
+.scan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.scan-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:16px 18px;}
+.scan-card.strong{border-color:rgba(16,185,129,0.4);}
+.scan-card.buy{border-color:rgba(96,165,250,0.3);}
+.scan-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.scan-ticker{font-size:15px;font-weight:700;color:var(--text);}
+.scan-name{font-size:10px;color:var(--t3);margin-top:1px;}
+.scan-signal{font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;}
+.sig-strong{background:rgba(16,185,129,0.15);color:var(--green);}
+.sig-buy{background:var(--blue-bg);color:var(--blue);}
+.scan-metrics{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;}
+.sm{background:var(--bg3);border-radius:5px;padding:7px 9px;}
+.sm-label{font-size:9px;color:var(--t3);margin-bottom:2px;}
+.sm-value{font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;}
+.scan-levels{font-size:10px;color:var(--t3);padding:8px;background:var(--bg3);border-radius:5px;margin-bottom:10px;line-height:1.8;}
+.scan-levels span{font-weight:600;}
+.scan-levels .stop-c{color:var(--red);}
+.scan-levels .tgt-c{color:var(--green);}
+
+/* ── POSITIONS TABLE ── */
+.pos-wrap{overflow-x:auto;}
+.pos-table{width:100%;border-collapse:collapse;min-width:900px;}
+.pos-table th{padding:10px 14px;text-align:left;font-size:9px;font-weight:600;color:var(--or);text-transform:uppercase;letter-spacing:0.05em;border-bottom:1px solid var(--bdr);white-space:nowrap;background:var(--bg2);}
+.pos-table td{padding:12px 14px;border-bottom:1px solid var(--bdr);font-size:12px;font-variant-numeric:tabular-nums;vertical-align:middle;}
+.pos-table tr:hover td{background:rgba(255,255,255,0.02);}
+.badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:10px;}
+.badge-open{background:var(--green-bg);color:var(--green);}
+.badge-warn{background:var(--amber-bg);color:var(--amber);}
+
+/* ── LOG MODAL ── */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;}
+.modal.open{display:flex;}
+.modal-box{background:var(--bg2);border:1px solid var(--bdr2);border-radius:12px;padding:24px;width:420px;max-width:90vw;}
+.modal-title{font-size:15px;font-weight:700;color:var(--or);margin-bottom:4px;}
+.modal-sub{font-size:11px;color:var(--t3);margin-bottom:18px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-group.full{grid-column:span 2;}
+label{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:0.04em;}
+.form-input{background:var(--bg3);border:1px solid var(--bdr2);color:var(--text);padding:9px 12px;border-radius:7px;font-size:13px;font-family:'Inter',sans-serif;outline:none;width:100%;}
+.form-input:focus{border-color:var(--or);}
+.modal-actions{display:flex;gap:8px;margin-top:16px;}
+
+/* ── RULES ── */
+.rules-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.rule-box{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:16px 18px;}
+.rule-title{font-size:10px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:12px;}
+.rule-item{font-size:11.5px;color:var(--t2);padding:5px 0;border-bottom:1px solid var(--bdr);line-height:1.5;}
+.rule-item:last-child{border-bottom:none;}
+.rule-item strong{color:var(--text);}
+
+/* ── UNIVERSE ── */
+.universe-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.sector-box{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:14px 16px;}
+.sector-title{font-size:10px;font-weight:700;color:var(--or);text-transform:uppercase;margin-bottom:10px;}
+.stock-item{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--bdr);font-size:11px;}
+.stock-item:last-child{border-bottom:none;}
+.stock-ticker{font-weight:600;color:var(--text);font-family:var(--mono);}
+.stock-name{color:var(--t3);font-size:10px;}
+
+/* ── LOADER ── */
+.loader{padding:2rem;text-align:center;}
+.loader-track{height:2px;background:var(--bdr);border-radius:1px;overflow:hidden;margin-bottom:8px;}
+.loader-fill{height:100%;background:var(--or);animation:ld 2s ease-in-out infinite;}
+@keyframes ld{0%{width:0}60%{width:75%}100%{width:100%}}
+.loader-msg{font-size:12px;color:var(--t3);}
+
+/* ── EMPTY ── */
+.empty{padding:3rem;text-align:center;color:var(--t3);}
+.empty-icon{font-size:36px;margin-bottom:12px;}
+.empty-title{font-size:14px;font-weight:600;color:var(--t2);margin-bottom:6px;}
+.empty-sub{font-size:12px;line-height:1.6;}
+
+/* ── SEC TITLE ── */
+.sec-title{font-size:11px;font-weight:700;color:var(--text);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:1rem;display:flex;align-items:center;gap:8px;}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--bdr);}
+
+@media(max-width:900px){
+  .vb-sidebar{display:none;}.main{margin-left:0;}
+  .stats-row{grid-template-columns:repeat(2,1fr);}
+  .scan-grid,.rules-grid,.universe-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="vb-sidebar">
+  <a class="vsb-brand" href="/">
+    <div class="vsb-vbmark"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="36" rx="7" fill="#0f1623"/><text x="4" y="26" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="700" fill="#e67e22" letter-spacing="-1">VB</text></svg></div>
+    <div><div class="vsb-name">Vikram Bhatia</div><div class="vsb-sub">Research Platform</div></div>
+  </a>
+  <div class="vsb-sec">Navigation</div>
+  <a class="vsb-lnk" href="/"><span class="vsb-icon">⌂</span>Home</a>
+  <div class="vsb-sec">India</div>
+  <a class="vsb-lnk" href="/ipo"><span class="vsb-icon">🇮🇳</span>IPO Intelligence</a>
+  <a class="vsb-lnk" href="/nfo"><span class="vsb-icon">🏦</span>NFO Analyser</a>
+  <a class="vsb-lnk" href="/india-mr"><span class="vsb-icon">📊</span>MR Compass</a>
+  <div class="vsb-sec">UAE</div>
+  <a class="vsb-lnk" href="/uae-ipo"><span class="vsb-icon">🇦🇪</span>IPO Intelligence</a>
+  <a class="vsb-lnk active" href="/uae-mr"><span class="vsb-icon">📊</span>MR Compass</a>
+  <div class="vsb-sec">USA</div>
+  <a class="vsb-lnk" href="/us-ipo"><span class="vsb-icon">🇺🇸</span>IPO Intelligence</a>
+  <a class="vsb-lnk" href="/us-mr"><span class="vsb-icon">📈</span>MR Compass</a>
+  <a class="vsb-lnk" href="/us-markets"><span class="vsb-icon">🔭</span>Market Pulse</a>
+  <div class="vsb-bottom"><div class="vsb-meta">© 2026 Vikram Bhatia<br>Personal research only</div></div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+<div class="topbar">
+  <div>
+    <div class="topbar-title">UAE MR Compass</div>
+    <div class="topbar-sub">DFM · ADX · Mean Reversion Strategy · ENBD</div>
+  </div>
+  <div class="topbar-badge">🇦🇪 Ready to trade</div>
+</div>
+
+<!-- TABS -->
+<div class="tab-bar">
+  <div class="tab active" onclick="switchTab('scanner',this)">🔍 MR Scanner</div>
+  <div class="tab" onclick="switchTab('positions',this)">📋 Open Positions</div>
+  <div class="tab" onclick="switchTab('rules',this)">📐 Strategy Rules</div>
+  <div class="tab" onclick="switchTab('universe',this)">🌍 Macro Context</div>
+</div>
+
+<!-- ── SCANNER TAB ── -->
+<div class="tab-content active" id="tab-scanner">
+
+  <div class="warn-banner">
+    <div style="font-size:16px;">⚠</div>
+    <div>
+      <strong>AI-powered scanner — universe and signals update with every scan.</strong>
+      Use this tab to find new signals only. Once you execute a trade on ENBD, log it in the <strong>Open Positions</strong> tab with your actual fill price.
+    </div>
+  </div>
+
+  <div class="scanner-header">
+    <div class="scanner-info">
+      AI-powered dynamic scan across DFM/ADX markets — universe selected fresh each scan.
+      <small>Analyses geopolitics · fundamentals · sector trends · Arabic &amp; English expert opinions · technical signals · All in one scan (~3-5 min)</small>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" id="loadScanBtn" onclick="loadLastScan()">Load Last Scan</button>
+      <button class="btn btn-or" id="runScanBtn" onclick="runScan()">Run New Scan ↗</button>
+    </div>
+  </div>
+
+  <div id="scanUpdated" style="font-size:10px;color:var(--t3);margin-bottom:1rem;"></div>
+  <div id="scanResults">
+    <div class="empty">
+      <div class="empty-icon">🔍</div>
+      <div class="empty-title">No scan loaded</div>
+      <div class="empty-sub">Click <strong>Load Last Scan</strong> to see previous results<br>or <strong>Run New Scan</strong> to scan all 30 stocks now (~2 min)</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── POSITIONS TAB ── -->
+<div class="tab-content" id="tab-positions">
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+    <div>
+      <div class="sec-title" style="margin-bottom:4px;">Open Positions</div>
+      <div style="font-size:11px;color:var(--t3);">Corpus: AED 25,000 · AED 5,000 per position · Max 5 positions</div>
+    </div>
+    <button class="btn btn-green" onclick="document.getElementById('logModal').classList.add('open')">+ Log Trade</button>
+  </div>
+
+  <!-- POSITION STATS -->
+  <div class="stats-row" id="posStats" style="display:none;">
+    <div class="sc or"><div class="sc-label">Open Positions</div><div class="sc-value or-c" id="statOpen">0</div><div class="sc-sub">of 5 max</div></div>
+    <div class="sc green"><div class="sc-label">Deployed</div><div class="sc-value green-c" id="statDeployed">AED 0</div><div class="sc-sub">of AED 25,000</div></div>
+    <div class="sc blue"><div class="sc-label">Unrealised P&L</div><div class="sc-value blue-c" id="statPnl">AED 0</div><div class="sc-sub">live estimate</div></div>
+    <div class="sc amber"><div class="sc-label">Avg Days Held</div><div class="sc-value amber-c" id="statDays">—</div><div class="sc-sub">time stop: 21 days</div></div>
+    <div class="sc or"><div class="sc-label">Available Capital</div><div class="sc-value or-c" id="statAvail">AED 25,000</div><div class="sc-sub">undeployed</div></div>
+  </div>
+
+  <div id="positionsContent">
+    <div class="empty">
+      <div class="empty-icon">📋</div>
+      <div class="empty-title">No open positions</div>
+      <div class="empty-sub">Run the scanner to find MR entry signals,<br>then log trades here after executing on ENBD.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── RULES TAB ── -->
+<div class="tab-content" id="tab-rules">
+  <div class="sec-title">UAE MR Strategy Rules</div>
+  <div class="rules-grid">
+    <div class="rule-box">
+      <div class="rule-title">Entry Rules</div>
+      <div class="rule-item"><strong>Pullback:</strong> Stock down 6–18% from 20D high</div>
+      <div class="rule-item"><strong>Momentum:</strong> RSI below 38 (oversold)</div>
+      <div class="rule-item"><strong>Trend:</strong> Price above 200D MA (uptrend intact)</div>
+      <div class="rule-item"><strong>Volume:</strong> Current volume ≥1.5× 20D avg volume</div>
+      <div class="rule-item"><strong>Earnings:</strong> No results within next 7 days</div>
+      <div class="rule-item"><strong>Banking cap:</strong> Max 2 bank stocks per cycle</div>
+      <div class="rule-item"><strong>Penny filter:</strong> Price above AED 0.50</div>
+      <div class="rule-item"><strong>Liquidity:</strong> Avg daily value ≥AED 500K</div>
+    </div>
+    <div class="rule-box">
+      <div class="rule-title">Exit Rules</div>
+      <div class="rule-item"><strong>Target:</strong> +6% gross → sell all at market open</div>
+      <div class="rule-item"><strong>Stop loss:</strong> −4% gross → sell all immediately</div>
+      <div class="rule-item"><strong>Time stop:</strong> 21 days → exit regardless of price</div>
+      <div class="rule-item"><strong>Hard rule:</strong> All exits are non-negotiable</div>
+      <div class="rule-item"><strong>No averaging:</strong> Never add to a losing position</div>
+      <div class="rule-item"><strong>All-or-nothing:</strong> No partial exits permitted</div>
+      <div class="rule-item"><strong>Reward/Risk:</strong> 1.5:1 ratio (6% target / 4% stop)</div>
+    </div>
+    <div class="rule-box">
+      <div class="rule-title">Execution & Corpus</div>
+      <div class="rule-item"><strong>Broker:</strong> Emirates NBD (ENBD X app)</div>
+      <div class="rule-item"><strong>Corpus:</strong> AED 25,000 per cycle</div>
+      <div class="rule-item"><strong>Per position:</strong> AED 5,000 (max 5 positions)</div>
+      <div class="rule-item"><strong>Brokerage:</strong> ~0.15% per leg (~0.30% round trip)</div>
+      <div class="rule-item"><strong>Net target:</strong> ~+5.6% after costs</div>
+      <div class="rule-item"><strong>Net stop:</strong> ~−4.3% after costs</div>
+      <div class="rule-item"><strong>Markets:</strong> DFM and ADX</div>
+      <div class="rule-item"><strong>Macro check:</strong> Before each new cycle</div>
+    </div>
+  </div>
+
+  <div style="margin-top:1.25rem;padding:14px 16px;background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;font-size:11px;color:var(--t2);line-height:1.7;">
+    <strong style="color:var(--text);">Why 6% target / 4% stop for UAE?</strong><br>
+    UAE markets (DFM/ADX) are less liquid and more volatile than NSE. Stocks can gap sharply on thin volumes. A tighter stop (4% vs 5% in India) protects against gap-down risk. The target (6% vs 8% in India) is more achievable in UAE's shorter mean-reversion windows. The 1.5:1 payoff ratio combined with a target win rate of 70%+ generates positive expectancy of ~AED 100–150 per trade.
+  </div>
+</div>
+
+<!-- ── UNIVERSE TAB ── -->
+<div class="tab-content" id="tab-universe">
+  <div class="sec-title">Stock Universe — 30 DFM/ADX Large Caps</div>
+  <div style="font-size:11px;color:var(--t3);margin-bottom:1.25rem;">Only liquid stocks with avg daily value ≥AED 500K. Yahoo Finance tickers shown for scanner reference.</div>
+  <div class="universe-grid">
+
+    <div class="sector-box">
+      <div class="sector-title">🏦 Banking (max 2/cycle)</div>
+      <div class="stock-item"><span class="stock-ticker">ENBD</span><span class="stock-name">Emirates NBD</span></div>
+      <div class="stock-item"><span class="stock-ticker">FAB</span><span class="stock-name">First Abu Dhabi Bank</span></div>
+      <div class="stock-item"><span class="stock-ticker">ADCB</span><span class="stock-name">Abu Dhabi Commercial Bank</span></div>
+      <div class="stock-item"><span class="stock-ticker">DIB</span><span class="stock-name">Dubai Islamic Bank</span></div>
+      <div class="stock-item"><span class="stock-ticker">MASQ</span><span class="stock-name">Mashreq Bank</span></div>
+    </div>
+
+    <div class="sector-box">
+      <div class="sector-title">🏗 Real Estate</div>
+      <div class="stock-item"><span class="stock-ticker">EMAAR</span><span class="stock-name">Emaar Properties</span></div>
+      <div class="stock-item"><span class="stock-ticker">ALDAR</span><span class="stock-name">Aldar Properties</span></div>
+      <div class="stock-item"><span class="stock-ticker">DAMAC</span><span class="stock-name">DAMAC Properties</span></div>
+      <div class="stock-item"><span class="stock-ticker">DEYAAR</span><span class="stock-name">Deyaar Development</span></div>
+      <div class="stock-item"><span class="stock-ticker">EMAARDEV</span><span class="stock-name">Emaar Development</span></div>
+    </div>
+
+    <div class="sector-box">
+      <div class="sector-title">📡 Telecom</div>
+      <div class="stock-item"><span class="stock-ticker">ETISALAT</span><span class="stock-name">e& (Etisalat)</span></div>
+      <div class="stock-item"><span class="stock-ticker">DU</span><span class="stock-name">du (EITC)</span></div>
+    </div>
+
+    <div class="sector-box">
+      <div class="sector-title">⚡ Energy & Utilities</div>
+      <div class="stock-item"><span class="stock-ticker">ADNOCDIST</span><span class="stock-name">ADNOC Distribution</span></div>
+      <div class="stock-item"><span class="stock-ticker">ADNOCDRILL</span><span class="stock-name">ADNOC Drilling</span></div>
+      <div class="stock-item"><span class="stock-ticker">TAQA</span><span class="stock-name">TAQA</span></div>
+      <div class="stock-item"><span class="stock-ticker">DEWA</span><span class="stock-name">DEWA</span></div>
+      <div class="stock-item"><span class="stock-ticker">ADENE</span><span class="stock-name">AD National Energy</span></div>
+    </div>
+
+    <div class="sector-box">
+      <div class="sector-title">✈ Transport & Logistics</div>
+      <div class="stock-item"><span class="stock-ticker">AIRARABI</span><span class="stock-name">Air Arabia</span></div>
+      <div class="stock-item"><span class="stock-ticker">ADPORTS</span><span class="stock-name">AD Ports Group</span></div>
+      <div class="stock-item"><span class="stock-ticker">DNLOGIST</span><span class="stock-name">ADNOC Logistics</span></div>
+    </div>
+
+    <div class="sector-box">
+      <div class="sector-title">🛒 Retail & Consumer</div>
+      <div class="stock-item"><span class="stock-ticker">LULU</span><span class="stock-name">LuLu Retail</span></div>
+      <div class="stock-item"><span class="stock-ticker">EMAARMALLS</span><span class="stock-name">Emaar Malls</span></div>
+      <div class="stock-item"><span class="stock-ticker">UNIONCOOP</span><span class="stock-name">Union Coop</span></div>
+    </div>
+
+    <div class="sector-box">
+      <div class="sector-title">🏥 Healthcare & Pharma</div>
+      <div class="stock-item"><span class="stock-ticker">JULPHAR</span><span class="stock-name">Gulf Pharma (Julphar)</span></div>
+      <div class="stock-item"><span class="stock-ticker">NMC</span><span class="stock-name">NMC Health</span></div>
+      <div class="stock-item"><span class="stock-ticker">SEHA</span><span class="stock-name">SEHA (Abu Dhabi Health)</span></div>
+    </div>
+
+    <div class="sector-box">
+      <div class="sector-title">🛡 Insurance & Diversified</div>
+      <div class="stock-item"><span class="stock-ticker">ADNIC</span><span class="stock-name">AD National Insurance</span></div>
+      <div class="stock-item"><span class="stock-ticker">DUBINS</span><span class="stock-name">Dubai Insurance</span></div>
+      <div class="stock-item"><span class="stock-ticker">IHC</span><span class="stock-name">International Holding</span></div>
+      <div class="stock-item"><span class="stock-ticker">ALPHA</span><span class="stock-name">Alpha Dhabi Holding</span></div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<!-- LOG TRADE MODAL -->
+<div class="modal" id="logModal">
+  <div class="modal-box">
+    <div class="modal-title">Log UAE MR Trade</div>
+    <div class="modal-sub">Enter your actual confirmed fill price from ENBD X — not the scanner price</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Ticker / Stock Code</label>
+        <input class="form-input" id="lt_ticker" placeholder="e.g. EMAAR" style="text-transform:uppercase;">
+      </div>
+      <div class="form-group">
+        <label>Exchange</label>
+        <select class="form-input" id="lt_exchange">
+          <option value="DFM">DFM</option>
+          <option value="ADX">ADX</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Buy Price (AED)</label>
+        <input class="form-input" id="lt_price" type="number" step="0.01" placeholder="e.g. 5.40">
+      </div>
+      <div class="form-group">
+        <label>Shares / Lots</label>
+        <input class="form-input" id="lt_shares" type="number" placeholder="e.g. 925">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>RSI at Entry (optional)</label>
+        <input class="form-input" id="lt_rsi" type="number" step="0.1" placeholder="e.g. 31.5">
+      </div>
+      <div class="form-group">
+        <label>Stock Name</label>
+        <input class="form-input" id="lt_name" placeholder="e.g. Emaar Properties">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-green" style="flex:1;" onclick="submitLogTrade()">Log Trade ↗</button>
+      <button class="btn btn-ghost" style="flex:1;" onclick="document.getElementById('logModal').classList.remove('open')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const AS_URL = 'https://ipo-proxy.vikrammbhatia.workers.dev';
+const T = 'VB2026UAEIPO';
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function switchTab(id, el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+  if(id==='positions') loadPositions();
+}
+
+// ── SCANNER ──────────────────────────────────────────────────
+async function runScan() {
+  const btn = document.getElementById('runScanBtn');
+  btn.disabled = true; btn.textContent = 'Scanning… (~2 min)';
+  document.getElementById('scanResults').innerHTML = `<div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg">Scanning 30 UAE large-cap stocks via Yahoo Finance… this takes ~2 minutes</div></div>`;
+  try {
+    const res = await fetch(AS_URL+'?action=uae_mr_scan&v='+Date.now(), {redirect:'follow'});
+    const d = await res.json();
+    renderScanResults(d);
+    if(d.lastScan) document.getElementById('scanUpdated').textContent = 'Last scan: '+d.lastScan;
+  } catch(e) {
+    document.getElementById('scanResults').innerHTML = `<div class="empty"><div class="empty-icon">⚠</div><div class="empty-title">Scan failed</div><div class="empty-sub">${esc(e.message)}</div></div>`;
+  } finally {
+    btn.disabled = false; btn.textContent = 'Run New Scan ↗';
+  }
+}
+
+async function loadLastScan() {
+  const btn = document.getElementById('loadScanBtn');
+  btn.disabled = true; btn.textContent = 'Loading…';
+  try {
+    const res = await fetch(AS_URL+'?action=uae_mr_results&v='+Date.now(), {redirect:'follow'});
+    const d = await res.json();
+    renderScanResults(d);
+    if(d.lastScan) document.getElementById('scanUpdated').textContent = 'Last scan: '+d.lastScan;
+  } catch(e) {
+    document.getElementById('scanResults').innerHTML = `<div class="empty"><div class="empty-icon">⚠</div><div class="empty-title">Could not load</div><div class="empty-sub">${esc(e.message)}</div></div>`;
+  } finally {
+    btn.disabled = false; btn.textContent = 'Load Last Scan';
+  }
+}
+
+function renderScanResults(d) {
+  const results = d.results || d || [];
+
+  // Macro context banner
+  let macroBanner = '';
+  if(d.macroContext || d.geoAlert) {
+    macroBanner = `<div style="background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.25);border-radius:8px;padding:12px 16px;margin-bottom:1rem;font-size:12px;color:var(--blue);">
+      <strong style="display:block;margin-bottom:4px;">🌍 Current Macro Context</strong>
+      ${esc(d.macroContext||'')}
+      ${d.geoAlert?`<div style="margin-top:6px;color:var(--amber);font-weight:600;">⚠ Geo Alert: ${esc(d.geoAlert)}</div>`:''}
+    </div>`;
+  }
+
+  if(!Array.isArray(results) || !results.length) {
+    document.getElementById('scanResults').innerHTML = macroBanner + `<div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">No signals found</div><div class="empty-sub">No stocks currently meet all entry criteria given today's macro environment.<br>The AI scanner analysed ${esc(String(d.scanned||''))} stocks.</div></div>`;
+    return;
+  }
+
+  const cards = results.map(r => {
+    const isSS = String(r.signal||'').includes('STRONG');
+    const price = parseFloat(r.currentPrice||r.price||0);
+    const shares = r.suggestedShares || Math.floor(5000/price);
+    const stopLoss = r.stopLoss || Math.round(price*0.96*100)/100;
+    const target   = r.target   || Math.round(price*1.06*100)/100;
+
+    // Score bars
+    const scoreBars = [
+      {label:'Geo-Political', val:r.geoScore,   clr:'var(--blue)'},
+      {label:'Fundamentals',  val:r.fundScore,   clr:'var(--green)'},
+      {label:'Sector',        val:r.sectorScore, clr:'var(--or)'},
+      {label:'Expert',        val:r.expertScore, clr:'var(--amber)'},
+      {label:'Technical',     val:r.techScore,   clr:'var(--green)'},
+    ].map(s=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+      <span style="font-size:9px;color:var(--t3);width:80px;flex-shrink:0;">${s.label}</span>
+      <div style="flex:1;height:4px;background:var(--bdr);border-radius:2px;overflow:hidden;">
+        <div style="width:${s.val||0}%;height:100%;background:${s.clr};border-radius:2px;"></div>
+      </div>
+      <span style="font-size:9px;font-weight:600;color:${s.clr};width:28px;text-align:right;">${s.val||'—'}</span>
+    </div>`).join('');
+
+    return `<div class="scan-card ${isSS?'strong':'buy'}">
+      <div class="scan-card-header">
+        <div>
+          <div class="scan-ticker">${esc(r.ticker)}</div>
+          <div class="scan-name">${esc(r.name||'')} · ${esc(r.exchange||'')} · ${esc(r.sector||'')}</div>
+        </div>
+        <div style="text-align:right;">
+          <span class="scan-signal ${isSS?'sig-strong':'sig-buy'}">${esc(r.signal||'BUY')}</span>
+          <div style="font-size:11px;font-weight:700;color:var(--or);margin-top:4px;">Score: ${r.overallScore||'—'}</div>
+        </div>
+      </div>
+
+      <div class="scan-metrics">
+        <div class="sm"><div class="sm-label">Current Price</div><div class="sm-value">AED ${price.toFixed(2)}</div></div>
+        <div class="sm"><div class="sm-label">RSI</div><div class="sm-value ${parseFloat(r.rsi)<30?'red-c':parseFloat(r.rsi)<38?'amber-c':''}">${r.rsi||'—'}</div></div>
+        <div class="sm"><div class="sm-label">Below 20D High</div><div class="sm-value red-c">−${r.pctBelow20D||'—'}%</div></div>
+        <div class="sm"><div class="sm-label">Vol Ratio</div><div class="sm-value green-c">${r.volRatio||'—'}×</div></div>
+      </div>
+
+      <div style="margin-bottom:10px;">${scoreBars}</div>
+
+      <div class="scan-levels">
+        Entry: <span>AED ${price.toFixed(2)}</span> &nbsp;·&nbsp;
+        Stop: <span class="stop-c">AED ${stopLoss}</span> &nbsp;·&nbsp;
+        Target: <span class="tgt-c">AED ${target}</span>
+        <br>Suggested: <span>${shares} shares · AED 5,000 position</span>
+      </div>
+
+      ${r.mrRationale?`<div style="font-size:11px;color:var(--t2);background:var(--bg3);border-radius:5px;padding:8px 10px;margin:8px 0;line-height:1.6;">${esc(r.mrRationale)}</div>`:''}
+      ${r.keyRisks?`<div style="font-size:10px;color:var(--amber);padding:6px 10px;background:var(--amber-bg);border-radius:5px;margin-bottom:8px;">⚠ ${esc(r.keyRisks)}</div>`:''}
+      ${r.expertConsensus?`<div style="font-size:10px;color:var(--t3);margin-bottom:8px;">📊 ${esc(r.expertConsensus)}</div>`:''}
+      ${r.sources?`<div style="font-size:9px;color:var(--t4);margin-bottom:8px;">Sources: ${esc(r.sources)}</div>`:''}
+
+      <div style="font-size:10px;color:var(--t3);margin-bottom:8px;">⚡ AI-generated signal · Prices at scan time only · Verify on ENBD before trading</div>
+      <button class="btn btn-green" style="width:100%;font-size:11px;" onclick="prefillLog('${esc(r.ticker)}','${esc(r.name||'')}','','${shares}')">+ Log Trade at actual fill price →</button>
+    </div>`;
+  }).join('');
+
+  document.getElementById('scanResults').innerHTML = macroBanner +
+    `<div style="font-size:11px;color:var(--t3);margin-bottom:1rem;">${results.length} signal${results.length!==1?'s':''} found from ${esc(String(d.scanned||''))} stocks scanned · AI-powered across geopolitical, fundamental, sector, expert and technical dimensions</div>`+
+    `<div class="scan-grid">${cards}</div>`;
+}
+
+function prefillLog(ticker, name, price, shares) {
+  document.getElementById('lt_ticker').value = ticker;
+  document.getElementById('lt_name').value = name;
+  document.getElementById('lt_price').value = '';
+  document.getElementById('lt_shares').value = shares;
+  document.getElementById('logModal').classList.add('open');
+}
+
+// ── POSITIONS ────────────────────────────────────────────────
+async function loadPositions() {
+  const el = document.getElementById('positionsContent');
+  el.innerHTML = `<div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg">Loading positions…</div></div>`;
+  try {
+    const res = await fetch(AS_URL+'?action=uae_mr_positions&v='+Date.now(), {redirect:'follow'});
+    const positions = await res.json();
+    updatePosStats(positions);
+    if(!positions.length) {
+      el.innerHTML = `<div class="empty"><div class="empty-icon">📋</div><div class="empty-title">No open positions</div><div class="empty-sub">Run the scanner to find MR entry signals,<br>then log trades here after executing on ENBD.</div></div>`;
+      return;
+    }
+    const rows = positions.map(p => {
+      const urgentTime = p.daysLeft !== null && p.daysLeft <= 5;
+      return `<tr>
+        <td><strong>${esc(p.ticker)}</strong><br><span style="font-size:10px;color:var(--t3);">${esc(p.tradeId)}</span></td>
+        <td>${esc(p.exchange||'—')}</td>
+        <td>${p.entryDate}</td>
+        <td>AED ${p.entryPrice}</td>
+        <td>${p.shares} shs<br><span style="font-size:10px;color:var(--t3);">AED ${p.positionSize}</span></td>
+        <td style="color:var(--red);">AED ${p.stopLoss}</td>
+        <td style="color:var(--green);">AED ${p.target}</td>
+        <td id="uae-live-${esc(p.ticker)}"><span style="color:var(--t3);font-size:11px;">Loading…</span></td>
+        <td id="uae-pnl-${esc(p.ticker)}">—</td>
+        <td id="uae-rec-${esc(p.ticker)}">—</td>
+        <td>${p.daysHeld}d<br>${p.daysLeft!==null?`<span class="badge ${urgentTime?'badge-warn':'badge-open'}">${p.daysLeft}d left</span>`:''}</td>
+        <td><button class="btn btn-red" style="font-size:11px;padding:5px 10px;" onclick="closeTrade('${esc(p.tradeId)}')">Close</button></td>
+      </tr>`;
+    }).join('');
+    el.innerHTML = `<div class="pos-wrap"><table class="pos-table">
+      <thead><tr>
+        <th>Ticker</th><th>Exch</th><th>Entry Date</th><th>Entry AED</th>
+        <th>Size</th><th>Stop Loss</th><th>Target</th>
+        <th>Live Price</th><th>Unrealised P&L</th><th>Signal</th>
+        <th>Days Held</th><th>Action</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>`;
+    fetchUaeLivePrices(positions);
+  } catch(e) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">⚠</div><div class="empty-title">Error</div><div class="empty-sub">${esc(e.message)}</div></div>`;
+  }
+}
+
+function updatePosStats(positions) {
+  const statsDiv = document.getElementById('posStats');
+  if(!positions.length) { statsDiv.style.display='none'; return; }
+  statsDiv.style.display='grid';
+  const deployed = positions.reduce((s,p)=>s+parseFloat(p.positionSize||0),0);
+  const avgDays  = positions.reduce((s,p)=>s+parseInt(p.daysHeld||0),0)/positions.length;
+  document.getElementById('statOpen').textContent     = positions.length;
+  document.getElementById('statDeployed').textContent = 'AED '+Math.round(deployed).toLocaleString();
+  document.getElementById('statDays').textContent     = Math.round(avgDays)+'d';
+  document.getElementById('statAvail').textContent    = 'AED '+(25000-deployed).toLocaleString();
+}
+
+// ── LIVE PRICES (Yahoo Finance) ──────────────────────────────
+async function fetchUaeLivePrices(positions) {
+  for(const p of positions) {
+    try {
+      // UAE stocks on Yahoo Finance use .AE suffix for ADX, .DU for DFM
+      const suffix = (p.exchange||'DFM')==='ADX' ? '.AE' : '.DU';
+      const yTicker = encodeURIComponent(p.ticker + suffix);
+      const res = await fetch(
+        `https://query1.finance.yahoo.com/v8/finance/chart/${yTicker}?interval=1d&range=5d`,
+        {redirect:'follow'}
+      );
+      const data = await res.json();
+      const closes = data?.chart?.result?.[0]?.indicators?.quote?.[0]?.close || [];
+      const valid  = closes.filter(c=>c!==null);
+      if(!valid.length) continue;
+      const livePrice = Math.round(valid[valid.length-1]*100)/100;
+      const entry  = parseFloat(p.entryPrice);
+      const stop   = parseFloat(p.stopLoss);
+      const target = parseFloat(p.target);
+      const shares = parseFloat(p.shares);
+      const pnlAED = Math.round((livePrice-entry)*shares*100)/100;
+      const pnlPct = Math.round(((livePrice-entry)/entry)*1000)/10;
+      const pnlClr = pnlAED >= 0 ? 'var(--green)' : 'var(--red)';
+      const daysLeft = p.daysLeft;
+
+      // Signal
+      let signal, sigClr, sigBg;
+      if(livePrice <= stop)                       { signal='🔴 STOP LOSS';    sigClr='#ef4444'; sigBg='rgba(239,68,68,0.12)'; }
+      else if(livePrice >= target)                { signal='🟢 TAKE PROFIT';  sigClr='#10b981'; sigBg='rgba(16,185,129,0.12)'; }
+      else if(daysLeft!==null && daysLeft<=3)     { signal='⏱ TIME STOP';    sigClr='#f59e0b'; sigBg='rgba(245,158,11,0.12)'; }
+      else if(pnlPct >= 4)                        { signal='🟡 TRAIL / HOLD'; sigClr='#f59e0b'; sigBg='rgba(245,158,11,0.12)'; }
+      else if(pnlPct > 0)                         { signal='🟢 HOLD';         sigClr='#10b981'; sigBg='rgba(16,185,129,0.12)'; }
+      else if(pnlPct > -2)                        { signal='⚪ HOLD';         sigClr='#9aa3b2'; sigBg='rgba(255,255,255,0.05)'; }
+      else                                        { signal='🟠 WATCH';        sigClr='#f97316'; sigBg='rgba(249,115,22,0.12)'; }
+
+      const toTarget = Math.round(((target-livePrice)/entry)*1000)/10;
+
+      const priceEl = document.getElementById('uae-live-'+p.ticker);
+      const pnlEl   = document.getElementById('uae-pnl-'+p.ticker);
+      const recEl   = document.getElementById('uae-rec-'+p.ticker);
+
+      if(priceEl) priceEl.innerHTML =
+        `<strong style="color:${pnlClr};font-size:13px;">AED ${livePrice.toFixed(2)}</strong>`+
+        `<br><span style="font-size:9px;color:var(--t3);">Stop AED ${stop} · Tgt AED ${target}</span>`;
+
+      if(pnlEl) pnlEl.innerHTML =
+        `<span style="font-weight:700;font-size:13px;color:${pnlClr};">${pnlAED>=0?'+':''}AED ${pnlAED.toFixed(2)}</span>`+
+        `<br><span style="font-size:10px;color:${pnlClr};">${pnlPct>=0?'+':''}${pnlPct}%</span>`;
+
+      if(recEl) { recEl.style.whiteSpace='nowrap';
+        recEl.innerHTML =
+        `<span style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:5px;white-space:nowrap;background:${sigBg};color:${sigClr};">${signal}</span>`+
+        `<br><span style="font-size:9px;color:var(--t3);">${signal.includes('PROFIT')||signal.includes('STOP')?'Act now':toTarget>0?toTarget+'% to target':'On track'}</span>`; }
+
+      // Update total P&L in stats
+      const curPnl = parseFloat(document.getElementById('statPnl').textContent.replace(/[^0-9.-]/g,''))||0;
+      document.getElementById('statPnl').textContent = 'AED '+(curPnl+pnlAED).toFixed(0);
+
+    } catch(e) { console.log('UAE live price error:', e.message); }
+  }
+}
+
+// ── LOG TRADE ────────────────────────────────────────────────
+async function submitLogTrade() {
+  const ticker   = document.getElementById('lt_ticker').value.trim().toUpperCase();
+  const exchange = document.getElementById('lt_exchange').value;
+  const price    = parseFloat(document.getElementById('lt_price').value);
+  const shares   = parseFloat(document.getElementById('lt_shares').value);
+  const rsi      = parseFloat(document.getElementById('lt_rsi').value)||null;
+  const name     = document.getElementById('lt_name').value.trim();
+  if(!ticker||!price||!shares){alert('Ticker, price and shares are required.');return;}
+  try {
+    const url = AS_URL+'?t='+T+'&action=uae_mr_log'
+      +'&ticker='+encodeURIComponent(ticker)
+      +'&exchange='+encodeURIComponent(exchange)
+      +'&price='+price+'&shares='+shares
+      +(rsi?'&rsi='+rsi:'')
+      +(name?'&name='+encodeURIComponent(name):'');
+    const res = await fetch(url,{redirect:'follow'});
+    const text = await res.text();
+    let d;
+    try { d = JSON.parse(text); } catch(pe) { throw new Error('Backend error: '+text.substring(0,100)); }
+    if(d.status==='logged') {
+      document.getElementById('logModal').classList.remove('open');
+      alert('✓ Trade logged!\nTrade ID: '+d.tradeId+'\nStop: AED '+d.stopLoss+' · Target: AED '+d.target+'\nTime Stop: '+d.timeStop);
+      loadPositions();
+    } else {
+      alert('Error: '+(d.message||JSON.stringify(d)));
+    }
+  } catch(e) { alert('Error: '+e.message); }
+}
+
+async function closeTrade(tradeId) {
+  const price  = prompt('Exit price for '+tradeId+' (AED):');
+  if(!price) return;
+  const reason = prompt('Exit reason (Target Hit / Stop Loss Hit / Time Stop / Manual):') || 'Manual';
+  try {
+    const res = await fetch(AS_URL+'?t='+T+'&action=uae_mr_close&tradeId='+encodeURIComponent(tradeId)+'&exitPrice='+parseFloat(price)+'&reason='+encodeURIComponent(reason),{redirect:'follow'});
+    const d = await res.json();
+    if(d.status==='closed') { alert('✓ Trade closed!\nNet P&L: AED '+d.netPnl+'\n'+d.reason); loadPositions(); }
+    else alert('Error: '+(d.message||JSON.stringify(d)));
+  } catch(e) { alert('Error: '+e.message); }
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+window.addEventListener('load', ()=>{ loadLastScan(); });
+</script>
+</body>
+</html>
