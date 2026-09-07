@@ -499,7 +499,19 @@ function renderScanResults(d) {
   }
 
   if(!Array.isArray(results) || !results.length) {
-    document.getElementById('scanResults').innerHTML = macroBanner + `<div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">No signals found</div><div class="empty-sub">No stocks currently meet all entry criteria given today's macro environment.<br>The AI scanner analysed ${esc(String(d.scanned||''))} stocks.</div></div>`;
+    const debugInfo = d.phase2Raw
+      ? `<details style="margin-top:12px;text-align:left;"><summary style="font-size:10px;color:var(--t3);cursor:pointer;">Debug: Claude raw response</summary><pre style="font-size:9px;color:var(--t3);white-space:pre-wrap;margin-top:6px;max-height:200px;overflow-y:auto;">${esc(d.phase2Raw||'')}</pre></details>`
+      : '';
+    document.getElementById('scanResults').innerHTML = macroBanner + `<div class="empty">
+      <div class="empty-icon">🔍</div>
+      <div class="empty-title">No signals found</div>
+      <div class="empty-sub">
+        Phase 1 discovered ${esc(String(d.phase1Count||d.universeSize||'0'))} stocks in the universe.<br>
+        Phase 2 found no stocks meeting all MR criteria right now.<br>
+        <span style="color:var(--t3);font-size:10px;">This is normal — means UAE markets are not oversold today.</span>
+        ${debugInfo}
+      </div>
+    </div>`;
     return;
   }
 
