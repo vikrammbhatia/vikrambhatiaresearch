@@ -42,7 +42,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
   overflow:hidden;flex-shrink:0;
 }
 .vb-mark svg{width:100%;height:100%;display:block;}
-.brand-name{font-size:12px;font-weight:600;color:#f0f2f5;letter-spacing:-0.01em;line-height:1.25;}
+.brand-name{font-size:13px;font-weight:700;color:#e67e22;letter-spacing:-0.02em;line-height:1.2;}
 .brand-sub{font-size:10px;color:#5a6478;}
 
 .sb-section{padding:16px 10px 8px;font-size:9px;font-weight:600;color:#e67e22;letter-spacing:0.08em;text-transform:uppercase;}
@@ -126,15 +126,15 @@ h1 em{font-style:normal;color:var(--or);}
 .pc.soon{opacity:0.55;pointer-events:none;}
 
 /* ── METHOD ── */
-.method{background:var(--sidebar);padding:2.5rem 2rem;margin-top:0;}
+.method{background:var(--bg);border-top:1px solid var(--bdr);padding:2rem 2rem;}
 .method-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;}
 .m-num{font-size:1.75rem;font-weight:700;color:var(--or);font-variant-numeric:tabular-nums;}
 .m-lbl{font-size:11px;color:#5a6478;margin-top:4px;line-height:1.5;}
 
 /* ── FOOTER ── */
-.footer{background:var(--surface);border-top:1px solid var(--bdr);padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;}
-.footer-l{font-size:11px;color:var(--t3);}
-.footer-r{font-size:11px;color:var(--t4);}
+.footer{background:var(--bg);border-top:1px solid var(--bdr);padding:1.5rem 2rem;}
+.footer-disc{font-size:10px;color:var(--t3);line-height:1.65;}
+
 
 @media(max-width:900px){
   .sidebar{display:none;}
@@ -278,8 +278,7 @@ h1 em{font-style:normal;color:var(--or);}
 
   <!-- FOOTER -->
   <div class="footer">
-    <div class="footer-l">© 2026 Vikram Bhatia Research Platform · For personal investment research only · Not financial advice</div>
-    <div class="footer-r">Built with Claude AI</div>
+    <div class="footer-disc">Disclaimer: This IPO, public offering, fund, stock, security, or other investment analysis is generated using an AI-powered quantitative and qualitative assessment model developed by Vikram Bhatia and is provided solely for informational and educational purposes. Nothing on this platform constitutes, or should be construed as, financial, investment, legal, tax, accounting, or other professional advice, or as an offer, solicitation, endorsement, or recommendation to apply for, subscribe to, buy, sell, or hold any security, financial product, or investment. All scores, ratings, opinions, projections, estimates, and analyses are based on publicly available information and AI-driven methodologies. While reasonable efforts may be made to use reliable information, its accuracy, completeness, timeliness, or reliability is not guaranteed. The analysis should be used only as a starting point for independent research and due diligence and does not guarantee listing gains, investment returns, or future performance. All investments involve risk, including market volatility and the potential loss of some or all invested capital. Past performance, historical data, projections, and model-generated assessments are not reliable indicators or guarantees of future results. Before making any investment decision, investors should carefully review the applicable prospectus, offering memorandum, regulatory filings, fund documents, financial statements, risk disclosures, and other official offering or investment documents relevant to their jurisdiction. Investors should also consider their individual financial circumstances, investment objectives, risk tolerance, and applicable laws and regulations, and seek advice from an appropriately qualified and licensed financial, investment, legal, and/or tax professional where necessary. The creator of the model and the creators, owners, operators, and contributors of this platform accept no responsibility or liability, to the fullest extent permitted by applicable law, for any direct or indirect loss, damage, cost, or consequence arising from any decision made or action taken in reliance on this analysis.</div>
   </div>
 
 </div>
