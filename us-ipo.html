@@ -214,12 +214,12 @@ body.has-sidebar{display:flex;min-height:100vh;background:#1c2333;}
   display:flex;flex-direction:column;
   position:fixed;top:0;left:0;bottom:0;z-index:200;overflow-y:auto;
 }
-.vsb-brand{padding:16px 14px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px;text-decoration:none;}
-.vsb-vbmark{width:36px;height:36px;flex-shrink:0;}
-.vsb-vbmark svg{width:100%;height:100%;display:block;}
-.vsb-brand-text{display:flex;flex-direction:column;gap:2px;}
-.vsb-name{font-size:13px;font-weight:700;color:#f0f2f5;letter-spacing:-0.02em;line-height:1.2;}
-.vsb-research{font-size:10px;font-weight:600;color:#e67e22;letter-spacing:0.04em;}
+.vb-brand{display:flex;align-items:center;gap:8px;padding:16px 14px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.08);}
+.vb-mark{width:38px;height:38px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.vb-mark svg{width:100%;height:100%;display:block;}
+.vb-brand-text{display:flex;flex-direction:column;gap:1px;}
+.vb-brand-name{font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:#e67e22;letter-spacing:-0.02em;line-height:1.25;}
+.vb-brand-sub{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:#e67e22;letter-spacing:0.06em;opacity:0.75;}
 .vsb-sec{padding:14px 10px 6px;font-size:9px;font-weight:600;color:#3d4a5a;letter-spacing:0.08em;text-transform:uppercase;font-family:'Inter',sans-serif;}
 .vsb-lnk{display:flex;align-items:center;gap:8px;padding:7px 12px;margin:1px 6px;border-radius:6px;font-size:11.5px;font-weight:500;color:#8892a0;text-decoration:none;transition:background 0.15s,color 0.15s;font-family:'Inter',sans-serif;}
 .vsb-lnk:hover{background:rgba(255,255,255,0.06);color:#d0d6e0;}
@@ -246,11 +246,15 @@ body.has-sidebar{display:flex;min-height:100vh;background:#1c2333;}
 </head>
 <body class="has-sidebar">
 <aside class="vb-sidebar">
-  <a class="vsb-brand" href="/">
-    <div class="vsb-vbmark"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="36" rx="7" fill="#0f1623"/><text x="18" y="26" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="800" fill="#e67e22" text-anchor="middle" letter-spacing="-1">VB</text></svg></div>
-    <div class="vsb-brand-text">
-      <div class="vsb-name">Vikram Bhatia</div>
-      <div class="vsb-research">Research</div>
+    <a class="vb-brand" href="/">
+    <div class="vb-mark">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <text x="20" y="29" font-family="Inter,Arial,sans-serif" font-size="22" font-weight="800" fill="#e67e22" text-anchor="middle" letter-spacing="-1">VB</text>
+      </svg>
+    </div>
+    <div class="vb-brand-text">
+      <div class="vb-brand-name">Vikram Bhatia</div>
+      <div class="vb-brand-sub">Research</div>
     </div>
   </a>
   <a class="vsb-lnk" href="/"><span class="vsb-icon">⌂</span>Home</a>
