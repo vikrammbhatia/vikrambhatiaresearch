@@ -229,8 +229,8 @@ label{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;le
 
   <div class="scanner-header">
     <div class="scanner-info">
-      AI-powered dynamic scan across DFM/ADX markets — universe selected fresh each scan.
-      <small>Analyses geopolitics · fundamentals · sector trends · Arabic &amp; English expert opinions · technical signals · All in one scan (~3-5 min)</small>
+      3-phase scanner: Claude selects universe → Yahoo Finance fetches real prices → Claude enriches with geo/expert analysis.
+      <small>Phase 1 (~15s): Claude dynamic universe · Phase 2 (~30s): Real Yahoo Finance data · Phase 3 (~40s): Claude AI enrichment</small>
     </div>
     <div class="btn-row">
       <button class="btn btn-ghost" id="loadScanBtn" onclick="loadLastScan()">Load Last Scan</button>
@@ -456,17 +456,69 @@ function switchTab(id, el) {
 // ── SCANNER ──────────────────────────────────────────────────
 async function runScan() {
   const btn = document.getElementById('runScanBtn');
-  btn.disabled = true; btn.textContent = 'Scanning… (~2 min)';
-  document.getElementById('scanResults').innerHTML = `<div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg">Scanning 30 UAE large-cap stocks via Yahoo Finance… this takes ~2 minutes</div></div>`;
+  const loadBtn = document.getElementById('loadScanBtn');
+  btn.disabled = true; loadBtn.disabled = true;
+  btn.textContent = 'Phase 1+2 running…';
+
+  const el = document.getElementById('scanResults');
+
+  // PHASE 1+2: Claude universe + Yahoo Finance technical scan
+  el.innerHTML = `<div class="loader"><div class="loader-track"><div class="loader-fill"></div></div>
+    <div class="loader-msg">Phase 1 — Claude selecting dynamic universe (~15s)…<br>
+    Phase 2 — Yahoo Finance scanning each stock for RSI, 20D high, 200D MA (~30s)…</div></div>`;
+
   try {
     const res = await fetch(AS_URL+'?action=uae_mr_scan&v='+Date.now(), {redirect:'follow'});
-    const d = await res.json();
-    renderScanResults(d);
+    const text = await res.text();
+    let d;
+    try { d = JSON.parse(text); } catch(pe) { throw new Error(text.substring(0,200)); }
+
+    if(d.error) throw new Error(d.error);
     if(d.lastScan) document.getElementById('scanUpdated').textContent = 'Last scan: '+d.lastScan;
+
+    // If no candidates, just show empty with macro context
+    if(!d.results || !d.results.length) {
+      renderScanResults(d);
+      btn.disabled = false; loadBtn.disabled = false;
+      btn.textContent = 'Run New Scan ↗';
+      return;
+    }
+
+    // Show technical results immediately
+    renderScanResults(d);
+    btn.textContent = 'Phase 3 — AI enriching…';
+
+    // PHASE 3: Claude enrichment in background
+    el.insertAdjacentHTML('afterbegin', `<div id="enrichBanner" style="background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.3);border-radius:8px;padding:10px 14px;margin-bottom:1rem;font-size:12px;color:var(--blue);">
+      <div class="loader-track" style="margin-bottom:6px;"><div class="loader-fill"></div></div>
+      ⚡ Phase 3 — Claude AI enriching candidates with geopolitical, fundamental and expert analysis (~40s)…
+    </div>`);
+
+    try {
+      const eRes = await fetch(AS_URL+'?action=uae_mr_enrich&v='+Date.now(), {redirect:'follow'});
+      const eText = await eRes.text();
+      let ed;
+      try { ed = JSON.parse(eText); } catch(pe) { throw new Error(eText.substring(0,200)); }
+
+      if(ed.results && ed.results.length) {
+        // Merge enriched data into existing results and re-render
+        renderScanResults({...d, results: ed.results,
+          macroContext: ed.macroContext||d.macroContext,
+          geoAlert: ed.geoAlert||d.geoAlert});
+      } else {
+        const banner = document.getElementById('enrichBanner');
+        if(banner) banner.innerHTML = '<span style="color:var(--amber);">AI enrichment complete — scores updated.</span>';
+      }
+    } catch(enrichErr) {
+      const banner = document.getElementById('enrichBanner');
+      if(banner) banner.innerHTML = `<span style="color:var(--amber);">AI enrichment unavailable — showing technical signals only. (${esc(enrichErr.message)})</span>`;
+    }
+
   } catch(e) {
-    document.getElementById('scanResults').innerHTML = `<div class="empty"><div class="empty-icon">⚠</div><div class="empty-title">Scan failed</div><div class="empty-sub">${esc(e.message)}</div></div>`;
+    el.innerHTML = `<div class="empty"><div class="empty-icon">⚠</div><div class="empty-title">Scan failed</div><div class="empty-sub">${esc(e.message)}</div></div>`;
   } finally {
-    btn.disabled = false; btn.textContent = 'Run New Scan ↗';
+    btn.disabled = false; loadBtn.disabled = false;
+    btn.textContent = 'Run New Scan ↗';
   }
 }
 
@@ -475,7 +527,9 @@ async function loadLastScan() {
   btn.disabled = true; btn.textContent = 'Loading…';
   try {
     const res = await fetch(AS_URL+'?action=uae_mr_results&v='+Date.now(), {redirect:'follow'});
-    const d = await res.json();
+    const text = await res.text();
+    let d;
+    try { d = JSON.parse(text); } catch(pe) { throw new Error(text.substring(0,200)); }
     renderScanResults(d);
     if(d.lastScan) document.getElementById('scanUpdated').textContent = 'Last scan: '+d.lastScan;
   } catch(e) {
