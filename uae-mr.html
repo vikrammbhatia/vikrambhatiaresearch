@@ -509,7 +509,7 @@ function renderScanResults(d) {
         Phase 1 discovered ${esc(String(d.phase1Count||d.universeSize||'0'))} stocks in the universe.<br>
         Phase 2 found no stocks meeting all MR criteria right now.<br>
         <span style="color:var(--t3);font-size:10px;">This is normal — means UAE markets are not oversold today.</span>
-        ${errInfo}${debugInfo}
+        ${d.error?"<div style='font-size:11px;color:var(--red);margin-top:8px;'>Error: "+esc(d.error)+"</div>":""}${debugInfo}
       </div>
     </div>`;
     return;
