@@ -46,9 +46,9 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 
 /* ── LAYOUT ── */
 .layout{display:flex;flex:1;min-height:0;}
-.sidebar-list{width:260px;flex-shrink:0;border-left:1px solid var(--bdr);background:var(--surface);overflow-y:auto;display:flex;flex-direction:column;}
-.sl-header{padding:12px 14px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;}
-.sl-title{font-size:11px;font-weight:600;color:var(--text);}
+.sidebar-list{width:300px;flex-shrink:0;border-left:1px solid #2e3a50;background:#1c2333;overflow-y:auto;display:flex;flex-direction:column;}
+.sl-header{padding:12px 14px;border-bottom:1px solid #2e3a50;display:flex;align-items:center;justify-content:space-between;background:#1c2333;}
+.sl-title{font-size:11px;font-weight:700;color:#e67e22;letter-spacing:0.04em;text-transform:uppercase;}
 .sl-refresh{font-size:10px;color:var(--or);cursor:pointer;text-decoration:none;background:none;border:none;font-family:'Inter',sans-serif;font-weight:500;}
 .sl-item{padding:10px 14px;border-bottom:1px solid #f0eeea;cursor:pointer;transition:background 0.1s;}
 .sl-item:hover{background:#232d40;}
@@ -175,6 +175,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
   .proj-grid{grid-template-columns:repeat(2,1fr);}
   .pc-grid{grid-template-columns:1fr;}
 }
+.pg-header{font-size:18px;font-weight:700;color:#e67e22;font-family:'Inter',sans-serif;padding:1.25rem 1.5rem 0.75rem;letter-spacing:-0.01em;}
 </style>
 </head>
 <body>
@@ -202,19 +203,14 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
   <a class="vsb-lnk" href="/us-ipo"><span class="vsb-icon">📊</span>IPO Intelligence</a>
   <a class="vsb-lnk" href="/us-mr"><span class="vsb-icon">📈</span>MR Compass</a>
   <a class="vsb-lnk" href="/us-markets"><span class="vsb-icon">🔭</span>Market Pulse</a>
-  <div class="vsb-bottom"><div class="vsb-meta">© 2026 Vikram Bhatia<br>Personal research only</div></div>
+  </div>
 </aside>
 
 <!-- MAIN COLUMN -->
 <div class="vb-maincol">
 
   <!-- TOPBAR -->
-  <div class="vb-topbar">
-    <div>
-      <div class="vb-topbar-title">India NFO Analyser</div>
-      <div class="vb-topbar-sub">Mutual Funds · New Fund Offerings · AI-powered scoring</div>
-    </div>
-  </div>
+  <div class="pg-header">India NFO Analyser</div>
 
   <!-- INNER LAYOUT -->
   <div class="layout">
