@@ -47,14 +47,14 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 /* ── LAYOUT ── */
 .layout{display:flex;flex:1;min-height:0;}
 .sidebar-list{width:300px;flex-shrink:0;border-left:1px solid #2e3a50;background:#1c2333;overflow-y:auto;display:flex;flex-direction:column;}
-.sl-header{padding:12px 14px;border-bottom:1px solid #2e3a50;display:flex;align-items:center;justify-content:space-between;background:#1c2333;}
-.sl-title{font-size:11px;font-weight:700;color:#e67e22;letter-spacing:0.04em;text-transform:uppercase;}
-.sl-refresh{font-size:10px;color:var(--or);cursor:pointer;text-decoration:none;background:none;border:none;font-family:'Inter',sans-serif;font-weight:500;}
-.sl-item{padding:10px 14px;border-bottom:1px solid #f0eeea;cursor:pointer;transition:background 0.1s;}
+.sl-header{padding:14px 14px 10px;border-bottom:1px solid #2e3a50;display:flex;align-items:center;justify-content:space-between;background:#1c2333;}
+.sl-title{font-size:11px;font-weight:700;color:#e67e22;letter-spacing:0.06em;text-transform:uppercase;}
+.sl-refresh{font-size:11px;color:#e67e22;cursor:pointer;background:none;border:none;font-family:inherit;padding:4px 10px;border-radius:5px;border:1px solid #2e3a50;}
+.sl-item{background:#232d40;border:1px solid #2e3a50;border-radius:7px;padding:11px 13px;margin:0 8px 8px;cursor:pointer;transition:background 0.15s;}
 .sl-item:hover{background:#232d40;}
-.sl-item.active{background:rgba(230,126,34,0.12);border-left:3px solid var(--or);}
-.sl-name{font-size:11.5px;font-weight:600;color:var(--text);margin-bottom:2px;line-height:1.4;}
-.sl-meta{font-size:10px;color:var(--t3);}
+.sl-item.active{background:rgba(230,126,34,0.1);border:1px solid #e67e22;border-radius:7px;}
+.sl-name{font-size:12px;font-weight:600;color:#f0f2f5;margin-bottom:3px;line-height:1.3;}
+.sl-meta{font-size:10px;color:#9aa3b2;margin-top:2px;}
 .sl-score{font-size:11px;font-weight:700;}
 .sl-empty{padding:2rem 1rem;text-align:center;color:var(--t3);font-size:12px;}
 
@@ -169,7 +169,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 @media(max-width:900px){
   .vb-sidebar{display:none;}
   .vb-maincol{margin-left:0;}
-  .sidebar-list{display:none;}
+  .sidebar-list{width:300px;flex-shrink:0;border-left:1px solid #2e3a50;background:#1c2333;overflow-y:auto;display:flex;flex-direction:column;}
   .metrics-grid{grid-template-columns:repeat(2,1fr);}
   .scores-grid{grid-template-columns:1fr;}
   .proj-grid{grid-template-columns:repeat(2,1fr);}
