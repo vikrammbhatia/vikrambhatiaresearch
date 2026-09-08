@@ -45,8 +45,9 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 .vb-topbar-sub{font-size:10px;color:var(--t3);}
 
 /* ── LAYOUT ── */
-.layout{display:flex;flex:1;min-height:0;}
-.sidebar-list{width:300px;flex-shrink:0;border-left:1px solid #2e3a50;background:#1c2333;overflow-y:auto;display:flex;flex-direction:column;}
+.nfo-main-col{flex:1;min-width:0;padding:0;}
+.layout{display:flex;flex-direction:row;min-height:100vh;width:100%;overflow:visible;}
+.sidebar-list{width:300px;min-width:300px;padding:0;border-left:1px solid #2e3a50;height:100vh;position:sticky;top:0;overflow-y:auto;background:#1c2333;display:flex;flex-direction:column;}
 .sl-header{padding:14px 14px 10px;border-bottom:1px solid #2e3a50;display:flex;align-items:center;justify-content:space-between;background:#1c2333;}
 .sl-title{font-size:11px;font-weight:700;color:#e67e22;letter-spacing:0.06em;text-transform:uppercase;}
 .sl-refresh{font-size:11px;color:#e67e22;cursor:pointer;background:none;border:none;font-family:inherit;padding:4px 10px;border-radius:5px;border:1px solid #2e3a50;}
@@ -77,10 +78,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 .loader-msg{font-size:12px;color:var(--t3);}
 
 /* ── HERO CARD ── */
-.hero-card{background:var(--surface);border:1px solid var(--bdr);border-radius:12px;padding:20px 24px;margin-bottom:14px;display:flex;align-items:flex-start;gap:20px;}
+.hero-card{background:#232d40;border:1px solid #2e3a50;border-radius:10px;padding:20px 24px;margin-bottom:1.25rem;}
 .hero-left{flex:1;min-width:0;}
-.hero-name{font-size:18px;font-weight:700;color:var(--text);margin-bottom:3px;letter-spacing:-0.02em;}
-.hero-amc{font-size:12px;color:var(--t2);margin-bottom:10px;}
+.hero-name{font-size:16px;font-weight:700;color:#f0f2f5;margin-bottom:4px;}
+.hero-amc{font-size:12px;color:#9aa3b2;margin-bottom:10px;}
 .hero-badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
 .badge{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;}
 .badge-cat{background:var(--blue-bg);color:var(--blue);}
@@ -169,13 +170,20 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 @media(max-width:900px){
   .vb-sidebar{display:none;}
   .vb-maincol{margin-left:0;}
-  .sidebar-list{width:300px;flex-shrink:0;border-left:1px solid #2e3a50;background:#1c2333;overflow-y:auto;display:flex;flex-direction:column;}
+  .sidebar-list{width:300px;min-width:300px;padding:0;border-left:1px solid #2e3a50;height:100vh;position:sticky;top:0;overflow-y:auto;background:#1c2333;display:flex;flex-direction:column;}
   .metrics-grid{grid-template-columns:repeat(2,1fr);}
   .scores-grid{grid-template-columns:1fr;}
   .proj-grid{grid-template-columns:repeat(2,1fr);}
   .pc-grid{grid-template-columns:1fr;}
 }
 .pg-header{font-size:18px;font-weight:700;color:#e67e22;font-family:'Inter',sans-serif;padding:1.25rem 1.5rem 0.75rem;letter-spacing:-0.01em;}
+
+@keyframes pulse-red{0%,100%{border-color:#ef4444;box-shadow:0 0 0 0 rgba(239,68,68,0.4);}50%{border-color:#ef4444;box-shadow:0 0 0 4px rgba(239,68,68,0);}}
+@keyframes pulse-amber{0%,100%{border-color:#f59e0b;box-shadow:0 0 0 0 rgba(245,158,11,0.4);}50%{border-color:#f59e0b;box-shadow:0 0 0 4px rgba(245,158,11,0);}}
+.nfo-urgent-close{animation:pulse-red 1.5s infinite;border-color:#ef4444!important;}
+.nfo-urgent-close .sl-name{color:#ef4444!important;}
+.nfo-urgent-soon{animation:pulse-amber 2s infinite;border-color:#f59e0b!important;}
+.nfo-urgent-close::before{content:'⚡ CLOSING TODAY';display:block;font-size:8px;font-weight:700;color:#ef4444;letter-spacing:0.05em;margin-bottom:4px;}
 </style>
 </head>
 <body>
@@ -203,21 +211,18 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
   <a class="vsb-lnk" href="/us-ipo"><span class="vsb-icon">📊</span>IPO Intelligence</a>
   <a class="vsb-lnk" href="/us-mr"><span class="vsb-icon">📈</span>MR Compass</a>
   <a class="vsb-lnk" href="/us-markets"><span class="vsb-icon">🔭</span>Market Pulse</a>
-  </div>
 </aside>
 
 <!-- MAIN COLUMN -->
 <div class="vb-maincol">
 
   <!-- TOPBAR -->
-  <div class="pg-header">India NFO Analyser</div>
-
   <!-- INNER LAYOUT -->
   <div class="layout">
 
     <!-- SEARCH + CONTENT -->
-    <div style="flex:1;min-width:0;display:flex;flex-direction:column;">
-
+    <div class="nfo-main-col">
+      <div class="pg-header">India NFO Analyser</div>
       <!-- SEARCH -->
       <div class="search-area">
         <div class="search-row">
@@ -238,7 +243,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
     </div>
 
     <!-- NFO LIST SIDEBAR (RIGHT) -->
-    <div class="sidebar-list">
+    <div class="sidebar-list" id="nfoSidePanel">
       <div class="sl-header">
         <div class="sl-title">Open NFOs</div>
         <button class="sl-refresh" onclick="refreshNfoList()">↻ Refresh</button>
@@ -271,7 +276,11 @@ async function loadNfoList() {
     el.innerHTML = nfos.map(n => {
       const scoreClr = !n.score ? 'var(--t3)' : n.score>=65?'#065f46':n.score>=50?'#92400e':'#b91c1c';
       const recLabel = n.recommendation ? ` · ${n.recommendation}` : '';
-      return `<div class="sl-item" onclick="loadNfo('${esc(n.name)}')">
+      const today = new Date().toISOString().split('T')[0];
+      const closingToday = n.closeDate && n.closeDate.slice(0,10) === today;
+      const closingSoon  = n.closeDate && !closingToday && (new Date(n.closeDate) - new Date()) < 3*86400000;
+      const urgentClass  = closingToday ? 'nfo-urgent-close' : closingSoon ? 'nfo-urgent-soon' : '';
+      return `<div class="sl-item ${urgentClass}" onclick="loadNfo('${esc(n.name)}')">
         <div class="sl-name">${esc(n.name)}</div>
         <div class="sl-meta" style="display:flex;justify-content:space-between;">
           <span>${esc(n.category||'')}</span>
@@ -386,9 +395,9 @@ function render(d) {
     (expRetNum < 1 && expRetNum > 0 ? (expRetNum * 100).toFixed(1) + '%' : expRetNum + '%');
 
   // Score colour
-  const scoreClr = score>=65 ? '#065f46' : score>=50 ? '#92400e' : '#b91c1c';
-  const scoreBdr = score>=65 ? '#6ee7b7' : score>=50 ? '#fcd34d' : '#fca5a5';
-  const scoreBg  = score>=65 ? '#ecfdf5' : score>=50 ? '#fffbeb' : '#fef2f2';
+  const scoreClr = score>=65 ? '#10b981' : score>=50 ? '#f59e0b' : '#ef4444';
+  const scoreBdr = score>=65 ? 'rgba(16,185,129,0.4)' : score>=50 ? 'rgba(245,158,11,0.4)' : 'rgba(239,68,68,0.4)';
+  const scoreBg  = score>=65 ? 'rgba(16,185,129,0.1)' : score>=50 ? 'rgba(245,158,11,0.1)' : 'rgba(239,68,68,0.1)';
 
   // Verdict class
   const verdictCls = rec.includes('strong buy') || rec.includes('strong') ? 'strong-buy'
