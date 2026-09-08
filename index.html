@@ -122,6 +122,35 @@ h1 em{font-style:normal;color:var(--or);}
 .pc:hover .pc-arrow{color:var(--or);transform:translate(3px,-3px);}
 .pc.soon{opacity:0.55;pointer-events:none;}
 
+
+/* ── CHARTS ── */
+.charts-section{padding:2rem 2rem 0;}
+.charts-title{font-size:14px;font-weight:700;color:var(--or);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:1rem;}
+.charts-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.chart-card{background:var(--surface);border:1px solid var(--bdr);border-radius:10px;padding:16px 18px;}
+.chart-card-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.chart-card-sub{font-size:10px;color:var(--t2);margin-bottom:14px;}
+.bar-chart{display:flex;flex-direction:column;gap:8px;}
+.bar-row{display:flex;align-items:center;gap:8px;}
+.bar-label{font-size:10px;color:var(--t2);width:140px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bar-wrap{flex:1;height:8px;background:var(--bdr);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;transition:width 1s ease;}
+.bar-val{font-size:10px;font-weight:700;color:var(--text);width:50px;text-align:right;flex-shrink:0;}
+.donut-wrap{display:flex;align-items:center;gap:16px;}
+.donut-svg{width:110px;flex-shrink:0;}
+.donut-legend{display:flex;flex-direction:column;gap:6px;}
+.donut-leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--t2);}
+.donut-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.donut-note{font-size:9px;color:var(--t3);margin-top:4px;}
+.chart-footnote{font-size:9px;color:var(--t3);margin-top:12px;border-top:1px solid var(--bdr);padding-top:8px;}
+.pos-mini-list{display:flex;flex-direction:column;gap:6px;}
+.pos-mini-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--bdr);}
+.pos-mini-row:last-child{border-bottom:none;}
+.pos-mini-ticker{font-size:12px;font-weight:700;color:var(--text);font-family:monospace;width:50px;}
+.pos-mini-entry{font-size:11px;color:var(--t2);}
+.pos-mini-sig{font-size:10px;font-weight:600;}
+@media(max-width:900px){.charts-grid{grid-template-columns:1fr 1fr;}}
+
 /* ── METHOD ── */
 .method{background:var(--bg);border-top:1px solid var(--bdr);padding:2rem 2rem;}
 .method-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;}
@@ -155,7 +184,6 @@ h1 em{font-style:normal;color:var(--or);}
     <div class="vb-brand-name">Vikram Bhatia Research</div>
   </a>
 
-  <div class="sb-section">Navigation</div>
   <a class="sb-link active" href="/"><span class="sb-icon">⌂</span><span class="sb-label">Home</span></a>
 
   <div class="sb-section">India</div>
@@ -191,6 +219,74 @@ h1 em{font-style:normal;color:var(--or);}
     <div class="stat-item"><div class="stat-num">89%</div><div class="stat-lbl">Direction accuracy — India IPO engine</div></div>
     <div class="stat-item"><div class="stat-num">3</div><div class="stat-lbl">Markets — NSE · DFM · NYSE · NASDAQ</div></div>
     <div class="stat-item"><div class="stat-num">Live</div><div class="stat-lbl">USA MR Compass — Cycle 1 active</div></div>
+  </div>
+
+
+  <!-- CHARTS -->
+  <div class="charts-section">
+    <div class="charts-title">Platform Performance</div>
+    <div class="charts-grid">
+
+      <!-- Chart 1: India IPO Avg Listing Premium by category -->
+      <div class="chart-card">
+        <div class="chart-card-title">India IPO Avg Listing Premium</div>
+        <div class="chart-card-sub">By recommendation tier · Last 47 IPOs analysed</div>
+        <div class="bar-chart">
+          <div class="bar-row"><div class="bar-label">Strong Subscribe</div><div class="bar-wrap"><div class="bar-fill" style="width:78%;background:#22c55e;"></div></div><div class="bar-val">+38.4%</div></div>
+          <div class="bar-row"><div class="bar-label">Subscribe</div><div class="bar-wrap"><div class="bar-fill" style="width:52%;background:#86efac;"></div></div><div class="bar-val">+19.2%</div></div>
+          <div class="bar-row"><div class="bar-label">Subscribe with Caution</div><div class="bar-wrap"><div class="bar-fill" style="width:28%;background:#f59e0b;"></div></div><div class="bar-val">+8.1%</div></div>
+          <div class="bar-row"><div class="bar-label">Avoid</div><div class="bar-wrap"><div class="bar-fill" style="width:14%;background:#ef4444;"></div></div><div class="bar-val">−4.2%</div></div>
+        </div>
+      </div>
+
+      <!-- Chart 2: Model direction accuracy -->
+      <div class="chart-card">
+        <div class="chart-card-title">Model Direction Accuracy</div>
+        <div class="chart-card-sub">Listing day prediction vs actual outcome</div>
+        <div class="donut-wrap">
+          <svg viewBox="0 0 120 120" class="donut-svg">
+            <circle cx="60" cy="60" r="46" fill="none" stroke="#2e3a50" stroke-width="14"/>
+            <circle cx="60" cy="60" r="46" fill="none" stroke="#e67e22" stroke-width="14"
+              stroke-dasharray="259 71" stroke-dashoffset="0" stroke-linecap="round"
+              transform="rotate(-90 60 60)"/>
+            <text x="60" y="55" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="800" fill="#e67e22">89%</text>
+            <text x="60" y="72" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a6478">accuracy</text>
+          </svg>
+          <div class="donut-legend">
+            <div class="donut-leg-item"><span class="donut-dot" style="background:#e67e22;"></span>Correct direction 89%</div>
+            <div class="donut-leg-item"><span class="donut-dot" style="background:#2e3a50;"></span>Missed 11%</div>
+            <div class="donut-note">Backtested on India IPO engine</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart 3: India MR Compass cycle P&L -->
+      <div class="chart-card">
+        <div class="chart-card-title">India MR Compass — Cycle P&amp;L</div>
+        <div class="chart-card-sub">Net P&amp;L per completed cycle · ₹ corpus</div>
+        <div class="bar-chart">
+          <div class="bar-row"><div class="bar-label">Cycle 1 · 9/11 wins</div><div class="bar-wrap"><div class="bar-fill" style="width:53%;background:#22c55e;"></div></div><div class="bar-val">₹14,534</div></div>
+          <div class="bar-row"><div class="bar-label">Cycle 2 · 9/10 wins</div><div class="bar-wrap"><div class="bar-fill" style="width:100%;background:#22c55e;"></div></div><div class="bar-val">₹27,382</div></div>
+          <div class="bar-row"><div class="bar-label">Cycle 3 · 2/3 wins</div><div class="bar-wrap"><div class="bar-fill" style="width:9%;background:#86efac;"></div></div><div class="bar-val">₹2,289</div></div>
+        </div>
+        <div class="chart-footnote">83.3% win rate · 4.12× profit factor · ₹1,842 avg expectancy</div>
+      </div>
+
+      <!-- Chart 4: MR win rate sparkline -->
+      <div class="chart-card">
+        <div class="chart-card-title">USA MR Compass — Live Positions</div>
+        <div class="chart-card-sub">Cycle 1 · S&amp;P 500 large caps</div>
+        <div class="pos-mini-list">
+          <div class="pos-mini-row"><span class="pos-mini-ticker">AMZN</span><span class="pos-mini-entry">$254.98</span><span class="pos-mini-sig" style="color:#10b981;">🟢 HOLD</span></div>
+          <div class="pos-mini-row"><span class="pos-mini-ticker">AMD</span><span class="pos-mini-entry">$453.01</span><span class="pos-mini-sig" style="color:#f59e0b;">🟡 WATCH</span></div>
+          <div class="pos-mini-row"><span class="pos-mini-ticker">TXN</span><span class="pos-mini-entry">$250.92</span><span class="pos-mini-sig" style="color:#10b981;">🟢 HOLD</span></div>
+          <div class="pos-mini-row"><span class="pos-mini-ticker">GE</span><span class="pos-mini-entry">$329.56</span><span class="pos-mini-sig" style="color:#10b981;">🟢 HOLD</span></div>
+          <div class="pos-mini-row"><span class="pos-mini-ticker">INTC</span><span class="pos-mini-entry">$89.30</span><span class="pos-mini-sig" style="color:#f97316;">🟠 WATCH</span></div>
+        </div>
+        <div class="chart-footnote">Live signals refresh on each scan</div>
+      </div>
+
+    </div>
   </div>
 
   <!-- PORTALS -->

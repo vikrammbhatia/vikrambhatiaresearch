@@ -11,8 +11,8 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 .vb-maincol{
   --or:#f97316;--or2:#c2540a;
-  --bg:#080808;--bg2:#0d0d0d;--bg3:#141414;--bg4:#1c1c1c;--bg5:#222;
-  --b1:#1e1e1e;--b2:#2a2a2a;--b3:#333;
+  --bg:#1c2333;--bg2:#232d40;--bg3:#2a3550;--bg4:#1e2a3a;--bg5:#28344a;
+  --b1:#2e3a50;--b2:#3a4a62;--b3:#4a5a72;
   --t1:#efefef;--t2:#888;--t3:#555;--t4:#333;
   --green:#22c55e;--amber:#f59e0b;--red:#ef4444;--blue:#3b82f6;--purple:#a855f7;--pink:#ec4899;
   --green-bg:#061209;--green-bd:#14532d;
@@ -238,7 +238,7 @@ html,html{overflow-y:auto;} body{font-family:'DM Sans',sans-serif;background:#1c
 .vsb-bottom{margin-top:auto;padding:12px 10px;border-top:1px solid rgba(255,255,255,0.06);}
 .vsb-meta{font-size:9.5px;color:#3d4a5a;line-height:1.6;font-family:'Inter',sans-serif;}
 /* Topbar inside portal */
-.vb-topbar{background:#1c2333;border-bottom:1px solid #2a3350;padding:0 1.5rem;height:50px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.vb-topbar{background:#1c2333;border-bottom:1px solid #2e3a50;padding:0 1.5rem;height:50px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .vb-topbar-title{font-size:13px;font-weight:700;color:#f0f2f5;font-family:'Inter',sans-serif;}
 .vb-topbar-sub{font-size:10px;color:#5a6478;font-family:'Inter',sans-serif;}
 /* Main column — sits next to sidebar */
@@ -270,20 +270,14 @@ body.has-sidebar{display:flex;min-height:100vh;background:#1c2333;}
   <a class="vsb-lnk" href="/us-ipo"><span class="vsb-icon">📊</span>IPO Intelligence</a>
   <a class="vsb-lnk" href="/us-mr"><span class="vsb-icon">📈</span>MR Compass</a>
   <a class="vsb-lnk" href="/us-markets"><span class="vsb-icon">🔭</span>Market Pulse</a>
-  <div class="vsb-bottom"><div class="vsb-meta">© 2026 Vikram Bhatia<br>Personal research only</div></div>
+  
 </aside>
 <div class="vb-maincol">
-<div class="vb-topbar">
-  <div><div class="vb-topbar-title">India IPO Intelligence</div><div class="vb-topbar-sub">NSE · BSE</div></div>
-</div>
+
 <div class="page">
 
   <!-- MAIN -->
   <div class="main-col">
-    <div class="ph-title">India IPO Intelligence</div>
-    <div class="ph-sub-orange">by Vikram Bhatia</div>
-    <div class="ph-sub">AI-powered analysis using live data, quantitative scoring and qualitative assessment &nbsp;·&nbsp; </div>
-
     <div class="search-row">
       <input type="text" id="ipoInput" placeholder="Enter IPO name, e.g. Nitin Castings, Ardee Industries…" onkeydown="if(event.key==='Enter')analyse()"/>
       <button class="btn-go" id="goBtn" onclick="analyse()">Analyse ↗</button>
