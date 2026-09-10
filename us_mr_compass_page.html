@@ -374,7 +374,7 @@ function signalCard(r){
   // direction implied) to the earnings warning when available. Purely
   // informational context — does not change the signal or sizing.
   const impliedMoveText = r.impliedMovePct ? ` · market pricing in ±${r.impliedMovePct}% move` : '';
-  const earningsWarn=r.daysToEarnings!==null&&r.daysToEarnings!==undefined&&r.daysToEarnings<=10
+  const earningsWarn=r.daysToEarnings!==null&&r.daysToEarnings!==undefined&&r.daysToEarnings>=0&&r.daysToEarnings<=10
     ?`<div class="earnings-warn">⚠ Earnings in ${r.daysToEarnings} days${impliedMoveText} — wait for post-earnings entry</div>`:'';
   const pos=Array.isArray(r.positives)?r.positives:String(r.notes||'').split(' | ').filter(Boolean);
   return `<div class="signal-card ${cls}">
