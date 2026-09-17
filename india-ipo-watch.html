@@ -498,21 +498,23 @@ function renderResult(d){
     <!-- Three buckets -->
     <div class="buckets-row">
       ${buckets.map(b => {
-        const bsc  = parseInt(d[b.scoreKey])||0;
-        const bsig = d[b.sigKey]||'—';
-        const bsigUp = bsig.toUpperCase().trim();
-        const bclr = (bsigUp.includes('BUY')) ? '#22c55e'
-          : (bsigUp.includes('WATCH')) ? '#f59e0b'
+        const bsc   = parseInt(d[b.scoreKey])||0;
+        const bsig  = (d[b.sigKey]||'').trim();
+        const bsigUp = bsig.toUpperCase();
+        const hasSignal = bsig && bsig !== '—';
+        const bclr  = !hasSignal ? '#5a6478'
+          : bsigUp.includes('BUY')  ? '#22c55e'
+          : bsigUp.includes('WATCH') ? '#f59e0b'
           : (bsigUp.includes('PASS')||bsigUp.includes('AVOID')) ? '#ef4444'
-          : scoreColor(bsc);
+          : '#9aa3b2';
         const entry = d[b.entryKey]||'—';
-        const tgt  = d[b.targetKey]||'—';
-        const stp  = d[b.stopKey]||'—';
-        return `<div class="bucket-card">
+        const tgt   = d[b.targetKey]||'—';
+        const stp   = d[b.stopKey]||'—';
+        return `<div class="bucket-card" style="border-color:${hasSignal?bclr:'#2e3a50'};">
           <div class="bucket-label">${b.label}</div>
           <div class="bucket-horizon">${b.horizon}</div>
-          <div class="bucket-signal" style="color:${bclr};">${esc(bsig)}</div>
-          <div style="font-size:11px;color:#5a6478;margin-bottom:10px;">${bsc}/100</div>
+          <div class="bucket-signal" style="color:${bclr};">${hasSignal ? esc(bsig) : '<span style="color:#3d4a5a;font-size:12px;font-weight:500;">Run scan for signal</span>'}</div>
+          <div style="font-size:11px;color:#5a6478;margin-bottom:10px;">${bsc ? bsc+'/100' : ''}</div>
           <div class="bucket-rows">
             <div class="bucket-row"><span class="bucket-row-lbl">Entry</span><span class="bucket-row-val">₹${esc(String(entry))}</span></div>
             <div class="bucket-row"><span class="bucket-row-lbl">Target</span><span class="bucket-row-val green">₹${esc(String(tgt))}${(parseFloat(tgt)>0&&parseFloat(entry)>0)?` <span style="font-size:10px;opacity:0.8;">(+${Math.round((parseFloat(tgt)-parseFloat(entry))/parseFloat(entry)*100)}%)</span>`:''}</span></div>
