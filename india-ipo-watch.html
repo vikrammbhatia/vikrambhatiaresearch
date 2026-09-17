@@ -427,12 +427,15 @@ async function runScan(){
 
     const r2 = await fetch(AS_URL+'?action=watch_scan_enrich&t='+T+'&name='+encodeURIComponent(name)+'&v='+Date.now(), {redirect:'follow'});
     const t2 = await r2.text();
+    console.log('Phase 2 raw response (first 500):', t2.substring(0,500));
     let d2;
     try { d2 = JSON.parse(t2); } catch(e){ throw new Error(t2.substring(0,200)); }
     if(d2.error) throw new Error(d2.error);
+    console.log('Phase 2 parsed - stSignal:', d2.stSignal, 'mtSignal:', d2.mtSignal, 'ltSignal:', d2.ltSignal);
 
     // Merge Phase 1 + Phase 2
     const merged = Object.assign({}, d1, d2, {hasData:true, lastScanned: new Date().toLocaleDateString('en-IN',{timeZone:'Asia/Kolkata',day:'2-digit',month:'short',year:'numeric'})});
+    console.log('Merged signals - stSignal:', merged.stSignal, 'mtSignal:', merged.mtSignal, 'ltSignal:', merged.ltSignal);
     renderResult(merged);
     setStatus('cached','Fresh scan complete', 'Scanned: '+merged.lastScanned);
     loadWatchList(); // refresh right panel
