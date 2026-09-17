@@ -309,7 +309,7 @@ async function loadWatchList(){
       const daysListed = ipo.listingDate
         ? Math.floor((today - new Date(ipo.listingDate)) / 86400000)
         : null;
-      const stOpen = daysListed !== null && daysListed >= 0 && daysListed <= 21;
+      const stOpen = daysListed !== null && daysListed >= 2 && daysListed <= 21;
       const sc  = parseInt(ipo.watchScore)||0;
       const clr = ipo.overallSignal ? sigColor(ipo.overallSignal) : '#5a6478';
       // Only show ST/MT/LT badges if an actual Watch scan has been run (lastScanned set)
