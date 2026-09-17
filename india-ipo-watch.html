@@ -136,7 +136,7 @@ body{font-family:'Inter',system-ui,sans-serif;font-size:14px;line-height:1.6;bac
 .wi-signals{display:flex;gap:4px;margin-top:5px;}
 .wi-sig{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;}
 .wi-sig.sb{background:rgba(34,197,94,0.15);color:#22c55e;}
-.wi-sig.b{background:rgba(230,126,34,0.15);color:#e67e22;}
+.wi-sig.b{background:rgba(34,197,94,0.12);color:#22c55e;}
 .wi-sig.w{background:rgba(245,158,11,0.15);color:#f59e0b;}
 .wi-sig.p{background:rgba(239,68,68,0.1);color:#ef4444;}
 @keyframes pulse-red{0%,100%{border-color:#ef4444;box-shadow:0 0 0 0 rgba(239,68,68,0.4);}50%{box-shadow:0 0 0 4px rgba(239,68,68,0);}}
@@ -232,15 +232,18 @@ function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')
 // ── Signal helpers ────────────────────────────────────────────
 function sigClass(sig){
   if(!sig) return 'w';
-  const s = sig.toUpperCase();
-  if(s.includes('STRONG')) return 'sb';
-  if(s==='BUY') return 'b';
-  if(s==='WATCH') return 'w';
-  return 'p';
+  const s = (sig||'').toUpperCase().trim();
+  if(s.includes('BUY'))  return 'sb';
+  if(s.includes('WATCH')) return 'w';
+  if(s.includes('PASS')||s.includes('AVOID')) return 'p';
+  return 'w';
 }
 function sigColor(sig){
-  const c = sigClass(sig);
-  return {sb:'#22c55e',b:'#e67e22',w:'#f59e0b',p:'#ef4444'}[c]||'#9aa3b2';
+  const s = (sig||'').toUpperCase().trim();
+  if(s.includes('BUY'))  return '#22c55e';
+  if(s.includes('WATCH'))return '#f59e0b';
+  if(s.includes('PASS')||s.includes('AVOID')) return '#ef4444';
+  return '#9aa3b2';
 }
 function scoreColor(n){
   const v = parseInt(n)||0;
@@ -497,10 +500,10 @@ function renderResult(d){
       ${buckets.map(b => {
         const bsc  = parseInt(d[b.scoreKey])||0;
         const bsig = d[b.sigKey]||'—';
-        const bsigUp = bsig.toUpperCase();
-        const bclr = (bsigUp==='STRONG BUY'||bsigUp==='BUY') ? '#22c55e'
-          : bsigUp==='WATCH' ? '#f59e0b'
-          : (bsigUp==='PASS'||bsigUp==='AVOID'||bsigUp==='STRONG AVOID') ? '#ef4444'
+        const bsigUp = bsig.toUpperCase().trim();
+        const bclr = (bsigUp.includes('BUY')) ? '#22c55e'
+          : (bsigUp.includes('WATCH')) ? '#f59e0b'
+          : (bsigUp.includes('PASS')||bsigUp.includes('AVOID')) ? '#ef4444'
           : scoreColor(bsc);
         const entry = d[b.entryKey]||'—';
         const tgt  = d[b.targetKey]||'—';
