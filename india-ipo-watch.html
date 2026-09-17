@@ -65,6 +65,7 @@ body{font-family:'Inter',system-ui,sans-serif;font-size:14px;line-height:1.6;bac
 .ovr-score-lbl{font-size:9px;color:#9aa3b2;}
 .ovr-verdict{font-size:13px;font-weight:700;}
 .price-row{display:flex;gap:20px;margin-top:10px;flex-wrap:wrap;}
+.ticker-row{margin-top:12px;padding-top:12px;border-top:1px solid #2e3a50;}
 .price-item{display:flex;flex-direction:column;gap:2px;}
 .price-lbl{font-size:10px;color:#5a6478;text-transform:uppercase;letter-spacing:0.04em;}
 .price-val{font-size:14px;font-weight:600;color:#f0f2f5;}
@@ -382,7 +383,12 @@ async function loadCached(name){
 async function runScan(){
   const name = document.getElementById('ipoSelect').value;
   if(!name){ alert('Please select an IPO first.'); return; }
+  await performScan(name, '');
+}
 
+// ── Core scan flow (Phase 1 + Phase 2), optionally with a manually-entered
+// ── ticker override (used by the "Correct ticker" control on the hero card) ──
+async function performScan(name, overrideTicker){
   const btn = document.getElementById('scanBtn');
   const cBtn = document.getElementById('loadCacheBtn');
   btn.disabled = true; cBtn.disabled = true;
@@ -403,7 +409,8 @@ async function runScan(){
   <div class="loader-wrap"><div class="loader-spinner"></div><div class="loader-msg">Scanning technical signals (~15s)…</div></div>`;
 
   try {
-    const r1 = await fetch(AS_URL+'?action=watch_scan_tech&t='+T+'&name='+encodeURIComponent(name)+'&v='+Date.now(), {redirect:'follow'});
+    const tickerParam = overrideTicker ? '&ticker='+encodeURIComponent(overrideTicker) : '';
+    const r1 = await fetch(AS_URL+'?action=watch_scan_tech&t='+T+'&name='+encodeURIComponent(name)+tickerParam+'&v='+Date.now(), {redirect:'follow'});
     const t1 = await r1.text();
     let d1;
     try { d1 = JSON.parse(t1); } catch(e){ throw new Error(t1.substring(0,200)); }
@@ -448,6 +455,25 @@ async function runScan(){
     btn.textContent = 'Run Fresh Scan ↗';
   }
 }
+
+// ── Ticker correction control (hero card) ──────────────────────
+function showTickerEdit(){
+  document.getElementById('tickerDisplayWrap').style.display = 'none';
+  document.getElementById('tickerEditBox').style.display = 'inline-flex';
+  document.getElementById('tickerInput').focus();
+}
+function cancelTickerEdit(){
+  document.getElementById('tickerDisplayWrap').style.display = 'inline-flex';
+  document.getElementById('tickerEditBox').style.display = 'none';
+}
+async function saveTickerOverride(){
+  const name = document.getElementById('ipoSelect').value;
+  const newTicker = document.getElementById('tickerInput').value.trim().toUpperCase();
+  if(!newTicker){ alert('Please enter a ticker symbol.'); return; }
+  if(!name){ alert('Please select an IPO first.'); return; }
+  await performScan(name, newTicker);
+}
+
 
 // ── Render result ─────────────────────────────────────────────
 function renderResult(d){
@@ -496,6 +522,18 @@ function renderResult(d){
         <div class="price-item"><div class="price-lbl">Current Price</div><div class="price-val">₹${esc(d.currentPrice||'—')}</div></div>
         <div class="price-item"><div class="price-lbl">vs Issue Price</div><div class="price-val" style="color:${parseFloat(d.vsIssue||0)>=0?'#22c55e':'#ef4444'};">${parseFloat(d.vsIssue||0)>=0?'+':''}${esc(d.vsIssue||'—')}%</div></div>
         <div class="price-item"><div class="price-lbl">From Listing High</div><div class="price-val" style="color:${parseFloat(d.fromHigh||0)>=0?'#22c55e':'#ef4444'};">${esc(d.fromHigh||'—')}%</div></div>
+      </div>
+      <div class="ticker-row">
+        <span id="tickerDisplayWrap" style="display:inline-flex;align-items:center;gap:6px;">
+          <span style="font-size:11px;color:#5a6478;">NSE Ticker:</span>
+          <span style="font-size:12px;font-weight:600;color:#f0f2f5;">${esc(d.nseTicker||'—')}</span>
+          <button onclick="showTickerEdit()" style="background:none;border:1px solid #2e3a50;color:#9aa3b2;border-radius:5px;padding:2px 8px;font-size:10px;cursor:pointer;font-family:'Inter',sans-serif;">✎ Correct</button>
+        </span>
+        <span id="tickerEditBox" style="display:none;align-items:center;gap:6px;">
+          <input type="text" id="tickerInput" placeholder="e.g. QUAINT" value="${esc(d.nseTicker||'')}" style="background:#1c2333;border:1px solid #e67e22;border-radius:5px;padding:4px 8px;color:#f0f2f5;font-size:12px;font-family:'Inter',sans-serif;width:120px;text-transform:uppercase;">
+          <button onclick="saveTickerOverride()" style="background:#e67e22;color:#fff;border:none;border-radius:5px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Save & Rescan</button>
+          <button onclick="cancelTickerEdit()" style="background:none;border:1px solid #2e3a50;color:#9aa3b2;border-radius:5px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;">Cancel</button>
+        </span>
       </div>
     </div>
 
