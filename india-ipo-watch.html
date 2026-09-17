@@ -462,10 +462,10 @@ function renderResult(d){
   ];
 
   const buckets = [
-    {label:'Short Term', horizon:'Day 2–21 post listing', scoreKey:'stScore', sigKey:'stSignal', targetKey:'stTarget', stopKey:'stStop', entryKey:'currentPrice'},
-    {label:'Medium Term',horizon:'1–6 months post listing',scoreKey:'mtScore', sigKey:'mtSignal', targetKey:'mtTarget', stopKey:'mtStop', entryKey:'currentPrice'},
-    {label:'Long Term',  horizon:'6–24 months post listing',scoreKey:'ltScore', sigKey:'ltSignal', targetKey:'ltTarget', stopKey:'ltStop', entryKey:'currentPrice'},
-  ];
+      {label:'Short Term', horizon:'Day 2–21 post listing',  scoreKey:'stScore', sigKey:'stSignal', targetKey:'stTarget', stopKey:'stStop', entryKey:'currentPrice', upKey:'stUpsidePct', stopPctKey:'stStopPct'},
+      {label:'Medium Term',horizon:'1–6 months post listing', scoreKey:'mtScore', sigKey:'mtSignal', targetKey:'mtTarget', stopKey:'mtStop', entryKey:'currentPrice', upKey:'mtUpsidePct', stopPctKey:'mtStopPct'},
+      {label:'Long Term',  horizon:'6–24 months post listing',scoreKey:'ltScore', sigKey:'ltSignal', targetKey:'ltTarget', stopKey:'ltStop', entryKey:'currentPrice', upKey:'ltUpsidePct', stopPctKey:'ltStopPct'},
+    ];
 
   el.innerHTML = `
     <!-- Stock hero -->
@@ -517,8 +517,18 @@ function renderResult(d){
           <div style="font-size:11px;color:#5a6478;margin-bottom:10px;">${bsc ? bsc+'/100' : ''}</div>
           <div class="bucket-rows">
             <div class="bucket-row"><span class="bucket-row-lbl">Entry</span><span class="bucket-row-val">₹${esc(String(entry))}</span></div>
-            <div class="bucket-row"><span class="bucket-row-lbl">Target</span><span class="bucket-row-val green">₹${esc(String(tgt))}${(parseFloat(tgt)>0&&parseFloat(entry)>0)?` <span style="font-size:10px;opacity:0.8;">(+${Math.round((parseFloat(tgt)-parseFloat(entry))/parseFloat(entry)*100)}%)</span>`:''}</span></div>
-            <div class="bucket-row"><span class="bucket-row-lbl">Stop</span><span class="bucket-row-val red">${b.label==='Long Term'?'Thesis-based':'₹'+esc(String(stp))+(parseFloat(stp)>0&&parseFloat(entry)>0?` <span style="font-size:10px;opacity:0.8;">(${Math.round((parseFloat(stp)-parseFloat(entry))/parseFloat(entry)*100)}%)</span>`:'')}</span></div>
+            <div class="bucket-row"><span class="bucket-row-lbl">Target</span><span class="bucket-row-val green">₹${esc(String(tgt))}${(() => {
+              const upPct = parseFloat(d[b.upKey]||0);
+              const calcPct = (parseFloat(tgt)>0&&parseFloat(entry)>0) ? Math.round((parseFloat(tgt)-parseFloat(entry))/parseFloat(entry)*100) : 0;
+              const pct = upPct || calcPct;
+              return pct ? ` <span style="font-size:10px;opacity:0.8;">(+${pct}%)</span>` : '';
+            })()}</span></div>
+            <div class="bucket-row"><span class="bucket-row-lbl">Stop</span><span class="bucket-row-val red">${b.label==='Long Term'?'Thesis-based':'₹'+esc(String(stp))+((() => {
+              const stPct = parseFloat(d[b.stopPctKey]||0);
+              const calcPct = (parseFloat(stp)>0&&parseFloat(entry)>0) ? Math.round((parseFloat(stp)-parseFloat(entry))/parseFloat(entry)*100) : 0;
+              const pct = stPct || calcPct;
+              return pct && pct < 0 ? ` <span style="font-size:10px;opacity:0.8;">(${pct}%)</span>` : '';
+            })())}</span></div>
           </div>
         </div>`;
       }).join('')}
