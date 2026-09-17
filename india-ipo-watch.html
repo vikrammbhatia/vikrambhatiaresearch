@@ -268,38 +268,59 @@ async function loadWatchList(){
     try { data = JSON.parse(text); } catch(e){ throw new Error(text.substring(0,200)); }
     if(data.error) throw new Error(data.error);
 
-    const ipos = Array.isArray(data) ? data : (data.ipos||[]);
-    if(!ipos.length){ el.innerHTML='<div class="no-items">No IPOs analysed yet.</div>'; return; }
+    const allIpos = Array.isArray(data) ? data : (data.ipos||[]);
+    if(!allIpos.length){ el.innerHTML='<div class="no-items">No IPOs analysed yet.</div>'; return; }
 
-    // Populate dropdown
+    // Fix 1: Filter out IPOs that have not yet listed (future listing date)
+    const todayStr = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const ipos = allIpos.filter(ipo => {
+      if (!ipo.listingDate) return true; // no date = include (can't tell)
+      const d = ipo.listingDate.substring(0,10);
+      return d <= todayStr; // only show if listing date has passed or is today
+    });
+    if(!ipos.length){ el.innerHTML='<div class="no-items">No listed IPOs found yet.</div>'; return; }
+
+    // Sort oldest to newest by listing date
+    ipos.sort((a, b) => {
+      if (!a.listingDate && !b.listingDate) return 0;
+      if (!a.listingDate) return 1;
+      if (!b.listingDate) return -1;
+      return a.listingDate < b.listingDate ? -1 : a.listingDate > b.listingDate ? 1 : 0;
+    });
+
+    // Populate dropdown in same order
     sel.innerHTML = '<option value="">— Select an analysed IPO —</option>';
     ipos.forEach(ipo => {
       const opt = document.createElement('option');
       opt.value = ipo.name;
-      opt.textContent = ipo.name + (ipo.listingDate ? ' ('+ipo.listingDate+')' : '');
+      opt.textContent = ipo.name + (ipo.listingDate ? ' ('+ipo.listingDate.substring(0,10)+')' : '');
       sel.appendChild(opt);
     });
 
-    // Populate right panel — show cached scores if available
+    // Fix 2: Always show signal badges — show "Not scanned" placeholder if no data yet
     const today = new Date();
     el.innerHTML = ipos.map(ipo => {
       const daysListed = ipo.listingDate
         ? Math.floor((today - new Date(ipo.listingDate)) / 86400000)
         : null;
-      const stOpen = daysListed !== null && daysListed <= 21;
-      const sc = parseInt(ipo.watchScore)||0;
+      const stOpen = daysListed !== null && daysListed >= 0 && daysListed <= 21;
+      const sc  = parseInt(ipo.watchScore)||0;
       const clr = sc ? scoreColor(sc) : '#5a6478';
+      const hasSignals = ipo.stSignal || ipo.mtSignal || ipo.ltSignal;
+      const signalBadges = hasSignals
+        ? `<div class="wi-signals">
+            <span class="wi-sig ${sigClass(ipo.stSignal)}">ST:${esc(ipo.stSignal||'—')}</span>
+            <span class="wi-sig ${sigClass(ipo.mtSignal)}">MT:${esc(ipo.mtSignal||'—')}</span>
+            <span class="wi-sig ${sigClass(ipo.ltSignal)}">LT:${esc(ipo.ltSignal||'—')}</span>
+          </div>`
+        : `<div style="font-size:9px;color:#3d4a5a;margin-top:4px;">Not scanned yet — click to scan</div>`;
       return `<div class="watch-item${stOpen?' wi-urgent':''}" onclick="selectIpo('${esc(ipo.name)}')">
         <div class="wi-name">${esc(ipo.name)}</div>
         <div class="wi-meta">
-          <span class="wi-score" style="color:${clr};">${sc||'—'}/100</span>
-          <span class="wi-days">${daysListed!==null?daysListed+'d listed':'—'}</span>
+          <span class="wi-score" style="color:${clr};">${sc ? sc+'/100' : '—'}</span>
+          <span class="wi-days">${daysListed!==null && daysListed>=0 ? daysListed+'d listed' : '—'}</span>
         </div>
-        ${ipo.stSignal||ipo.mtSignal||ipo.ltSignal ? `<div class="wi-signals">
-          <span class="wi-sig ${sigClass(ipo.stSignal)}">ST:${esc(ipo.stSignal||'—')}</span>
-          <span class="wi-sig ${sigClass(ipo.mtSignal)}">MT:${esc(ipo.mtSignal||'—')}</span>
-          <span class="wi-sig ${sigClass(ipo.ltSignal)}">LT:${esc(ipo.ltSignal||'—')}</span>
-        </div>` : ''}
+        ${signalBadges}
       </div>`;
     }).join('');
   } catch(e){
