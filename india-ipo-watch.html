@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>India IPO Watch — Vikram Bhatia Research</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',system-ui,sans-serif;font-size:14px;line-height:1.6;background:#1c2333;color:#f0f2f5;display:flex;min-height:100vh;}
+
+/* ── SIDEBAR ── */
+.vb-sidebar{width:210px;flex-shrink:0;background:#1c2333;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;border-right:1px solid #2e3a50;}
+.vb-brand{display:flex;align-items:center;gap:8px;padding:14px 14px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.08);}
+.vb-mark{width:36px;height:36px;flex-shrink:0;}
+.vb-mark svg{width:100%;height:100%;display:block;}
+.vb-brand-name{font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:#e67e22;letter-spacing:-0.01em;line-height:1.3;}
+.vsb-sec{padding:14px 10px 6px;font-size:9px;font-weight:600;color:#e67e22;letter-spacing:0.08em;text-transform:uppercase;font-family:'Inter',sans-serif;}
+.vsb-lnk{display:flex;align-items:center;gap:8px;padding:7px 12px;margin:1px 6px;border-radius:6px;font-size:11.5px;font-weight:500;color:#8892a0;text-decoration:none;transition:background 0.15s,color 0.15s;font-family:'Inter',sans-serif;}
+.vsb-lnk:hover{background:rgba(255,255,255,0.06);color:#d0d6e0;}
+.vsb-lnk.active{background:rgba(230,126,34,0.12);color:#e67e22;}
+.vsb-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0;}
+
+/* ── MAIN WRAPPER ── */
+.vb-maincol{margin-left:210px;flex:1;min-width:0;
+  --or:#e67e22;--or2:#c0651a;
+  --bg:#1c2333;--bg2:#232d40;--bg3:#2a3550;
+  --b1:#2e3a50;--b2:#3a4a62;
+  --t1:#f0f2f5;--t2:#9aa3b2;--t3:#5a6478;
+  --green:#22c55e;--amber:#f59e0b;--red:#ef4444;--blue:#3b82f6;
+}
+
+/* ── PAGE LAYOUT ── */
+.page{display:flex;flex-direction:row;min-height:100vh;width:100%;overflow:visible;}
+.main-col{flex:1;padding:2.5rem 3rem;min-width:0;}
+.pg-header{font-size:18px;font-weight:700;color:#e67e22;font-family:'Inter',sans-serif;padding:1.25rem 0 0.75rem;letter-spacing:-0.01em;}
+
+/* ── SEARCH ROW ── */
+.search-row{display:flex;gap:10px;margin-bottom:1.5rem;align-items:center;}
+.search-row select{flex:1;background:#232d40;border:1px solid #2e3a50;border-radius:8px;padding:10px 14px;color:#f0f2f5;font-size:14px;font-family:'Inter',sans-serif;outline:none;cursor:pointer;}
+.search-row select:focus{border-color:#e67e22;}
+.btn-scan{background:#e67e22;color:#fff;border:none;border-radius:8px;padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif;transition:background 0.15s;}
+.btn-scan:hover{background:#c0651a;}
+.btn-scan:disabled{opacity:0.5;cursor:not-allowed;}
+.btn-cache{background:transparent;border:1px solid #2e3a50;color:#9aa3b2;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;}
+.btn-cache:hover{border-color:#e67e22;color:#e67e22;}
+
+/* ── STATUS BANNER ── */
+.status-banner{background:#232d40;border:1px solid #2e3a50;border-radius:8px;padding:10px 16px;font-size:12px;color:#9aa3b2;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;}
+.status-banner.scanning{border-color:#e67e22;color:#f0f2f5;}
+.status-dot{width:8px;height:8px;border-radius:50%;background:#5a6478;flex-shrink:0;margin-right:8px;}
+.status-dot.live{background:#22c55e;animation:pulse-green 1.5s infinite;}
+.status-dot.scanning{background:#e67e22;animation:pulse-amber 1s infinite;}
+@keyframes pulse-green{0%,100%{opacity:1;}50%{opacity:0.4;}}
+@keyframes pulse-amber{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+/* ── STOCK HERO CARD ── */
+.stock-card{background:#232d40;border:1px solid #2e3a50;border-radius:10px;padding:20px 24px;margin-bottom:1.25rem;}
+.stock-name{font-size:18px;font-weight:700;color:#f0f2f5;margin-bottom:4px;}
+.stock-meta{font-size:12px;color:#9aa3b2;margin-bottom:14px;display:flex;gap:14px;flex-wrap:wrap;}
+.stock-meta span{display:flex;align-items:center;gap:4px;}
+.ovr-score-row{display:flex;align-items:center;gap:16px;margin-bottom:8px;}
+.ovr-score-ring{width:72px;height:72px;border-radius:50%;border:4px solid;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;}
+.ovr-score-num{font-size:22px;font-weight:800;line-height:1;}
+.ovr-score-lbl{font-size:9px;color:#9aa3b2;}
+.ovr-verdict{font-size:13px;font-weight:700;}
+.price-row{display:flex;gap:20px;margin-top:10px;flex-wrap:wrap;}
+.price-item{display:flex;flex-direction:column;gap:2px;}
+.price-lbl{font-size:10px;color:#5a6478;text-transform:uppercase;letter-spacing:0.04em;}
+.price-val{font-size:14px;font-weight:600;color:#f0f2f5;}
+
+/* ── THREE BUCKET CARDS ── */
+.buckets-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem;}
+.bucket-card{background:#232d40;border:1px solid #2e3a50;border-radius:10px;padding:18px 20px;}
+.bucket-label{font-size:9px;font-weight:700;color:#e67e22;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;}
+.bucket-horizon{font-size:11px;color:#5a6478;margin-bottom:12px;}
+.bucket-signal{font-size:15px;font-weight:800;margin-bottom:12px;}
+.bucket-rows{display:flex;flex-direction:column;gap:6px;}
+.bucket-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;}
+.bucket-row-lbl{color:#5a6478;}
+.bucket-row-val{font-weight:600;color:#f0f2f5;}
+.bucket-row-val.green{color:#22c55e;}
+.bucket-row-val.red{color:#ef4444;}
+.bucket-row-val.amber{color:#f59e0b;}
+
+/* ── PILLAR SCORES ── */
+.pillars-section{background:#232d40;border:1px solid #2e3a50;border-radius:10px;padding:20px 24px;margin-bottom:1.5rem;}
+.pillars-title{font-size:12px;font-weight:700;color:#e67e22;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:16px;}
+.pillar-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.pillar-name{font-size:12px;color:#9aa3b2;width:180px;flex-shrink:0;}
+.pillar-bar-wrap{flex:1;height:8px;background:#1c2333;border-radius:4px;overflow:hidden;}
+.pillar-bar-fill{height:100%;border-radius:4px;transition:width 0.6s ease;}
+.pillar-score-val{font-size:12px;font-weight:700;width:32px;text-align:right;flex-shrink:0;}
+
+/* ── RATIONALE SECTIONS ── */
+.rationale-section{margin-bottom:1rem;}
+.rat-header{background:#1c2333;border:1px solid #2e3a50;border-radius:8px;padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;}
+.rat-header:hover{border-color:#3a4a62;}
+.rat-title{font-size:13px;font-weight:600;color:#f0f2f5;}
+.rat-score-badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;}
+.rat-chevron{color:#5a6478;font-size:12px;transition:transform 0.2s;}
+.rat-body{background:#232d40;border:1px solid #2e3a50;border-top:none;border-radius:0 0 8px 8px;padding:14px 16px;font-size:13px;color:#9aa3b2;line-height:1.7;display:none;}
+.rat-body.open{display:block;}
+
+/* ── LOADING / EMPTY ── */
+.loader-wrap{padding:3rem 0;text-align:center;}
+.loader-spinner{width:36px;height:36px;border:3px solid #2e3a50;border-top-color:#e67e22;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loader-msg{font-size:13px;color:#9aa3b2;}
+.empty-state{padding:3rem;text-align:center;color:#5a6478;}
+.empty-icon{font-size:36px;margin-bottom:12px;}
+.empty-title{font-size:16px;font-weight:600;color:#f0f2f5;margin-bottom:6px;}
+.empty-sub{font-size:13px;line-height:1.6;}
+
+/* ── PHASE PROGRESS ── */
+.phase-bar{background:#1c2333;border:1px solid #2e3a50;border-radius:8px;padding:14px 18px;margin-bottom:1rem;}
+.phase-steps{display:flex;gap:8px;margin-bottom:10px;}
+.phase-step{flex:1;height:4px;border-radius:2px;background:#2e3a50;transition:background 0.4s;}
+.phase-step.done{background:#22c55e;}
+.phase-step.active{background:#e67e22;animation:pulse-amber 1s infinite;}
+.phase-msg{font-size:12px;color:#9aa3b2;}
+
+/* ── RIGHT SIDE PANEL ── */
+.side-col{width:300px;min-width:300px;border-left:1px solid #2e3a50;height:100vh;position:sticky;top:0;overflow-y:auto;background:#1c2333;display:flex;flex-direction:column;}
+.side-header{padding:14px 14px 10px;border-bottom:1px solid #2e3a50;display:flex;align-items:center;justify-content:space-between;}
+.side-title{font-size:11px;font-weight:700;color:#e67e22;letter-spacing:0.06em;text-transform:uppercase;}
+.refresh-btn{font-size:11px;color:#e67e22;cursor:pointer;background:none;border:1px solid #2e3a50;padding:4px 10px;border-radius:5px;font-family:'Inter',sans-serif;}
+.side-list{padding:8px;}
+.watch-item{background:#232d40;border:1px solid #2e3a50;border-radius:7px;padding:11px 13px;margin-bottom:8px;cursor:pointer;transition:background 0.15s;}
+.watch-item:hover{background:#2a3550;}
+.watch-item.active{border-color:#e67e22;background:rgba(230,126,34,0.08);}
+.wi-name{font-size:12px;font-weight:600;color:#f0f2f5;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.wi-meta{display:flex;justify-content:space-between;align-items:center;font-size:10px;}
+.wi-score{font-weight:700;}
+.wi-days{color:#5a6478;}
+.wi-signals{display:flex;gap:4px;margin-top:5px;}
+.wi-sig{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;}
+.wi-sig.sb{background:rgba(34,197,94,0.15);color:#22c55e;}
+.wi-sig.b{background:rgba(230,126,34,0.15);color:#e67e22;}
+.wi-sig.w{background:rgba(245,158,11,0.15);color:#f59e0b;}
+.wi-sig.p{background:rgba(239,68,68,0.1);color:#ef4444;}
+@keyframes pulse-red{0%,100%{border-color:#ef4444;box-shadow:0 0 0 0 rgba(239,68,68,0.4);}50%{box-shadow:0 0 0 4px rgba(239,68,68,0);}}
+.wi-urgent{animation:pulse-red 1.5s infinite;border-color:#22c55e!important;}
+.wi-urgent::before{content:'⚡ ST OPEN';display:block;font-size:8px;font-weight:700;color:#22c55e;letter-spacing:0.05em;margin-bottom:3px;}
+.no-items{padding:20px 14px;font-size:12px;color:#5a6478;text-align:center;}
+
+/* signal colours helper */
+.sig-sb{color:#22c55e;} .sig-b{color:#e67e22;} .sig-w{color:#f59e0b;} .sig-p{color:#ef4444;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="vb-sidebar">
+  <a class="vb-brand" href="/">
+    <div class="vb-mark">
+      <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <text x="22" y="31" font-family="Inter,Arial,sans-serif" font-size="24" font-weight="800" fill="#e67e22" text-anchor="middle" letter-spacing="-1">VB</text>
+      </svg>
+    </div>
+    <div class="vb-brand-name">Vikram Bhatia Research</div>
+  </a>
+  <a class="vsb-lnk" href="/"><span class="vsb-icon">⌂</span>Home</a>
+  <div class="vsb-sec">India</div>
+  <a class="vsb-lnk" href="/ipo"><span class="vsb-icon">📊</span>IPO Intelligence</a>
+  <a class="vsb-lnk" href="/nfo"><span class="vsb-icon">🏦</span>NFO Analyser</a>
+  <a class="vsb-lnk" href="/india-mr"><span class="vsb-icon">🔁</span>MR Compass</a>
+  <a class="vsb-lnk active" href="/india-ipo-watch"><span class="vsb-icon">🎯</span>IPO Watch</a>
+  <div class="vsb-sec">UAE</div>
+  <a class="vsb-lnk" href="/uae-ipo"><span class="vsb-icon">📊</span>IPO Intelligence</a>
+  <a class="vsb-lnk" href="/uae-mr"><span class="vsb-icon">🔁</span>MR Compass</a>
+  <div class="vsb-sec">USA</div>
+  <a class="vsb-lnk" href="/us-ipo"><span class="vsb-icon">📊</span>IPO Intelligence</a>
+  <a class="vsb-lnk" href="/us-mr"><span class="vsb-icon">📈</span>MR Compass</a>
+  <a class="vsb-lnk" href="/us-markets"><span class="vsb-icon">🔭</span>Market Pulse</a>
+</aside>
+
+<!-- MAIN -->
+<div class="vb-maincol">
+<div class="page">
+
+  <!-- MAIN COLUMN -->
+  <div class="main-col">
+    <div class="pg-header">India IPO Watch</div>
+
+    <!-- SEARCH ROW -->
+    <div class="search-row">
+      <select id="ipoSelect">
+        <option value="">— Select an analysed IPO —</option>
+      </select>
+      <button class="btn-cache" id="loadCacheBtn" onclick="loadCached()">Load Last Scan</button>
+      <button class="btn-scan" id="scanBtn" onclick="runScan()">Run Fresh Scan ↗</button>
+    </div>
+
+    <!-- STATUS -->
+    <div class="status-banner" id="statusBanner" style="display:none;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusMsg"></span>
+      </div>
+      <span id="statusTime" style="font-size:11px;color:#5a6478;"></span>
+    </div>
+
+    <!-- RESULT AREA -->
+    <div id="resultArea">
+      <div class="empty-state">
+        <div class="empty-icon">🎯</div>
+        <div class="empty-title">India IPO Watch</div>
+        <div class="empty-sub">Select an IPO from the dropdown and run a fresh scan,<br>or load the last cached results.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT SIDE PANEL -->
+  <div class="side-col">
+    <div class="side-header">
+      <div class="side-title">Analysed IPOs</div>
+      <button class="refresh-btn" onclick="loadWatchList()">Refresh</button>
+    </div>
+    <div class="side-list" id="watchList"><div class="no-items">Loading…</div></div>
+  </div>
+
+</div>
+</div>
+
+<script>
+const AS_URL = 'https://ipo-proxy.vikrammbhatia.workers.dev';
+const T      = 'VB2026IPO';
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── Signal helpers ────────────────────────────────────────────
+function sigClass(sig){
+  if(!sig) return 'w';
+  const s = sig.toUpperCase();
+  if(s.includes('STRONG')) return 'sb';
+  if(s==='BUY') return 'b';
+  if(s==='WATCH') return 'w';
+  return 'p';
+}
+function sigColor(sig){
+  const c = sigClass(sig);
+  return {sb:'#22c55e',b:'#e67e22',w:'#f59e0b',p:'#ef4444'}[c]||'#9aa3b2';
+}
+function scoreColor(n){
+  const v = parseInt(n)||0;
+  if(v>=75) return '#22c55e';
+  if(v>=60) return '#e67e22';
+  if(v>=45) return '#f59e0b';
+  return '#ef4444';
+}
+function pillarColor(n){
+  const v = parseInt(n)||0;
+  if(v>=75) return '#22c55e';
+  if(v>=55) return '#e67e22';
+  return '#ef4444';
+}
+
+// ── Load list of analysed IPOs into dropdown + right panel ────
+async function loadWatchList(){
+  const el = document.getElementById('watchList');
+  const sel = document.getElementById('ipoSelect');
+  el.innerHTML = '<div class="no-items">Loading…</div>';
+  try {
+    const res  = await fetch(AS_URL+'?action=watch_list&t='+T+'&v='+Date.now(), {redirect:'follow'});
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); } catch(e){ throw new Error(text.substring(0,200)); }
+    if(data.error) throw new Error(data.error);
+
+    const ipos = Array.isArray(data) ? data : (data.ipos||[]);
+    if(!ipos.length){ el.innerHTML='<div class="no-items">No IPOs analysed yet.</div>'; return; }
+
+    // Populate dropdown
+    sel.innerHTML = '<option value="">— Select an analysed IPO —</option>';
+    ipos.forEach(ipo => {
+      const opt = document.createElement('option');
+      opt.value = ipo.name;
+      opt.textContent = ipo.name + (ipo.listingDate ? ' ('+ipo.listingDate+')' : '');
+      sel.appendChild(opt);
+    });
+
+    // Populate right panel — show cached scores if available
+    const today = new Date();
+    el.innerHTML = ipos.map(ipo => {
+      const daysListed = ipo.listingDate
+        ? Math.floor((today - new Date(ipo.listingDate)) / 86400000)
+        : null;
+      const stOpen = daysListed !== null && daysListed <= 21;
+      const sc = parseInt(ipo.watchScore)||0;
+      const clr = sc ? scoreColor(sc) : '#5a6478';
+      return `<div class="watch-item${stOpen?' wi-urgent':''}" onclick="selectIpo('${esc(ipo.name)}')">
+        <div class="wi-name">${esc(ipo.name)}</div>
+        <div class="wi-meta">
+          <span class="wi-score" style="color:${clr};">${sc||'—'}/100</span>
+          <span class="wi-days">${daysListed!==null?daysListed+'d listed':'—'}</span>
+        </div>
+        ${ipo.stSignal||ipo.mtSignal||ipo.ltSignal ? `<div class="wi-signals">
+          <span class="wi-sig ${sigClass(ipo.stSignal)}">ST:${esc(ipo.stSignal||'—')}</span>
+          <span class="wi-sig ${sigClass(ipo.mtSignal)}">MT:${esc(ipo.mtSignal||'—')}</span>
+          <span class="wi-sig ${sigClass(ipo.ltSignal)}">LT:${esc(ipo.ltSignal||'—')}</span>
+        </div>` : ''}
+      </div>`;
+    }).join('');
+  } catch(e){
+    el.innerHTML = `<div class="no-items">Error: ${esc(e.message)}</div>`;
+  }
+}
+
+function selectIpo(name){
+  document.getElementById('ipoSelect').value = name;
+  document.querySelectorAll('.watch-item').forEach(el=>{
+    el.classList.toggle('active', el.querySelector('.wi-name')?.textContent === name);
+  });
+  loadCached(name);
+}
+
+// ── Load cached result for selected IPO ───────────────────────
+async function loadCached(name){
+  const sel = name || document.getElementById('ipoSelect').value;
+  if(!sel){ alert('Please select an IPO first.'); return; }
+  document.getElementById('ipoSelect').value = sel;
+  setStatus('loading','Loading cached results…','');
+  const el = document.getElementById('resultArea');
+  el.innerHTML = `<div class="loader-wrap"><div class="loader-spinner"></div><div class="loader-msg">Fetching cached analysis…</div></div>`;
+  try {
+    const res  = await fetch(AS_URL+'?action=watch_results&t='+T+'&name='+encodeURIComponent(sel)+'&v='+Date.now(), {redirect:'follow'});
+    const text = await res.text();
+    let d;
+    try { d = JSON.parse(text); } catch(e){ throw new Error(text.substring(0,200)); }
+    if(d.error) throw new Error(d.error);
+    if(!d.hasData){
+      el.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">No cached scan found</div><div class="empty-sub">Press <b>Run Fresh Scan</b> to analyse ${esc(sel)}.</div></div>`;
+      setStatus('idle','','');
+      return;
+    }
+    renderResult(d);
+    setStatus('cached','Showing cached scan','Last scanned: '+esc(d.lastScanned||''));
+  } catch(e){
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠</div><div class="empty-title">Error</div><div class="empty-sub">${esc(e.message)}</div></div>`;
+    setStatus('idle','','');
+  }
+}
+
+// ── Run fresh scan ────────────────────────────────────────────
+async function runScan(){
+  const name = document.getElementById('ipoSelect').value;
+  if(!name){ alert('Please select an IPO first.'); return; }
+
+  const btn = document.getElementById('scanBtn');
+  const cBtn = document.getElementById('loadCacheBtn');
+  btn.disabled = true; cBtn.disabled = true;
+  btn.textContent = 'Scanning…';
+
+  const el = document.getElementById('resultArea');
+
+  // Phase 1
+  setStatus('scanning','Phase 1 — Fetching current price & technical signals…','');
+  el.innerHTML = `<div class="phase-bar">
+    <div class="phase-steps">
+      <div class="phase-step active" id="ph1"></div>
+      <div class="phase-step" id="ph2"></div>
+      <div class="phase-step" id="ph3"></div>
+    </div>
+    <div class="phase-msg" id="phaseMsg">Phase 1 — Fetching live price data from Yahoo Finance…</div>
+  </div>
+  <div class="loader-wrap"><div class="loader-spinner"></div><div class="loader-msg">Scanning technical signals (~15s)…</div></div>`;
+
+  try {
+    const r1 = await fetch(AS_URL+'?action=watch_scan_tech&t='+T+'&name='+encodeURIComponent(name)+'&v='+Date.now(), {redirect:'follow'});
+    const t1 = await r1.text();
+    let d1;
+    try { d1 = JSON.parse(t1); } catch(e){ throw new Error(t1.substring(0,200)); }
+    if(d1.error) throw new Error(d1.error);
+
+    // Phase 2
+    document.getElementById('ph1').className = 'phase-step done';
+    document.getElementById('ph2').className = 'phase-step active';
+    document.getElementById('phaseMsg').textContent = 'Phase 2 — Claude AI analysing fundamentals, sector, geopolitics, expert opinions…';
+    setStatus('scanning','Phase 2 — Claude AI deep analysis (~90s)…','');
+
+    el.innerHTML = `<div class="phase-bar">
+      <div class="phase-steps">
+        <div class="phase-step done"></div>
+        <div class="phase-step active"></div>
+        <div class="phase-step" id="ph3b"></div>
+      </div>
+      <div class="phase-msg">Phase 2 — Claude web search: sector trends, expert opinions, geopolitics, company developments… (~60–90s)</div>
+    </div>
+    <div class="loader-wrap"><div class="loader-spinner"></div><div class="loader-msg">Analysing 6 pillars across 3 time horizons…</div></div>`;
+
+    const r2 = await fetch(AS_URL+'?action=watch_scan_enrich&t='+T+'&name='+encodeURIComponent(name)+'&v='+Date.now(), {redirect:'follow'});
+    const t2 = await r2.text();
+    let d2;
+    try { d2 = JSON.parse(t2); } catch(e){ throw new Error(t2.substring(0,200)); }
+    if(d2.error) throw new Error(d2.error);
+
+    // Merge Phase 1 + Phase 2
+    const merged = Object.assign({}, d1, d2, {hasData:true, lastScanned: new Date().toLocaleDateString('en-IN',{timeZone:'Asia/Kolkata',day:'2-digit',month:'short',year:'numeric'})});
+    renderResult(merged);
+    setStatus('cached','Fresh scan complete', 'Scanned: '+merged.lastScanned);
+    loadWatchList(); // refresh right panel
+
+  } catch(e){
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠</div><div class="empty-title">Scan failed</div><div class="empty-sub">${esc(e.message)}</div></div>`;
+    setStatus('idle','','');
+  } finally {
+    btn.disabled = false; cBtn.disabled = false;
+    btn.textContent = 'Run Fresh Scan ↗';
+  }
+}
+
+// ── Render result ─────────────────────────────────────────────
+function renderResult(d){
+  const el = document.getElementById('resultArea');
+  const sc  = parseInt(d.overallScore)||0;
+  const clr = scoreColor(sc);
+
+  const pillars = [
+    {name:'Technical & Listing Signals', key:'techScore'},
+    {name:'Business Fundamentals',        key:'fundScore'},
+    {name:'Sectoral Trends & Challenges', key:'sectScore'},
+    {name:'Geopolitical & Macro',         key:'geoScore'},
+    {name:'Expert & Institutional Opinion',key:'expertScore'},
+    {name:'Company Developments',         key:'compScore'},
+  ];
+
+  const buckets = [
+    {label:'Short Term', horizon:'Day 2–21 post listing', scoreKey:'stScore', sigKey:'stSignal', targetKey:'stTarget', stopKey:'stStop', entryKey:'currentPrice'},
+    {label:'Medium Term',horizon:'1–6 months post listing',scoreKey:'mtScore', sigKey:'mtSignal', targetKey:'mtTarget', stopKey:'mtStop', entryKey:'currentPrice'},
+    {label:'Long Term',  horizon:'6–24 months post listing',scoreKey:'ltScore', sigKey:'ltSignal', targetKey:'ltTarget', stopKey:'ltStop', entryKey:'currentPrice'},
+  ];
+
+  el.innerHTML = `
+    <!-- Stock hero -->
+    <div class="stock-card">
+      <div class="stock-name">${esc(d.name||'')}</div>
+      <div class="stock-meta">
+        <span>🏭 ${esc(d.sector||'—')}</span>
+        <span>📅 Listed ${esc(d.listingDate||'—')} · ${esc(d.daysListed||'—')} days ago</span>
+        <span>🎯 VBR Pre-Score: <b style="color:#e67e22;">${esc(d.vbrPreScore||'—')}/100</b></span>
+      </div>
+      <div class="ovr-score-row">
+        <div class="ovr-score-ring" style="border-color:${clr};background:${clr}1a;">
+          <div class="ovr-score-num" style="color:${clr};">${sc||'—'}</div>
+          <div class="ovr-score-lbl">/100</div>
+        </div>
+        <div>
+          <div class="ovr-verdict" style="color:${clr};">${esc(d.overallSignal||'—')}</div>
+          <div style="font-size:12px;color:#9aa3b2;margin-top:4px;">${esc(d.oneLiner||'')}</div>
+        </div>
+      </div>
+      <div class="price-row">
+        <div class="price-item"><div class="price-lbl">Issue Price</div><div class="price-val">₹${esc(d.issuePrice||'—')}</div></div>
+        <div class="price-item"><div class="price-lbl">Listing Price</div><div class="price-val">₹${esc(d.listingPrice||'—')}</div></div>
+        <div class="price-item"><div class="price-lbl">Current Price</div><div class="price-val">₹${esc(d.currentPrice||'—')}</div></div>
+        <div class="price-item"><div class="price-lbl">vs Issue Price</div><div class="price-val" style="color:${parseFloat(d.vsIssue||0)>=0?'#22c55e':'#ef4444'};">${parseFloat(d.vsIssue||0)>=0?'+':''}${esc(d.vsIssue||'—')}%</div></div>
+        <div class="price-item"><div class="price-lbl">From Listing High</div><div class="price-val" style="color:${parseFloat(d.fromHigh||0)>=0?'#22c55e':'#ef4444'};">${esc(d.fromHigh||'—')}%</div></div>
+      </div>
+    </div>
+
+    <!-- Three buckets -->
+    <div class="buckets-row">
+      ${buckets.map(b => {
+        const bsc  = parseInt(d[b.scoreKey])||0;
+        const bclr = scoreColor(bsc);
+        const bsig = d[b.sigKey]||'—';
+        const entry = d[b.entryKey]||'—';
+        const tgt  = d[b.targetKey]||'—';
+        const stp  = d[b.stopKey]||'—';
+        return `<div class="bucket-card">
+          <div class="bucket-label">${b.label}</div>
+          <div class="bucket-horizon">${b.horizon}</div>
+          <div class="bucket-signal" style="color:${bclr};">${esc(bsig)}</div>
+          <div style="font-size:11px;color:#5a6478;margin-bottom:10px;">${bsc}/100</div>
+          <div class="bucket-rows">
+            <div class="bucket-row"><span class="bucket-row-lbl">Entry</span><span class="bucket-row-val">₹${esc(String(entry))}</span></div>
+            <div class="bucket-row"><span class="bucket-row-lbl">Target</span><span class="bucket-row-val green">₹${esc(String(tgt))}</span></div>
+            <div class="bucket-row"><span class="bucket-row-lbl">Stop</span><span class="bucket-row-val red">${b.label==='Long Term'?'Thesis-based':'₹'+esc(String(stp))}</span></div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <!-- Pillar scores -->
+    <div class="pillars-section">
+      <div class="pillars-title">Pillar Scores</div>
+      ${pillars.map(p => {
+        const v = parseInt(d[p.key])||0;
+        const c = pillarColor(v);
+        return `<div class="pillar-row">
+          <div class="pillar-name">${p.name}</div>
+          <div class="pillar-bar-wrap"><div class="pillar-bar-fill" style="width:${v}%;background:${c};"></div></div>
+          <div class="pillar-score-val" style="color:${c};">${v}</div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <!-- Rationale sections (expandable) -->
+    <div>
+      ${pillars.map(p => {
+        const v   = parseInt(d[p.key])||0;
+        const c   = pillarColor(v);
+        const rat = d[p.key.replace('Score','Rationale')]||'No rationale available.';
+        return `<div class="rationale-section">
+          <div class="rat-header" onclick="toggleRat(this)">
+            <span class="rat-title">${p.name}</span>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span class="rat-score-badge" style="background:${c}22;color:${c};">${v}/100</span>
+              <span class="rat-chevron">▼</span>
+            </div>
+          </div>
+          <div class="rat-body">${esc(rat)}</div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <!-- Re-scan option -->
+    <div style="margin-top:1.5rem;padding:14px 16px;background:#232d40;border:1px solid #2e3a50;border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
+      <div style="font-size:12px;color:#5a6478;">Last scanned: ${esc(d.lastScanned||'—')}</div>
+      <button class="btn-scan" style="padding:8px 18px;font-size:13px;" onclick="runScan()">Re-scan ↗</button>
+    </div>
+  `;
+}
+
+function toggleRat(hdr){
+  const body = hdr.nextElementSibling;
+  const chev = hdr.querySelector('.rat-chevron');
+  body.classList.toggle('open');
+  chev.style.transform = body.classList.contains('open') ? 'rotate(180deg)' : '';
+}
+
+function setStatus(type, msg, time){
+  const banner = document.getElementById('statusBanner');
+  const dot    = document.getElementById('statusDot');
+  const msgEl  = document.getElementById('statusMsg');
+  const timeEl = document.getElementById('statusTime');
+  if(!msg){ banner.style.display='none'; return; }
+  banner.style.display='flex';
+  dot.className = 'status-dot ' + (type==='scanning'?'scanning':type==='cached'?'live':'');
+  msgEl.textContent = msg;
+  timeEl.textContent = time;
+}
+
+// Init
+window.addEventListener('load', loadWatchList);
+</script>
+</body>
+</html>
