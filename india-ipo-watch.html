@@ -496,8 +496,12 @@ function renderResult(d){
     <div class="buckets-row">
       ${buckets.map(b => {
         const bsc  = parseInt(d[b.scoreKey])||0;
-        const bclr = scoreColor(bsc);
         const bsig = d[b.sigKey]||'—';
+        const bsigUp = bsig.toUpperCase();
+        const bclr = (bsigUp==='STRONG BUY'||bsigUp==='BUY') ? '#22c55e'
+          : bsigUp==='WATCH' ? '#f59e0b'
+          : (bsigUp==='PASS'||bsigUp==='AVOID'||bsigUp==='STRONG AVOID') ? '#ef4444'
+          : scoreColor(bsc);
         const entry = d[b.entryKey]||'—';
         const tgt  = d[b.targetKey]||'—';
         const stp  = d[b.stopKey]||'—';
