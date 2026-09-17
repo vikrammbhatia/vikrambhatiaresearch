@@ -314,8 +314,14 @@ async function loadWatchList(){
             <span class="wi-sig ${sigClass(ipo.ltSignal)}">LT:${esc(ipo.ltSignal||'—')}</span>
           </div>`
         : `<div style="font-size:9px;color:#3d4a5a;margin-top:4px;">Not scanned yet — click to scan</div>`;
+      const verdictClr = (ipo.verdict||'').toUpperCase().indexOf('STRONG') >= 0 ? '#22c55e'
+        : (ipo.verdict||'').toUpperCase().indexOf('AVOID') >= 0 ? '#ef4444'
+        : (ipo.verdict||'').toUpperCase().indexOf('CAUTION') >= 0 ? '#f59e0b'
+        : (ipo.verdict||'').toUpperCase().indexOf('WATCHLIST') >= 0 ? '#f59e0b'
+        : '#e67e22';
       return `<div class="watch-item${stOpen?' wi-urgent':''}" onclick="selectIpo('${esc(ipo.name)}')">
         <div class="wi-name">${esc(ipo.name)}</div>
+        ${ipo.verdict ? `<div style="font-size:10px;font-weight:700;color:${verdictClr};margin-bottom:4px;">${esc(ipo.verdict)}</div>` : ''}
         <div class="wi-meta">
           <span class="wi-score" style="color:${clr};">${sc ? sc+'/100' : '—'}</span>
           <span class="wi-days">${daysListed!==null && daysListed>=0 ? daysListed+'d listed' : '—'}</span>
