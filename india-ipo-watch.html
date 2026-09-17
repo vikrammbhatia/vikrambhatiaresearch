@@ -126,8 +126,8 @@ body{font-family:'Inter',system-ui,sans-serif;font-size:14px;line-height:1.6;bac
 .side-title{font-size:11px;font-weight:700;color:#e67e22;letter-spacing:0.06em;text-transform:uppercase;}
 .refresh-btn{font-size:11px;color:#e67e22;cursor:pointer;background:none;border:1px solid #2e3a50;padding:4px 10px;border-radius:5px;font-family:'Inter',sans-serif;}
 .side-list{padding:8px;}
-.watch-item{background:#232d40;border:1px solid #2e3a50;border-radius:7px;padding:11px 13px;margin-bottom:8px;cursor:pointer;transition:background 0.15s;}
-.watch-item:hover{background:#2a3550;}
+.watch-item{background:#232d40;border:1px solid #2e3a50;border-radius:7px;padding:11px 13px;margin-bottom:8px;transition:background 0.15s;}
+.watch-item{}
 .watch-item.active{border-color:#e67e22;background:rgba(230,126,34,0.08);}
 .wi-name{font-size:12px;font-weight:600;color:#f0f2f5;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .wi-meta{display:flex;justify-content:space-between;align-items:center;font-size:10px;}
@@ -306,20 +306,23 @@ async function loadWatchList(){
       const stOpen = daysListed !== null && daysListed >= 0 && daysListed <= 21;
       const sc  = parseInt(ipo.watchScore)||0;
       const clr = sc ? scoreColor(sc) : '#5a6478';
-      const hasSignals = ipo.stSignal || ipo.mtSignal || ipo.ltSignal;
+      // Only show ST/MT/LT badges if an actual Watch scan has been run (lastScanned set)
+      const hasScanned = !!(ipo.lastScanned);
+      const hasSignals = hasScanned && (ipo.stSignal || ipo.mtSignal || ipo.ltSignal);
       const signalBadges = hasSignals
         ? `<div class="wi-signals">
             <span class="wi-sig ${sigClass(ipo.stSignal)}">ST:${esc(ipo.stSignal||'—')}</span>
             <span class="wi-sig ${sigClass(ipo.mtSignal)}">MT:${esc(ipo.mtSignal||'—')}</span>
             <span class="wi-sig ${sigClass(ipo.ltSignal)}">LT:${esc(ipo.ltSignal||'—')}</span>
           </div>`
-        : `<div style="font-size:9px;color:#3d4a5a;margin-top:4px;">Not scanned yet — click to scan</div>`;
-      const verdictClr = (ipo.verdict||'').toUpperCase().indexOf('STRONG') >= 0 ? '#22c55e'
-        : (ipo.verdict||'').toUpperCase().indexOf('AVOID') >= 0 ? '#ef4444'
-        : (ipo.verdict||'').toUpperCase().indexOf('CAUTION') >= 0 ? '#f59e0b'
-        : (ipo.verdict||'').toUpperCase().indexOf('WATCHLIST') >= 0 ? '#f59e0b'
-        : '#e67e22';
-      return `<div class="watch-item${stOpen?' wi-urgent':''}" onclick="selectIpo('${esc(ipo.name)}')">
+        : `<div style="font-size:9px;color:#3d4a5a;margin-top:4px;">Run scan for ST·MT·LT signals</div>`;
+      const vUp = (ipo.verdict||'').toUpperCase();
+      const verdictClr = (vUp.indexOf('STRONG AVOID') >= 0 || vUp.indexOf('AVOID') >= 0) ? '#ef4444'
+        : vUp.indexOf('CAUTION') >= 0 ? '#f59e0b'
+        : vUp.indexOf('WATCHLIST') >= 0 ? '#f59e0b'
+        : (vUp.indexOf('STRONG SUBSCRIBE') >= 0 || vUp.indexOf('SUBSCRIBE') >= 0) ? '#22c55e'
+        : '#9aa3b2';
+      return `<div class="watch-item${stOpen?' wi-urgent':''}">
         <div class="wi-name">${esc(ipo.name)}</div>
         ${ipo.verdict ? `<div style="font-size:10px;font-weight:700;color:${verdictClr};margin-bottom:4px;">${esc(ipo.verdict)}</div>` : ''}
         <div class="wi-meta">
