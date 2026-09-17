@@ -448,6 +448,7 @@ async function runScan(){
 
 // ── Render result ─────────────────────────────────────────────
 function renderResult(d){
+  console.log('renderResult signals:', d.stSignal, d.mtSignal, d.ltSignal, 'scores:', d.stScore, d.mtScore, d.ltScore);
   const el = document.getElementById('resultArea');
   const sc  = parseInt(d.overallScore)||0;
   const clr = scoreColor(sc);
