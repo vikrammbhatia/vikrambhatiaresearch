@@ -280,6 +280,9 @@ async function loadWatchList(){
     });
     if(!ipos.length){ el.innerHTML='<div class="no-items">No listed IPOs found yet.</div>'; return; }
 
+    // Store for auto-load on init
+    window._loadedIpos = ipos;
+
     // Sort oldest to newest by listing date
     ipos.sort((a, b) => {
       if (!a.listingDate && !b.listingDate) return 0;
@@ -572,8 +575,19 @@ function setStatus(type, msg, time){
   timeEl.textContent = time;
 }
 
-// Init
-window.addEventListener('load', loadWatchList);
+// Init — load watch list then auto-populate last scanned result
+window.addEventListener('load', async function() {
+  await loadWatchList();
+  // After list loads, find the most recently scanned IPO and auto-load it
+  const ipos = window._loadedIpos || [];
+  const lastScanned = ipos.filter(i => i.lastScanned).sort((a,b) => {
+    return a.lastScanned < b.lastScanned ? 1 : -1;
+  })[0];
+  if (lastScanned) {
+    document.getElementById('ipoSelect').value = lastScanned.name;
+    loadCached(lastScanned.name);
+  }
+});
 </script>
 </body>
 </html>
