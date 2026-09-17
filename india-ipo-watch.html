@@ -517,18 +517,8 @@ function renderResult(d){
           <div style="font-size:11px;color:#5a6478;margin-bottom:10px;">${bsc ? bsc+'/100' : ''}</div>
           <div class="bucket-rows">
             <div class="bucket-row"><span class="bucket-row-lbl">Entry</span><span class="bucket-row-val">₹${esc(String(entry))}</span></div>
-            <div class="bucket-row"><span class="bucket-row-lbl">Target</span><span class="bucket-row-val green">₹${esc(String(tgt))}${(() => {
-              const upPct = parseFloat(d[b.upKey]||0);
-              const calcPct = (parseFloat(tgt)>0&&parseFloat(entry)>0) ? Math.round((parseFloat(tgt)-parseFloat(entry))/parseFloat(entry)*100) : 0;
-              const pct = upPct || calcPct;
-              return pct ? ` <span style="font-size:10px;opacity:0.8;">(+${pct}%)</span>` : '';
-            })()}</span></div>
-            <div class="bucket-row"><span class="bucket-row-lbl">Stop</span><span class="bucket-row-val red">${b.label==='Long Term'?'Thesis-based':'₹'+esc(String(stp))+((() => {
-              const stPct = parseFloat(d[b.stopPctKey]||0);
-              const calcPct = (parseFloat(stp)>0&&parseFloat(entry)>0) ? Math.round((parseFloat(stp)-parseFloat(entry))/parseFloat(entry)*100) : 0;
-              const pct = stPct || calcPct;
-              return pct && pct < 0 ? ` <span style="font-size:10px;opacity:0.8;">(${pct}%)</span>` : '';
-            })())}</span></div>
+            <div class="bucket-row"><span class="bucket-row-lbl">Target</span><span class="bucket-row-val green">₹${esc(String(tgt))}${d[b.upKey] ? ` <span style="font-size:10px;opacity:0.8;">(+${esc(String(d[b.upKey]))}%)</span>` : ''}</span></div>
+            <div class="bucket-row"><span class="bucket-row-lbl">Stop</span><span class="bucket-row-val red">${b.label==='Long Term'?'Thesis-based':'₹'+esc(String(stp))+(d[b.stopPctKey]?` <span style="font-size:10px;opacity:0.8;">(${esc(String(d[b.stopPctKey]))}%)</span>`:'')}</span></div>
           </div>
         </div>`;
       }).join('')}
