@@ -513,7 +513,10 @@ function renderResult(d){
           : '#9aa3b2';
         const entry = d[b.entryKey]||'—';
         const tgt   = d[b.targetKey]||'—';
+        const tgtIsNumeric = tgt !== '—' && !isNaN(parseFloat(tgt));
         const stp   = d[b.stopKey]||'—';
+        const stpNum = parseFloat(stp);
+        const stpIsNumeric = stp !== '—' && !isNaN(stpNum);
         const bBg = !hasSignal ? 'transparent'
           : bsigUp.includes('BUY')   ? 'rgba(34,197,94,0.08)'
           : bsigUp.includes('WATCH') ? 'rgba(245,158,11,0.08)'
@@ -526,8 +529,8 @@ function renderResult(d){
           <div style="font-size:11px;color:#5a6478;margin-bottom:10px;">${bsc ? bsc+'/100' : ''}</div>
           <div class="bucket-rows">
             <div class="bucket-row"><span class="bucket-row-lbl">Entry</span><span class="bucket-row-val">₹${esc(String(entry))}</span></div>
-            <div class="bucket-row"><span class="bucket-row-lbl">Target</span><span class="bucket-row-val green">₹${esc(String(tgt))}${d[b.upKey] ? ` <span style="font-size:10px;opacity:0.8;">(+${esc(String(d[b.upKey]))}%)</span>` : ''}</span></div>
-            <div class="bucket-row"><span class="bucket-row-lbl">Stop</span><span class="bucket-row-val red">₹${esc(String(stp))}${d[b.stopPctKey] ? ` <span style="font-size:10px;opacity:0.8;">(${esc(String(d[b.stopPctKey]))}%)</span>` : ''}</span></div>
+            <div class="bucket-row"><span class="bucket-row-lbl">Target</span><span class="bucket-row-val green">${tgtIsNumeric ? '₹'+esc(String(tgt)) : esc(String(tgt))}${d[b.upKey] ? ` <span style="font-size:10px;opacity:0.8;">(+${esc(String(d[b.upKey]))}%)</span>` : ''}</span></div>
+            <div class="bucket-row"><span class="bucket-row-lbl">Stop</span><span class="bucket-row-val red">${stpIsNumeric ? '₹'+esc(String(stp)) : esc(String(stp))}${d[b.stopPctKey] ? ` <span style="font-size:10px;opacity:0.8;">(${esc(String(d[b.stopPctKey]))}%)</span>` : ''}</span></div>
           </div>
         </div>`;
       }).join('')}
