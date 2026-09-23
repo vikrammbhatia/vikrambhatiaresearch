@@ -287,8 +287,18 @@ async function loadWatchList(){
     // Store for auto-load on init
     window._loadedIpos = ipos;
 
-    // Sort oldest to newest by listing date
+    // Sort: scanned IPOs first (most recently scanned at top, for quick
+    // reference), then everything not yet scanned, oldest-to-newest by
+    // listing date as before.
     ipos.sort((a, b) => {
+      const aScanned = !!a.lastScanned;
+      const bScanned = !!b.lastScanned;
+      if (aScanned !== bScanned) return aScanned ? -1 : 1;
+      if (aScanned && bScanned) {
+        const aTime = new Date(a.lastScanned).getTime() || 0;
+        const bTime = new Date(b.lastScanned).getTime() || 0;
+        return bTime - aTime;
+      }
       if (!a.listingDate && !b.listingDate) return 0;
       if (!a.listingDate) return 1;
       if (!b.listingDate) return -1;
