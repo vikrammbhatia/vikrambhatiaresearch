@@ -134,8 +134,10 @@ body{font-family:'Inter',system-ui,sans-serif;font-size:14px;line-height:1.6;bac
 .wi-meta{display:flex;justify-content:space-between;align-items:center;font-size:10px;}
 .wi-score{font-weight:700;}
 .wi-days{color:#5a6478;}
-.wi-signals{display:flex;gap:4px;margin-top:5px;}
-.wi-sig{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;}
+.wi-signals{display:flex;flex-direction:column;gap:4px;margin-top:5px;}
+.wi-sig-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.wi-tsl{font-size:9px;color:#8b95a5;white-space:nowrap;}
+.wi-sig{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;flex-shrink:0;}
 .wi-sig.sb{background:rgba(34,197,94,0.15);color:#22c55e;}
 .wi-sig.b{background:rgba(34,197,94,0.12);color:#22c55e;}
 .wi-sig.w{background:rgba(245,158,11,0.15);color:#f59e0b;}
@@ -246,6 +248,19 @@ function sigColor(sig){
   if(s.includes('PASS')||s.includes('AVOID')) return '#ef4444';
   return '#9aa3b2';
 }
+// Compact "Entry ₹x · Target ₹y (+z%) · SL ₹w" line for the sidebar bucket
+// rows. Only prepends ₹ to values that actually parse as numbers — guards
+// against stale/non-numeric cached values (e.g. old "Thesis-based" text)
+// rendering as garbage like "₹Thesis-based".
+function tslLine(entry, target, upPct, stop){
+  const entryNum = parseFloat(entry);
+  if(!entry || isNaN(entryNum)) return '';
+  const tgtNum = parseFloat(target);
+  const tgtStr = (target && !isNaN(tgtNum)) ? '₹'+target+(upPct?' (+'+upPct+'%)':'') : '—';
+  const stpNum = parseFloat(stop);
+  const stpStr = (stop && !isNaN(stpNum)) ? '₹'+stop : (stop || '—');
+  return `Entry ₹${entry} · Target ${tgtStr} · SL ${stpStr}`;
+}
 function scoreColor(n){
   const v = parseInt(n)||0;
   if(v>=75) return '#22c55e';
@@ -326,11 +341,14 @@ async function loadWatchList(){
       // Only show ST/MT/LT badges if an actual Watch scan has been run (lastScanned set)
       const hasScanned = !!(ipo.lastScanned);
       const hasSignals = hasScanned && (ipo.stSignal || ipo.mtSignal || ipo.ltSignal);
+      const stLine = tslLine(ipo.currentPrice, ipo.stTarget, ipo.stUpsidePct, ipo.stStop);
+      const mtLine = tslLine(ipo.currentPrice, ipo.mtTarget, ipo.mtUpsidePct, ipo.mtStop);
+      const ltLine = tslLine(ipo.currentPrice, ipo.ltTarget, ipo.ltUpsidePct, ipo.ltStop);
       const signalBadges = hasSignals
         ? `<div class="wi-signals">
-            <span class="wi-sig ${sigClass(ipo.stSignal)}">ST:${esc(ipo.stSignal||'—')}</span>
-            <span class="wi-sig ${sigClass(ipo.mtSignal)}">MT:${esc(ipo.mtSignal||'—')}</span>
-            <span class="wi-sig ${sigClass(ipo.ltSignal)}">LT:${esc(ipo.ltSignal||'—')}</span>
+            <div class="wi-sig-row"><span class="wi-sig ${sigClass(ipo.stSignal)}">ST:${esc(ipo.stSignal||'—')}</span>${stLine?`<span class="wi-tsl">${esc(stLine)}</span>`:''}</div>
+            <div class="wi-sig-row"><span class="wi-sig ${sigClass(ipo.mtSignal)}">MT:${esc(ipo.mtSignal||'—')}</span>${mtLine?`<span class="wi-tsl">${esc(mtLine)}</span>`:''}</div>
+            <div class="wi-sig-row"><span class="wi-sig ${sigClass(ipo.ltSignal)}">LT:${esc(ipo.ltSignal||'—')}</span>${ltLine?`<span class="wi-tsl">${esc(ltLine)}</span>`:''}</div>
           </div>`
         : `<div style="font-size:9px;color:#3d4a5a;margin-top:4px;">Run scan for ST·MT·LT signals</div>`;
       const vUp = (ipo.verdict||'').toUpperCase();
