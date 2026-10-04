@@ -253,8 +253,8 @@ h1 em{font-style:normal;color:var(--or);}
         <div class="chart-card-title">India SME IPOs</div>
         <div class="chart-card-sub">Median listing premium by verdict</div>
         <div class="kpi-row">
-          <div><div class="kpi" data-k="dir">—</div><div class="kpi-l">direction correct</div></div>
-          <div><div class="kpi" data-k="err">—</div><div class="kpi-l">median forecast error</div></div>
+          <div><div class="kpi" data-k="dir">—</div><div class="kpi-l">direction correct (original formula)</div></div>
+          <div><div class="kpi" data-k="err">—</div><div class="kpi-l">median error (original formula)</div></div>
         </div>
         <div class="bar-chart" data-k="bars"><div class="chart-loading">Loading live data…</div></div>
         <div class="chart-footnote" data-k="foot">&nbsp;</div>
@@ -413,7 +413,14 @@ h1 em{font-style:normal;color:var(--or);}
       var col=g.median<0?"#ef4444":COLORS[k];
       return '<div class="bar-row"><div class="bar-label">'+LABELS[k]+' ('+g.n+')</div><div class="bar-wrap"><div class="bar-fill" style="width:'+w+'%;background:'+col+';"></div></div><div class="bar-val">'+pct(g.median)+'</div></div>';
     }).join("");
-    q("foot").textContent = "Based on "+(f.n||0)+" listed IPOs · error in percentage points · updated "+asOf;
+    var foot = "Based on "+(f.n||0)+" listed IPOs · error in percentage points · updated "+asOf;
+    var v2 = seg.forecastV2;
+    if (v2) {
+      foot += v2.sampleOk
+        ? " · New SME formula (since Oct 2026): "+v2.directionCorrectPct+"% direction correct, "+v2.medianAbsErrorPp.toFixed(1)+" pp median error ("+v2.n+" IPOs)"
+        : " · New SME formula live since Oct 2026 — "+(v2.n||0)+" listed so far; results shown from 5";
+    }
+    q("foot").textContent = foot;
   }
 
   function fail(){
