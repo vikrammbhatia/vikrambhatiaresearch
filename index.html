@@ -150,6 +150,12 @@ h1 em{font-style:normal;color:var(--or);}
 .pos-mini-ticker{font-size:12px;font-weight:700;color:var(--text);font-family:monospace;width:50px;}
 .pos-mini-entry{font-size:11px;color:var(--t2);}
 .pos-mini-sig{font-size:10px;font-weight:600;}
+.kpi-row{display:flex;gap:18px;margin-bottom:14px;}
+.kpi{font-size:1.25rem;font-weight:700;color:var(--or);font-variant-numeric:tabular-nums;line-height:1.1;}
+.kpi-l{font-size:9.5px;color:var(--t3);margin-top:2px;}
+.bar-row.na .bar-val{width:auto;font-weight:500;color:var(--t3);font-size:9.5px;}
+.chart-loading{font-size:10px;color:var(--t3);}
+#ipo-mb .bar-label,#ipo-sme .bar-label{width:88px;}
 @media(max-width:900px){.charts-grid{grid-template-columns:1fr 1fr;}}
 
 /* ── METHOD ── */
@@ -218,10 +224,10 @@ h1 em{font-style:normal;color:var(--or);}
 
   <!-- STATS -->
   <div class="stats-strip">
-    <div class="stat-item"><div class="stat-num">47</div><div class="stat-lbl">India IPOs analysed</div></div>
-    <div class="stat-item"><div class="stat-num">89%</div><div class="stat-lbl">Direction accuracy — India IPO engine</div></div>
-    <div class="stat-item"><div class="stat-num">3</div><div class="stat-lbl">Markets — NSE · DFM · NYSE · NASDAQ</div></div>
-    <div class="stat-item"><div class="stat-num">Live</div><div class="stat-lbl">USA MR Compass — Cycle 1 active</div></div>
+    <div class="stat-item"><div class="stat-num" id="hs-total">—</div><div class="stat-lbl" id="hs-total-lbl">IPOs analysed</div></div>
+    <div class="stat-item"><div class="stat-num" id="hs-mb-dir">—</div><div class="stat-lbl" id="hs-mb-dir-lbl">Direction correct — India mainboard IPOs</div></div>
+    <div class="stat-item"><div class="stat-num" id="hs-sme-dir">—</div><div class="stat-lbl" id="hs-sme-dir-lbl">Direction correct — India SME IPOs</div></div>
+    <div class="stat-item"><div class="stat-num" id="hs-gap">—</div><div class="stat-lbl">Mainboard median listing premium, Subscribe vs Avoid</div></div>
   </div>
 
 
@@ -230,37 +236,28 @@ h1 em{font-style:normal;color:var(--or);}
     <div class="charts-title">Platform Performance</div>
     <div class="charts-grid">
 
-      <!-- Chart 1: India IPO Avg Listing Premium by category -->
-      <div class="chart-card">
-        <div class="chart-card-title">India IPO Avg Listing Premium</div>
-        <div class="chart-card-sub">By recommendation tier · Last 47 IPOs analysed</div>
-        <div class="bar-chart">
-          <div class="bar-row"><div class="bar-label">Strong Subscribe</div><div class="bar-wrap"><div class="bar-fill" style="width:78%;background:#22c55e;"></div></div><div class="bar-val">+38.4%</div></div>
-          <div class="bar-row"><div class="bar-label">Subscribe</div><div class="bar-wrap"><div class="bar-fill" style="width:52%;background:#86efac;"></div></div><div class="bar-val">+19.2%</div></div>
-          <div class="bar-row"><div class="bar-label">Subscribe with Caution</div><div class="bar-wrap"><div class="bar-fill" style="width:28%;background:#f59e0b;"></div></div><div class="bar-val">+8.1%</div></div>
-          <div class="bar-row"><div class="bar-label">Avoid</div><div class="bar-wrap"><div class="bar-fill" style="width:14%;background:#ef4444;"></div></div><div class="bar-val">−4.2%</div></div>
+      <!-- Chart 1: India mainboard IPO metrics (live) -->
+      <div class="chart-card" id="ipo-mb">
+        <div class="chart-card-title">India Mainboard IPOs</div>
+        <div class="chart-card-sub">Median listing premium by verdict</div>
+        <div class="kpi-row">
+          <div><div class="kpi" data-k="dir">—</div><div class="kpi-l">direction correct</div></div>
+          <div><div class="kpi" data-k="err">—</div><div class="kpi-l">median forecast error</div></div>
         </div>
+        <div class="bar-chart" data-k="bars"><div class="chart-loading">Loading live data…</div></div>
+        <div class="chart-footnote" data-k="foot">&nbsp;</div>
       </div>
 
-      <!-- Chart 2: Model direction accuracy -->
-      <div class="chart-card">
-        <div class="chart-card-title">Model Direction Accuracy</div>
-        <div class="chart-card-sub">Listing day prediction vs actual outcome</div>
-        <div class="donut-wrap">
-          <svg viewBox="0 0 120 120" class="donut-svg">
-            <circle cx="60" cy="60" r="46" fill="none" stroke="#2e3a50" stroke-width="14"/>
-            <circle cx="60" cy="60" r="46" fill="none" stroke="#e67e22" stroke-width="14"
-              stroke-dasharray="259 71" stroke-dashoffset="0" stroke-linecap="round"
-              transform="rotate(-90 60 60)"/>
-            <text x="60" y="55" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="800" fill="#e67e22">89%</text>
-            <text x="60" y="72" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a6478">accuracy</text>
-          </svg>
-          <div class="donut-legend">
-            <div class="donut-leg-item"><span class="donut-dot" style="background:#e67e22;"></span>Correct direction 89%</div>
-            <div class="donut-leg-item"><span class="donut-dot" style="background:#2e3a50;"></span>Missed 11%</div>
-            <div class="donut-note">Backtested on India IPO engine</div>
-          </div>
+      <!-- Chart 2: India SME IPO metrics (live) -->
+      <div class="chart-card" id="ipo-sme">
+        <div class="chart-card-title">India SME IPOs</div>
+        <div class="chart-card-sub">Median listing premium by verdict</div>
+        <div class="kpi-row">
+          <div><div class="kpi" data-k="dir">—</div><div class="kpi-l">direction correct</div></div>
+          <div><div class="kpi" data-k="err">—</div><div class="kpi-l">median forecast error</div></div>
         </div>
+        <div class="bar-chart" data-k="bars"><div class="chart-loading">Loading live data…</div></div>
+        <div class="chart-footnote" data-k="foot">&nbsp;</div>
       </div>
 
       <!-- Chart 3: India MR Compass cycle P&L -->
@@ -379,7 +376,7 @@ h1 em{font-style:normal;color:var(--or);}
   <div class="method">
     <div class="method-grid">
       <div><div class="m-num">22+</div><div class="m-lbl">Scoring factors per IPO across all three markets</div></div>
-      <div><div class="m-num">89%</div><div class="m-lbl">Direction accuracy on India IPO engine (backtested)</div></div>
+      <div><div class="m-num">Daily</div><div class="m-lbl">Listing-day results captured automatically and checked against every forecast</div></div>
       <div><div class="m-num">3</div><div class="m-lbl">Markets covered — India, UAE and United States</div></div>
       <div><div class="m-num">Live</div><div class="m-lbl">Claude AI web search, Yahoo Finance, BSE, DFM, ADX</div></div>
     </div>
@@ -391,5 +388,58 @@ h1 em{font-style:normal;color:var(--or);}
   </div>
 
 </div>
+<script>
+// ── LIVE HOMEPAGE IPO METRICS ─────────────────────────────────
+(function(){
+  var URL_ = "https://ipo-proxy.vikrammbhatia.workers.dev?action=home_stats";
+  var COLORS = {subscribe:"#22c55e", caution:"#f59e0b", avoid:"#ef4444"};
+  var LABELS = {subscribe:"Subscribe", caution:"Caution", avoid:"Avoid"};
+  function $(id){ return document.getElementById(id); }
+  function pct(v){ if(v===null||v===undefined) return "—"; var a=Math.abs(v).toFixed(1); return (v>0?"+":v<0?"−":"")+a+"%"; }
+  function esc(t){ return String(t).replace(/[&<>]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c];}); }
+
+  function renderCard(id, seg, asOf){
+    var el=$(id); if(!el) return;
+    var q=function(k){ return el.querySelector('[data-k="'+k+'"]'); };
+    var f=seg.forecast||{};
+    q("dir").textContent = f.sampleOk && f.directionCorrectPct!==null ? f.directionCorrectPct+"%" : "—";
+    q("err").textContent = f.sampleOk && f.medianAbsErrorPp!==null ? f.medianAbsErrorPp.toFixed(1)+" pp" : "—";
+    var bv=seg.byVerdict||{}, keys=["subscribe","caution","avoid"], max=10;
+    keys.forEach(function(k){ var g=bv[k]; if(g&&g.sampleOk&&g.median!==null) max=Math.max(max,Math.abs(g.median)); });
+    q("bars").innerHTML = keys.map(function(k){
+      var g=bv[k]||{n:0};
+      if(!g.sampleOk) return '<div class="bar-row na"><div class="bar-label">'+LABELS[k]+' ('+(g.n||0)+')</div><div class="bar-val">Not enough data yet</div></div>';
+      var w=Math.max(2,Math.round(Math.abs(g.median)/max*100));
+      var col=g.median<0?"#ef4444":COLORS[k];
+      return '<div class="bar-row"><div class="bar-label">'+LABELS[k]+' ('+g.n+')</div><div class="bar-wrap"><div class="bar-fill" style="width:'+w+'%;background:'+col+';"></div></div><div class="bar-val">'+pct(g.median)+'</div></div>';
+    }).join("");
+    q("foot").textContent = "Based on "+(f.n||0)+" listed IPOs · error in percentage points · updated "+asOf;
+  }
+
+  function fail(){
+    ["ipo-mb","ipo-sme"].forEach(function(id){
+      var el=$(id); if(!el) return;
+      el.querySelector('[data-k="bars"]').innerHTML='<div class="chart-loading">Live data temporarily unavailable.</div>';
+    });
+  }
+
+  fetch(URL_,{redirect:"follow"}).then(function(r){ return r.json(); }).then(function(d){
+    if(!d || !d.india || !d.india.segments){ fail(); return; }
+    var m=d.byMarket||{}, seg=d.india.segments, asOf=esc(d.india.asOf||"");
+    if(d.totalAnalysed!==null){
+      $("hs-total").textContent = d.totalAnalysed;
+      var parts=[]; if(m.india!==null) parts.push("India "+m.india); if(m.uae!==null) parts.push("UAE "+m.uae); if(m.us!==null) parts.push("USA "+m.us);
+      $("hs-total-lbl").textContent = "IPOs analysed · "+parts.join(" · ");
+    }
+    var mb=seg.mainboard.forecast, sm=seg.sme.forecast;
+    if(mb.sampleOk){ $("hs-mb-dir").textContent=mb.directionCorrectPct+"%"; $("hs-mb-dir-lbl").textContent="Direction correct — India mainboard IPOs ("+mb.n+")"; }
+    if(sm.sampleOk){ $("hs-sme-dir").textContent=sm.directionCorrectPct+"%"; $("hs-sme-dir-lbl").textContent="Direction correct — India SME IPOs ("+sm.n+")"; }
+    var sv=seg.mainboard.byVerdict.subscribe, av=seg.mainboard.byVerdict.avoid;
+    if(sv.sampleOk&&av.sampleOk){ var gap=Math.round((sv.median-av.median)*10)/10; $("hs-gap").textContent=(gap>=0?"+":"−")+Math.abs(gap).toFixed(1)+" pp"; }
+    renderCard("ipo-mb", seg.mainboard, asOf);
+    renderCard("ipo-sme", seg.sme, asOf);
+  }).catch(fail);
+})();
+</script>
 </body>
 </html>
