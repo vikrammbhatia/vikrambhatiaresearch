@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Crypto Watch — Vikram Bhatia Research</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',system-ui,sans-serif;font-size:14px;line-height:1.6;background:#1c2333;color:#f0f2f5;display:flex;min-height:100vh;}
+
+/* ── SIDEBAR (same as other portal pages) ── */
+.vb-sidebar{width:210px;flex-shrink:0;background:#1c2333;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;border-right:1px solid #2e3a50;}
+.vb-brand{display:flex;align-items:center;gap:8px;padding:14px 14px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.08);}
+.vb-mark{width:36px;height:36px;flex-shrink:0;}
+.vb-mark svg{width:100%;height:100%;display:block;}
+.vb-brand-name{font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:#e67e22;letter-spacing:-0.01em;line-height:1.3;}
+.vsb-sec{padding:14px 10px 6px;font-size:9px;font-weight:600;color:#e67e22;letter-spacing:0.08em;text-transform:uppercase;font-family:'Inter',sans-serif;}
+.vsb-lnk{display:flex;align-items:center;gap:8px;padding:7px 12px;margin:1px 6px;border-radius:6px;font-size:11.5px;font-weight:500;color:#8892a0;text-decoration:none;transition:background 0.15s,color 0.15s;font-family:'Inter',sans-serif;}
+.vsb-lnk:hover{background:rgba(255,255,255,0.06);color:#d0d6e0;}
+.vsb-lnk.active{background:rgba(230,126,34,0.12);color:#e67e22;}
+.vsb-lnk.vsb-disabled{opacity:0.45;cursor:default;pointer-events:none;}
+.vsb-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0;}
+
+/* ── MAIN WRAPPER ── */
+.vb-maincol{margin-left:210px;flex:1;min-width:0;}
+.page{display:flex;flex-direction:row;min-height:100vh;width:100%;}
+.main-col{flex:1;padding:2.5rem 3rem;min-width:0;}
+.pg-header{font-size:18px;font-weight:700;color:#e67e22;padding:1.25rem 0 0.75rem;letter-spacing:-0.01em;}
+
+/* ── SEARCH ROW ── */
+.search-row{display:flex;gap:10px;margin-bottom:1.5rem;align-items:center;}
+.search-row select{flex:1;background:#232d40;border:1px solid #2e3a50;border-radius:8px;padding:10px 14px;color:#f0f2f5;font-size:14px;font-family:'Inter',sans-serif;outline:none;cursor:pointer;}
+.search-row select:focus{border-color:#e67e22;}
+.btn-scan{background:#e67e22;color:#fff;border:none;border-radius:8px;padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif;transition:background 0.15s;}
+.btn-scan:hover{background:#c0651a;}
+.btn-scan:disabled{opacity:0.5;cursor:not-allowed;}
+button:focus-visible,select:focus-visible,.watch-item:focus-visible{outline:2px solid #e67e22;outline-offset:2px;}
+
+/* ── STATUS BANNER ── */
+.status-banner{background:#232d40;border:1px solid #2e3a50;border-radius:8px;padding:10px 16px;font-size:12px;color:#9aa3b2;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;}
+.status-dot{width:8px;height:8px;border-radius:50%;background:#5a6478;flex-shrink:0;margin-right:8px;}
+.status-dot.live{background:#22c55e;animation:pulse-green 1.5s infinite;}
+.status-dot.scanning{background:#e67e22;animation:pulse-amber 1s infinite;}
+@keyframes pulse-green{0%,100%{opacity:1;}50%{opacity:0.4;}}
+@keyframes pulse-amber{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+/* ── MARKET CONTEXT STRIP ── */
+.ctx-card{background:#232d40;border:1px solid #2e3a50;border-radius:10px;padding:16px 20px;margin-bottom:1.25rem;}
+.ctx-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+.ctx-title{font-size:12px;font-weight:700;color:#e67e22;letter-spacing:0.06em;text-transform:uppercase;}
+.ctx-regime{font-size:11px;font-weight:800;padding:3px 10px;border-radius:4px;letter-spacing:0.04em;}
+.ctx-scores{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:10px;}
+.ctx-score-grp{font-size:11px;color:#5a6478;}
+.ctx-score-grp b{font-size:13px;margin-right:6px;}
+.ctx-summary{font-size:12.5px;color:#9aa3b2;line-height:1.7;}
+.ctx-toggle{background:none;border:none;color:#e67e22;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;padding:6px 0 0;}
+.ctx-more{display:none;margin-top:10px;padding-top:10px;border-top:1px solid #2e3a50;font-size:12px;color:#9aa3b2;}
+.ctx-more.open{display:block;}
+.ctx-more h4{font-size:11px;color:#f0f2f5;font-weight:600;margin:8px 0 4px;}
+.ctx-more ul{padding-left:18px;}
+.ctx-more li{margin-bottom:3px;}
+
+/* ── COIN HERO CARD ── */
+.stock-card{background:#232d40;border:1px solid #2e3a50;border-radius:10px;padding:20px 24px;margin-bottom:1.25rem;}
+.stock-name{font-size:18px;font-weight:700;color:#f0f2f5;margin-bottom:4px;}
+.stock-name small{font-size:13px;color:#9aa3b2;font-weight:600;margin-left:6px;}
+.stock-meta{font-size:12px;color:#9aa3b2;margin-bottom:6px;display:flex;gap:14px;flex-wrap:wrap;}
+.price-row{display:flex;gap:24px;margin-top:12px;flex-wrap:wrap;}
+.price-item{display:flex;flex-direction:column;gap:2px;}
+.price-lbl{font-size:10px;color:#5a6478;text-transform:uppercase;letter-spacing:0.04em;}
+.price-val{font-size:14px;font-weight:600;color:#f0f2f5;}
+.price-big{font-size:22px;font-weight:800;}
+
+/* ── THREE BUCKET CARDS ── */
+.buckets-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem;}
+.bucket-card{background:#232d40;border:1px solid #2e3a50;border-radius:10px;padding:18px 20px;}
+.bucket-label{font-size:12px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:4px;}
+.bucket-horizon{font-size:11px;color:#5a6478;margin-bottom:12px;}
+.bucket-rows{display:flex;flex-direction:column;gap:6px;}
+.bucket-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;}
+.bucket-row-lbl{color:#5a6478;}
+.bucket-row-val{font-weight:600;color:#f0f2f5;}
+.bucket-row-val.green{color:#22c55e;}
+.bucket-row-val.red{color:#ef4444;}
+
+/* ── PILLAR SCORES ── */
+.pillars-section{background:#232d40;border:1px solid #2e3a50;border-radius:10px;padding:20px 24px;margin-bottom:1.5rem;}
+.pillars-title{font-size:12px;font-weight:700;color:#e67e22;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:16px;}
+.pillar-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.pillar-name{font-size:12px;color:#9aa3b2;width:180px;flex-shrink:0;}
+.pillar-bar-wrap{flex:1;height:8px;background:#1c2333;border-radius:4px;overflow:hidden;}
+.pillar-bar-fill{height:100%;border-radius:4px;transition:width 0.6s ease;}
+.pillar-score-val{font-size:12px;font-weight:700;width:32px;text-align:right;flex-shrink:0;}
+.pillar-split{flex:1;display:flex;gap:18px;font-size:12px;color:#5a6478;}
+.pillar-split b{margin-left:4px;}
+.pillar-note{font-size:11px;color:#5a6478;margin-top:6px;}
+
+/* ── ANALYSIS SECTIONS (expandable) ── */
+.rationale-section{margin-bottom:1rem;}
+.rat-header{background:#1c2333;border:1px solid #2e3a50;border-radius:8px;padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;width:100%;font-family:'Inter',sans-serif;text-align:left;}
+.rat-header:hover{border-color:#3a4a62;}
+.rat-title{font-size:13px;font-weight:600;color:#f0f2f5;}
+.rat-chevron{color:#5a6478;font-size:12px;transition:transform 0.2s;}
+.rat-body{background:#232d40;border:1px solid #2e3a50;border-top:none;border-radius:0 0 8px 8px;padding:14px 16px;font-size:13px;color:#9aa3b2;line-height:1.7;display:none;}
+.rat-body.open{display:block;}
+.rat-body ul{padding-left:18px;}
+.rat-body li{margin-bottom:4px;}
+
+/* ── LOADING / EMPTY ── */
+.loader-wrap{padding:3rem 0;text-align:center;}
+.loader-spinner{width:36px;height:36px;border:3px solid #2e3a50;border-top-color:#e67e22;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loader-msg{font-size:13px;color:#9aa3b2;}
+.empty-state{padding:3rem;text-align:center;color:#5a6478;}
+.empty-icon{font-size:36px;margin-bottom:12px;}
+.empty-title{font-size:16px;font-weight:600;color:#f0f2f5;margin-bottom:6px;}
+.empty-sub{font-size:13px;line-height:1.6;}
+
+/* ── DISCLAIMER ── */
+.disclaimer{margin-top:2rem;padding:16px 18px;border:1px solid #2e3a50;border-radius:8px;font-size:11.5px;color:#5a6478;line-height:1.7;}
+.disclaimer p{margin-bottom:8px;}
+.disclaimer p:last-child{margin-bottom:0;}
+.disclaimer b{color:#9aa3b2;}
+
+/* ── RIGHT SIDE PANEL ── */
+.side-col{width:300px;min-width:300px;border-left:1px solid #2e3a50;height:100vh;position:sticky;top:0;overflow-y:auto;background:#1c2333;display:flex;flex-direction:column;}
+.side-header{padding:14px 14px 10px;border-bottom:1px solid #2e3a50;display:flex;align-items:center;justify-content:space-between;}
+.side-title{font-size:11px;font-weight:700;color:#e67e22;letter-spacing:0.06em;text-transform:uppercase;}
+.refresh-btn{font-size:11px;color:#e67e22;cursor:pointer;background:none;border:1px solid #2e3a50;padding:4px 10px;border-radius:5px;font-family:'Inter',sans-serif;}
+.side-list{padding:8px;}
+.watch-item{background:#232d40;border:1px solid #2e3a50;border-radius:7px;padding:11px 13px;margin-bottom:8px;cursor:pointer;transition:border-color 0.15s;}
+.watch-item:hover{border-color:#3a4a62;}
+.watch-item.active{border-color:#e67e22;background:rgba(230,126,34,0.08);}
+.wi-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px;}
+.wi-name{font-size:12px;font-weight:600;color:#f0f2f5;}
+.wi-name small{color:#5a6478;font-weight:500;margin-left:4px;}
+.wi-price{font-size:12px;font-weight:600;color:#f0f2f5;}
+.wi-meta{display:flex;justify-content:space-between;font-size:10px;color:#5a6478;}
+.wi-signals{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap;}
+.wi-sig{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;}
+.wi-sig.sb{background:rgba(34,197,94,0.15);color:#22c55e;}
+.wi-sig.w{background:rgba(245,158,11,0.15);color:#f59e0b;}
+.wi-sig.p{background:rgba(239,68,68,0.1);color:#ef4444;}
+.wi-hint{font-size:9px;color:#3d4a5a;margin-top:5px;}
+.no-items{padding:20px 14px;font-size:12px;color:#5a6478;text-align:center;}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important;transition:none!important;}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="vb-sidebar">
+  <a class="vb-brand" href="/">
+    <div class="vb-mark">
+      <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <text x="22" y="31" font-family="Inter,Arial,sans-serif" font-size="24" font-weight="800" fill="#e67e22" text-anchor="middle" letter-spacing="-1">VB</text>
+      </svg>
+    </div>
+    <div class="vb-brand-name">Vikram Bhatia Research</div>
+  </a>
+  <a class="vsb-lnk" href="/"><span class="vsb-icon">⌂</span>Home</a>
+  <div class="vsb-sec">India</div>
+  <a class="vsb-lnk" href="/ipo"><span class="vsb-icon">📊</span>IPO Intelligence</a>
+  <a class="vsb-lnk" href="/nfo"><span class="vsb-icon">🏦</span>NFO Analyser</a>
+  <a class="vsb-lnk" href="/india-mr"><span class="vsb-icon">🔁</span>MR Compass</a>
+  <a class="vsb-lnk" href="/india-ipo-watch"><span class="vsb-icon">🎯</span>IPO Watch</a>
+  <div class="vsb-sec">UAE</div>
+  <a class="vsb-lnk" href="/uae-ipo"><span class="vsb-icon">📊</span>IPO Intelligence</a>
+  <a class="vsb-lnk" href="/uae-mr"><span class="vsb-icon">🔁</span>MR Compass</a>
+  <span class="vsb-lnk vsb-disabled" aria-disabled="true"><span class="vsb-icon">🎯</span>IPO Watch - Coming Soon</span>
+  <div class="vsb-sec">USA</div>
+  <a class="vsb-lnk" href="/us-ipo"><span class="vsb-icon">📊</span>IPO Intelligence</a>
+  <a class="vsb-lnk" href="/us-mr"><span class="vsb-icon">🔁</span>MR Compass</a>
+  <a class="vsb-lnk" href="/us-markets"><span class="vsb-icon">🔭</span>Market Pulse</a>
+  <div class="vsb-sec">Crypto</div>
+  <a class="vsb-lnk active" href="/crypto-watch"><span class="vsb-icon">₿</span>Crypto Watch</a>
+</aside>
+
+<!-- MAIN -->
+<div class="vb-maincol">
+<div class="page">
+
+  <div class="main-col">
+    <div class="pg-header">Crypto Watch</div>
+
+    <div class="search-row">
+      <select id="coinSelect" aria-label="Choose a coin">
+        <option value="">— Select a coin —</option>
+      </select>
+      <button class="btn-scan" id="scanBtn" onclick="analyse()">Analyse</button>
+    </div>
+
+    <div class="status-banner" id="statusBanner" style="display:none;">
+      <div style="display:flex;align-items:center;">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusMsg"></span>
+      </div>
+      <span id="statusTime" style="font-size:11px;color:#5a6478;"></span>
+    </div>
+
+    <div id="contextArea"></div>
+
+    <div id="resultArea">
+      <div class="empty-state">
+        <div class="empty-icon">₿</div>
+        <div class="empty-title">Crypto Watch</div>
+        <div class="empty-sub">Pick a coin and press <b>Analyse</b>.<br>Each coin is researched once a day, so later views load instantly.</div>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      <p><b>Crypto risk disclaimer:</b> Cryptocurrencies are highly volatile and largely unregulated in many jurisdictions. Prices can fall sharply, and tokens can lose all value. The scores and signals on this page are AI-generated research for informational purposes only. They are not investment advice.</p>
+      <p><b>Tax note for Indian residents:</b> Gains from virtual digital assets are taxed at a flat 30% (plus applicable surcharge and cess), with 1% TDS on transfers above the threshold. Losses cannot be set off against other income or carried forward. NRIs should check their residency status and the applicable tax treaty with a tax advisor.</p>
+      <p><b>UAE:</b> Virtual asset activity in Dubai is regulated by VARA. Use only licensed platforms.</p>
+    </div>
+  </div>
+
+  <div class="side-col">
+    <div class="side-header">
+      <div class="side-title">Coins tracked</div>
+      <button class="refresh-btn" onclick="loadCoinList()">Refresh</button>
+    </div>
+    <div class="side-list" id="coinList"><div class="no-items">Loading…</div></div>
+  </div>
+
+</div>
+</div>
+
+<script>
+// Token is added by the Cloudflare Worker, so none is needed here
+const AS_URL = 'https://ipo-proxy.vikrammbhatia.workers.dev';
+const EXCHANGE_TOKENS = ['BNB','LEO','WBT','OKB','CRO','BGB','HTX','GT','KCS'];
+
+let COINS = [];
+let busy = false;
+
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+async function api(params){
+  const qs = new URLSearchParams(Object.assign({}, params, { v: Date.now() })).toString();
+  const res = await fetch(AS_URL + '?' + qs, { redirect: 'follow' });
+  const text = await res.text();
+  let d;
+  try { d = JSON.parse(text); } catch(e){ throw new Error('Unexpected response from server. Try again in a minute.'); }
+  if (d.error) throw new Error(d.error);
+  if (d.ok === false) throw new Error(d.error || 'Request failed');
+  return d;
+}
+
+// ── Formatting ───────────────────────────────────────────────
+function usd(v){
+  const n = Number(v);
+  if (v === '' || v == null || isNaN(n)) return '—';
+  if (n >= 1000) return '$' + n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  if (n >= 1)    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return '$' + Number(n.toPrecision(4)).toString();
+}
+function bigUsd(v){
+  const n = Number(v);
+  if (!n) return '—';
+  if (n >= 1e12) return '$' + (n/1e12).toFixed(2) + 'T';
+  if (n >= 1e9)  return '$' + (n/1e9).toFixed(1) + 'B';
+  if (n >= 1e6)  return '$' + (n/1e6).toFixed(1) + 'M';
+  return usd(n);
+}
+function pct(v){
+  const n = Number(v);
+  if (v === '' || v == null || isNaN(n)) return '—';
+  return (n > 0 ? '+' : '') + n + '%';
+}
+function pctColor(v){ return Number(v) >= 0 ? '#22c55e' : '#ef4444'; }
+function sigClass(sig){
+  const s = String(sig||'').toUpperCase();
+  if (s.includes('BUY')) return 'sb';
+  if (s.includes('PASS')) return 'p';
+  return 'w';
+}
+function sigColor(sig){
+  const s = String(sig||'').toUpperCase();
+  if (s.includes('BUY'))   return '#22c55e';
+  if (s.includes('WATCH')) return '#f59e0b';
+  if (s.includes('PASS'))  return '#ef4444';
+  return '#9aa3b2';
+}
+function pillarColor(n){
+  const v = parseInt(n)||0;
+  if (v >= 60) return '#22c55e';
+  if (v >= 45) return '#f59e0b';
+  return '#ef4444';
+}
+function when(iso){
+  if (!iso) return '—';
+  return new Date(iso).toLocaleString('en-GB', { timeZone:'Asia/Dubai', day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) + ' (Dubai)';
+}
+// "ST 43 · MT 43 · LT 54 (coin adj +5)" -> {ST:43, MT:43, LT:54, note:'coin adj +5'}
+function parseSplit(str){
+  const out = { ST:'', MT:'', LT:'', note:'' };
+  String(str||'').replace(/\b(ST|MT|LT)\s+(\d+)/g, (m, k, v) => { out[k] = v; });
+  const n = String(str||'').match(/\(([^)]+)\)/);
+  if (n) out.note = n[1];
+  return out;
+}
+
+// ── Status banner ────────────────────────────────────────────
+function setStatus(type, msg, time){
+  const banner = document.getElementById('statusBanner');
+  if (!msg){ banner.style.display = 'none'; return; }
+  banner.style.display = 'flex';
+  document.getElementById('statusDot').className = 'status-dot ' + (type === 'scanning' ? 'scanning' : type === 'cached' ? 'live' : '');
+  document.getElementById('statusMsg').textContent = msg;
+  document.getElementById('statusTime').textContent = time || '';
+}
+
+// ── Coin list (dropdown + right panel) ───────────────────────
+async function loadCoinList(){
+  const el = document.getElementById('coinList');
+  const sel = document.getElementById('coinSelect');
+  const current = sel.value;
+  el.innerHTML = '<div class="no-items">Loading…</div>';
+  try {
+    const d = await api({ action: 'crypto_list' });
+    COINS = d.coins || [];
+    if (!COINS.length){ el.innerHTML = '<div class="no-items">No coins tracked yet.</div>'; return; }
+
+    sel.innerHTML = '<option value="">— Select a coin —</option>' + COINS.map(c =>
+      `<option value="${esc(c.id)}">${esc(c.name)} (${esc(c.symbol)})</option>`).join('');
+    if (current) sel.value = current;
+
+    el.innerHTML = COINS.map(c => {
+      const sigs = c.scannedToday
+        ? `<div class="wi-signals">
+             <span class="wi-sig ${sigClass(c.st && c.st.signal)}">ST: ${esc(c.st && c.st.signal || '—')}</span>
+             <span class="wi-sig ${sigClass(c.mt && c.mt.signal)}">MT: ${esc(c.mt && c.mt.signal || '—')}</span>
+             <span class="wi-sig ${sigClass(c.lt && c.lt.signal)}">LT: ${esc(c.lt && c.lt.signal || '—')}</span>
+           </div>`
+        : `<div class="wi-hint">Not analysed today</div>`;
+      return `<div class="watch-item${c.id === current ? ' active' : ''}" data-id="${esc(c.id)}" tabindex="0" role="button"
+                   onclick="pickCoin('${esc(c.id)}')" onkeydown="if(event.key==='Enter')pickCoin('${esc(c.id)}')">
+        <div class="wi-top">
+          <span class="wi-name">${esc(c.name)}<small>${esc(c.symbol)}</small></span>
+          <span class="wi-price">${usd(c.price)}</span>
+        </div>
+        <div class="wi-meta">
+          <span>#${esc(c.rank)}</span>
+          <span style="color:${pctColor(c.change24h)};">${pct(c.change24h)} 24h</span>
+        </div>
+        ${sigs}
+      </div>`;
+    }).join('');
+  } catch(e){
+    el.innerHTML = `<div class="no-items">Couldn't load coins: ${esc(e.message)}</div>`;
+  }
+}
+
+function markActive(id){
+  document.querySelectorAll('.watch-item').forEach(w => w.classList.toggle('active', w.dataset.id === id));
+}
+
+function pickCoin(id){
+  document.getElementById('coinSelect').value = id;
+  markActive(id);
+  analyse();
+}
+
+// ── Market context strip ─────────────────────────────────────
+async function loadContext(){
+  const el = document.getElementById('contextArea');
+  try {
+    const d = await api({ action: 'crypto_context' });
+    const c = d.context;
+    const regime = c.risk_regime || 'MIXED';
+    const rc = regime === 'RISK-ON' ? '#22c55e' : regime === 'RISK-OFF' ? '#ef4444' : '#f59e0b';
+    const score = (lbl, v) => `<span style="margin-right:10px;">${lbl} <b style="color:${pillarColor(v)};">${esc(v)}</b></span>`;
+    const list = arr => (arr && arr.length) ? '<ul>' + arr.map(x => `<li>${esc(x)}</li>`).join('') + '</ul>' : '<p>None</p>';
+    const bills = (c.pending_bills || []).map(b =>
+      `${b.name} (${b.jurisdiction}): ${b.stage}. Chance of passing ${b.probability_pct}%, impact ${String(b.impact||'').toLowerCase()}`);
+    el.innerHTML = `<div class="ctx-card">
+      <div class="ctx-top">
+        <span class="ctx-title">Market context</span>
+        <span class="ctx-regime" style="background:${rc}22;color:${rc};">${esc(regime)}</span>
+      </div>
+      <div class="ctx-scores">
+        <div class="ctx-score-grp">Macro &amp; cross-asset: ${score('ST', c.macro_st)}${score('MT', c.macro_mt)}${score('LT', c.macro_lt)}</div>
+        <div class="ctx-score-grp">Regulatory &amp; policy: ${score('ST', c.reg_st)}${score('MT', c.reg_mt)}${score('LT', c.reg_lt)}</div>
+      </div>
+      <div class="ctx-summary">${esc(c.summary)}</div>
+      <button class="ctx-toggle" onclick="toggleCtx(this)" aria-expanded="false">Show drivers and pending bills</button>
+      <div class="ctx-more" id="ctxMore">
+        <h4>Macro drivers</h4>${list(c.macro_drivers)}
+        <h4>Regulatory drivers</h4>${list(c.reg_drivers)}
+        <h4>Pending bills and rules</h4>${list(bills)}
+        <p style="margin-top:8px;color:#5a6478;font-size:11px;">Updated ${esc(when(c.timestamp))}</p>
+      </div>
+    </div>`;
+  } catch(e){
+    el.innerHTML = '';
+  }
+}
+function toggleCtx(btn){
+  const more = document.getElementById('ctxMore');
+  more.classList.toggle('open');
+  const open = more.classList.contains('open');
+  btn.textContent = open ? 'Hide drivers and pending bills' : 'Show drivers and pending bills';
+  btn.setAttribute('aria-expanded', open);
+}
+
+// ── Analyse a coin (cached if already done today) ────────────
+async function analyse(){
+  const id = document.getElementById('coinSelect').value;
+  if (!id){ setStatus('idle', 'Choose a coin first.', ''); return; }
+  if (busy) return;
+  busy = true;
+  markActive(id);
+  const coin = COINS.find(c => c.id === id) || { id: id, name: id };
+  const btn = document.getElementById('scanBtn');
+  btn.disabled = true; btn.textContent = 'Analysing…';
+  const el = document.getElementById('resultArea');
+
+  if (coin.scannedToday){
+    setStatus('loading', 'Loading today\'s analysis…', '');
+    el.innerHTML = `<div class="loader-wrap"><div class="loader-spinner"></div><div class="loader-msg">Loading today's analysis…</div></div>`;
+  } else {
+    setStatus('scanning', 'Researching ' + coin.name + ' (about 30–60 seconds)…', '');
+    el.innerHTML = `<div class="loader-wrap"><div class="loader-spinner"></div>
+      <div class="loader-msg">Claude is searching the web for ${esc(coin.name)}'s chart levels, supply, network activity, sentiment and recent news.<br>This takes about 30–60 seconds.</div></div>`;
+  }
+
+  try {
+    const d = await api({ action: 'crypto_scan', coin: id });
+    renderResult(d, coin);
+    setStatus('cached', d.cached ? 'Today\'s analysis' : 'New analysis complete', 'Analysed ' + when(d.lastScanned));
+    if (!d.cached) loadCoinList();
+  } catch(e){
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠</div><div class="empty-title">Analysis didn't complete</div>
+      <div class="empty-sub">${esc(e.message)}<br>Press <b>Analyse</b> to try again.</div></div>`;
+    setStatus('idle', '', '');
+  } finally {
+    busy = false;
+    btn.disabled = false; btn.textContent = 'Analyse';
+  }
+}
+
+// ── Render result ────────────────────────────────────────────
+function renderResult(d, coin){
+  const el = document.getElementById('resultArea');
+  const price = Number(d.price) || Number(coin.price);
+  const isExchange = EXCHANGE_TOKENS.includes(String(coin.symbol||'').toUpperCase());
+
+  const buckets = [
+    { key:'ST', label:'Short term',  horizon:'1–3 weeks' },
+    { key:'MT', label:'Medium term', horizon:'1–6 months' },
+    { key:'LT', label:'Long term',   horizon:'6–24 months' }
+  ];
+
+  const bucketHtml = buckets.map(b => {
+    const r = (d.results && d.results[b.key]) || {};
+    const clr = sigColor(r.signal);
+    const bg = clr === '#22c55e' ? 'rgba(34,197,94,0.08)' : clr === '#f59e0b' ? 'rgba(245,158,11,0.08)' : clr === '#ef4444' ? 'rgba(239,68,68,0.08)' : 'transparent';
+    const hasTarget = r.target !== '—' && r.target !== '' && r.target != null && Number(r.upsidePct) > 0;
+    const stopPct = (price && Number(r.stop)) ? Math.round((1 - Number(r.stop)/price) * 1000) / 10 : '';
+    return `<div class="bucket-card" style="border-color:${clr};background:${bg};">
+      <div class="bucket-label" style="color:${clr};">${b.label}</div>
+      <div class="bucket-horizon">${b.horizon}</div>
+      <div style="font-size:16px;font-weight:800;color:${clr};margin-bottom:4px;">${esc(r.signal || '—')}</div>
+      <div style="font-size:11px;color:#5a6478;margin-bottom:10px;">${r.score ? esc(r.score) + '/100' : ''}</div>
+      <div class="bucket-rows">
+        <div class="bucket-row"><span class="bucket-row-lbl">Entry</span><span class="bucket-row-val">${usd(price)}</span></div>
+        <div class="bucket-row"><span class="bucket-row-lbl">Target</span><span class="bucket-row-val green">${hasTarget ? usd(r.target) + ` <span style="font-size:10px;opacity:0.8;">(+${esc(r.upsidePct)}%)</span>` : '<span style="color:#5a6478;">No upside</span>'}</span></div>
+        <div class="bucket-row"><span class="bucket-row-lbl">Stop</span><span class="bucket-row-val red">${usd(r.stop)}${stopPct !== '' ? ` <span style="font-size:10px;opacity:0.8;">(−${stopPct}%)</span>` : ''}</span></div>
+        <div class="bucket-row"><span class="bucket-row-lbl">Reward : risk</span><span class="bucket-row-val" style="color:${Number(r.rr) >= 1 ? '#22c55e' : r.rr === '' || r.rr == null ? '#5a6478' : '#ef4444'};">${r.rr === '' || r.rr == null ? '—' : esc(r.rr)}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const p = d.pillars || {};
+  const pillars = [
+    { name:'Technical',     v:p.technical },
+    { name:'Tokenomics',    v:p.tokenomics },
+    { name: isExchange ? 'Exchange business' : 'On-chain activity', v:p.onchain },
+    { name:'Sentiment',     v:p.sentiment },
+    { name:'Developments',  v:p.developments }
+  ];
+  const macro = parseSplit(d.macro);
+  const reg = parseSplit(d.regulatory);
+  const splitRow = (name, s) => `<div class="pillar-row">
+      <div class="pillar-name">${name}</div>
+      <div class="pillar-split">
+        <span>ST<b style="color:${pillarColor(s.ST)};">${esc(s.ST||'—')}</b></span>
+        <span>MT<b style="color:${pillarColor(s.MT)};">${esc(s.MT||'—')}</b></span>
+        <span>LT<b style="color:${pillarColor(s.LT)};">${esc(s.LT||'—')}</b></span>
+        ${s.note ? `<span>${esc(s.note)}</span>` : ''}
+      </div>
+    </div>`;
+
+  // Summary comes as a paragraph followed by labelled lines (Risks:, Targets:, Stops:, Rules:, Regulatory:)
+  const lines = String(d.summary || '').split('\n');
+  const overview = lines[0] || '';
+  const extra = {};
+  lines.slice(1).forEach(l => {
+    const m = l.match(/^(Risks|Targets|Stops|Rules|Regulatory):\s*(.*)$/);
+    if (m) extra[m[1]] = m[2];
+  });
+  const section = (title, body, open) => body ? `<div class="rationale-section">
+      <button class="rat-header" onclick="toggleRat(this)" aria-expanded="${open ? 'true' : 'false'}">
+        <span class="rat-title">${title}</span><span class="rat-chevron" style="${open ? 'transform:rotate(180deg);' : ''}">▼</span>
+      </button>
+      <div class="rat-body${open ? ' open' : ''}">${body}</div>
+    </div>` : '';
+  const asList = s => '<ul>' + String(s).split(/;\s*/).filter(Boolean).map(x => `<li>${esc(x)}</li>`).join('') + '</ul>';
+  const levelNotes = [extra.Targets ? 'Targets: ' + extra.Targets : '', extra.Stops ? 'Stop adjustments: ' + extra.Stops : '', extra.Rules ? 'Signal rules applied: ' + extra.Rules : ''].filter(Boolean);
+
+  el.innerHTML = `
+    <div class="stock-card">
+      <div class="stock-name">${esc(coin.name || d.coinId)}<small>${esc(coin.symbol || '')}</small></div>
+      <div class="stock-meta">
+        <span>Rank #${esc(coin.rank || '—')}</span>
+        <span>Market cap ${bigUsd(coin.marketCap)}</span>
+        ${isExchange ? '<span>Exchange token</span>' : ''}
+      </div>
+      <div class="price-row">
+        <div class="price-item"><div class="price-lbl">Price</div><div class="price-val price-big">${usd(price)}</div></div>
+        <div class="price-item"><div class="price-lbl">24h</div><div class="price-val" style="color:${pctColor(coin.change24h)};">${pct(coin.change24h)}</div></div>
+        <div class="price-item"><div class="price-lbl">7 days</div><div class="price-val" style="color:${pctColor(coin.change7d)};">${pct(coin.change7d)}</div></div>
+        <div class="price-item"><div class="price-lbl">30 days</div><div class="price-val" style="color:${pctColor(coin.change30d)};">${pct(coin.change30d)}</div></div>
+        <div class="price-item"><div class="price-lbl">From all-time high</div><div class="price-val" style="color:#ef4444;">${pct(coin.fromAth)}</div></div>
+      </div>
+    </div>
+
+    <div class="buckets-row">${bucketHtml}</div>
+
+    <div class="pillars-section">
+      <div class="pillars-title">Pillar scores</div>
+      ${pillars.map(x => {
+        const v = parseInt(x.v) || 0;
+        const c = pillarColor(v);
+        return `<div class="pillar-row">
+          <div class="pillar-name">${x.name}</div>
+          <div class="pillar-bar-wrap"><div class="pillar-bar-fill" style="width:${v}%;background:${c};"></div></div>
+          <div class="pillar-score-val" style="color:${c};">${v}</div>
+        </div>`;
+      }).join('')}
+      ${splitRow('Macro &amp; cross-asset', macro)}
+      ${splitRow('Regulatory &amp; policy', reg)}
+      <div class="pillar-note">Macro and regulatory scores are shared across all coins and updated daily. 50 is neutral; higher is more favourable.</div>
+    </div>
+
+    ${section('Analysis', esc(overview), true)}
+    ${section('Key risks', extra.Risks ? asList(extra.Risks) : '', false)}
+    ${section('How targets and stops were set', levelNotes.length ? '<ul>' + levelNotes.map(x => `<li>${esc(x)}</li>`).join('') + '</ul>' : '', false)}
+    ${section('Coin-specific regulation', extra.Regulatory ? esc(extra.Regulatory) : '', false)}
+  `;
+}
+
+function toggleRat(hdr){
+  const body = hdr.nextElementSibling;
+  body.classList.toggle('open');
+  const open = body.classList.contains('open');
+  hdr.querySelector('.rat-chevron').style.transform = open ? 'rotate(180deg)' : '';
+  hdr.setAttribute('aria-expanded', open);
+}
+
+document.getElementById('coinSelect').addEventListener('change', e => markActive(e.target.value));
+
+// Init: load coins and market context; open the first coin already analysed today (no paid scan on page load)
+window.addEventListener('load', async function(){
+  await Promise.all([loadCoinList(), loadContext()]);
+  const ready = COINS.find(c => c.scannedToday);
+  if (ready){
+    document.getElementById('coinSelect').value = ready.id;
+    analyse();
+  }
+});
+</script>
+</body>
+</html>
