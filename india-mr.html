@@ -370,11 +370,11 @@ function renderDip(d,isSaved){
     if((d.picks||[]).length) h+='<div class="signal-grid">'+d.picks.map(pickCard).join('')+'</div>';
     else h+='<div style="color:var(--t3);font-size:12px;">No stock passed every check.</div>';
     h+='</div>';
-    h+=listPanel('Other dipped stocks in unaffected sectors (not picked)',d.insulated);
-    h+=listPanel('Dipped stocks in affected sectors',d.exposed);
-    h+=listPanel('Skipped: dipped after an unusual run-up (the stock\'s own, or the whole Nifty\'s'+(m.niftySpikeZ!=null&&m.niftySpikeZ>=2?' — the Nifty ran up before this dip, so every dipped stock is skipped':'')+')',d.spiked,true);
+    h+=listPanel('NOT RECOMMENDED · dipped stocks in unaffected sectors that were not picked',d.insulated);
+    h+=listPanel('NOT RECOMMENDED · dipped stocks in affected sectors',d.exposed);
+    h+=listPanel('NOT RECOMMENDED · skipped after an unusual run-up (the stock\'s own, or the whole Nifty\'s'+(m.niftySpikeZ!=null&&m.niftySpikeZ>=2?' — the Nifty ran up before this dip, so every dipped stock is skipped':'')+')',d.spiked,true);
   } else if((d.watch||[]).length){
-    h+=listPanel('Stocks that dipped on their own (watch only, no market dip)',d.watch);
+    h+=listPanel('NOT RECOMMENDED · stocks that dipped on their own (watch only, no market dip)',d.watch);
   }
   h+='<div class="note-box" style="margin-top:14px;"><div>ℹ</div><div style="font-size:11px;color:var(--t2);line-height:1.6;">'+(d.evidence||EVIDENCE).map(esc).join('<br>')+'</div></div>';
   el.innerHTML=h;
