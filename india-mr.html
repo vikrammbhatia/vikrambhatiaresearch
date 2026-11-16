@@ -2,157 +2,160 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
 <title>India MR Compass — Vikram Bhatia Research</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#1c2333;--surface:#232d40;--surface2:#2a3550;
-  --bdr:#2e3a50;--bdr2:#3a4a62;
-  --or:#e67e22;--or2:#c0651a;--or-bg:rgba(230,126,34,0.12);
-  --green:#10b981;--green-bg:rgba(16,185,129,0.12);
-  --red:#ef4444;--red-bg:rgba(239,68,68,0.12);
-  --amber:#f59e0b;--amber-bg:rgba(245,158,11,0.12);
-  --blue:#60a5fa;--blue-bg:rgba(96,165,250,0.12);
-  --text:#f0f2f5;--t2:#9aa3b2;--t3:#5a6478;--t4:#3d4a5a;
-  --mono:'DM Mono',monospace;
+  --bg1:#1c2333;--bg2:#232d40;--bg3:#2a3550;--bg4:#1e1e1e;
+  --b1:#2e3a50;--b2:#2a2a2a;
+  --t1:#f0f2f5;--t2:#9aa3b2;--t3:#5a6478;
+  --or:#e67e22;--amber:#f59e0b;
+  --green:#22c55e;--green-bg:#052e16;--green-bd:#166534;
+  --red:#ef4444;--red-bg:#1a0000;--red-bd:#7f1d1d;
+  --blue:#60a5fa;--blue-bg:#0d1b3e;--blue-bd:#1e40af;
 }
-html{overflow-y:auto;}
-body{font-family:'Inter',sans-serif;font-size:13px;background:var(--bg);color:var(--text);display:flex;min-height:100vh;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#1c2333;color:var(--t1);font-family:'Inter','Segoe UI',sans-serif;font-size:13px;}
+.page{padding:2rem 2.5rem;}
+.ph-title{font-size:22px;font-weight:700;color:var(--or);margin-bottom:2px;}
+.ph-sub{font-size:12px;color:var(--t3);margin-bottom:4px;}
+.ph-nav{font-size:11px;color:var(--t3);margin-bottom:2rem;}
+.ph-nav a{color:var(--or);text-decoration:none;margin-right:12px;}
 
-/* ── SIDEBAR ── */
-.vb-sidebar{width:210px;flex-shrink:0;background:#1c2333;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:200;overflow-y:auto;border-right:1px solid var(--bdr);}
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:1.5rem;border-bottom:2px solid var(--b2);background:var(--bg2);padding:8px 8px 0;border-radius:8px 8px 0 0;}
+.tab{padding:10px 22px;font-size:13px;font-weight:600;cursor:pointer;color:var(--t2);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all 0.2s;white-space:nowrap;}
+.tab.active{color:var(--or);border-bottom-color:var(--or);}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:1.5rem;}
+.stat-card{background:var(--bg3);border:1px solid var(--b1);border-radius:8px;padding:14px 16px;}
+.stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:0.05em;color:var(--t3);margin-bottom:6px;}
+.stat-val{font-size:22px;font-weight:700;}
+.stat-sub{font-size:11px;color:var(--t3);margin-top:2px;}
+
+/* SIGNAL CARDS */
+.signal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:1.5rem;}
+.signal-card{border-radius:10px;padding:16px 18px;}
+.signal-card.strong-buy{background:var(--green-bg);border:2px solid var(--green-bd);}
+.signal-card.buy{background:#0d2818;border:1px solid var(--green-bd);}
+.signal-card.watch{background:#1a1200;border:1px solid #854d0e;}
+.sc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.sc-ticker{font-size:18px;font-weight:700;}
+.sc-signal{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
+.signal-card.strong-buy .sc-ticker,.signal-card.strong-buy .sc-signal{color:var(--green);}
+.signal-card.buy .sc-ticker,.signal-card.buy .sc-signal{color:#4ade80;}
+.signal-card.watch .sc-ticker,.signal-card.watch .sc-signal{color:var(--amber);}
+.sc-name{font-size:11px;color:var(--t3);margin-bottom:10px;}
+.sc-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px;}
+.sc-m{background:var(--bg4);border-radius:4px;padding:6px 8px;}
+.sc-ml{font-size:9px;text-transform:uppercase;color:var(--t3);margin-bottom:2px;}
+.sc-mv{font-size:12px;font-weight:600;}
+.sc-levels{display:flex;gap:8px;margin-bottom:8px;}
+.sc-level{flex:1;text-align:center;padding:6px;border-radius:5px;font-size:11px;font-weight:600;}
+.sc-entry{background:var(--blue-bg);border:1px solid var(--blue-bd);color:var(--blue);}
+.sc-stop{background:var(--red-bg);border:1px solid var(--red-bd);color:var(--red);}
+.sc-target{background:var(--green-bg);border:1px solid var(--green-bd);color:var(--green);}
+.sc-positives{font-size:11px;color:var(--t2);line-height:1.6;}
+.sc-score{font-size:20px;font-weight:700;text-align:right;}
+.earnings-warn{font-size:10px;background:var(--red-bg);border:1px solid var(--red-bd);color:var(--red);padding:3px 8px;border-radius:4px;margin-top:6px;}
+
+/* POSITIONS */
+.pos-table{width:100%;border-collapse:collapse;}
+.pos-table th{padding:10px 14px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--or);background:var(--bg3);border-bottom:2px solid var(--b2);white-space:nowrap;}
+.pos-table td{padding:12px 14px;border-bottom:1px solid var(--b1);font-size:12px;vertical-align:middle;}
+.pos-table tr:hover td{background:var(--bg3);}
+.badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;}
+.badge.open{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd);}
+.badge.warn{background:#1a1200;color:var(--amber);border:1px solid #854d0e;}
+
+/* RULES */
+.rules-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
+.rule-card{background:var(--bg3);border:1px solid var(--b1);border-radius:8px;padding:14px 16px;}
+.rule-title{font-size:12px;font-weight:700;color:var(--or);margin-bottom:8px;}
+.rule-item{font-size:12px;color:var(--t2);padding:4px 0;border-bottom:1px solid var(--b1);line-height:1.5;}
+.rule-item:last-child{border-bottom:none;}
+.rule-item strong{color:var(--t1);}
+
+/* LOADER */
+.loader{padding:2rem;text-align:center;color:var(--t3);}
+.loader-track{height:2px;background:var(--b1);border-radius:1px;overflow:hidden;margin-bottom:8px;}
+.loader-fill{height:100%;background:var(--or);animation:ld 2.4s ease-in-out infinite;}
+@keyframes ld{0%{width:0%}60%{width:75%}100%{width:100%}}
+
+.slabel{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--or);margin-bottom:10px;margin-top:1.5rem;}
+.slabel:first-child{margin-top:0;}
+.btn{border:none;padding:8px 16px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;}
+.btn-green{background:var(--green);color:#000;}
+.btn-or{background:var(--or);color:#fff;}
+.btn-red{background:var(--red);color:#fff;}
+.btn:disabled{opacity:0.5;}
+.div{height:1px;background:var(--b1);margin:1.5rem 0;}
+.empty{color:var(--t3);text-align:center;padding:3rem;background:var(--bg3);border-radius:8px;}
+@media(max-width:600px){.page{padding:1rem 0.75rem;}.signal-grid,.rules-grid{grid-template-columns:1fr;}.stats-row{grid-template-columns:repeat(2,1fr);}}
+
+
+
+/* ── OPTION 3: IVORY & CHARCOAL SIDEBAR ── */
+body.has-sidebar{display:flex;min-height:100vh;background:#1c2333;}
+.vb-sidebar{
+  width:210px;flex-shrink:0;background:#1c2333;
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;z-index:200;overflow-y:auto;
+}
 .vb-brand{display:flex;align-items:center;gap:8px;padding:14px 14px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.08);}
 .vb-mark{width:36px;height:36px;flex-shrink:0;}
 .vb-mark svg{width:100%;height:100%;display:block;}
 .vb-brand-name{font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:#e67e22;letter-spacing:-0.01em;line-height:1.3;}
-.vsb-logo-img{width:100%;height:auto;display:block;}
-.vsb-tagline-text{font-size:9px;color:#9aa3b2;line-height:1.5;text-align:center;font-family:'Inter',sans-serif;}
-.vsb-sec{padding:14px 10px 6px;font-size:9px;font-weight:600;color:#e67e22;letter-spacing:0.08em;text-transform:uppercase;}
-.vsb-lnk{display:flex;align-items:center;gap:9px;padding:9px 12px;margin:1px 6px;border-radius:6px;font-size:13px;font-weight:500;color:#9aa3b2;text-decoration:none;transition:background 0.15s,color 0.15s;}
+.vsb-sec{padding:14px 10px 6px;font-size:9px;font-weight:600;color:#e67e22;letter-spacing:0.08em;text-transform:uppercase;font-family:'Inter',sans-serif;}
+.vsb-lnk{display:flex;align-items:center;gap:8px;padding:7px 12px;margin:1px 6px;border-radius:6px;font-size:11.5px;font-weight:500;color:#8892a0;text-decoration:none;transition:background 0.15s,color 0.15s;font-family:'Inter',sans-serif;}
 .vsb-lnk:hover{background:rgba(255,255,255,0.06);color:#d0d6e0;}
 .vsb-lnk.active{background:rgba(230,126,34,0.12);color:#e67e22;}
-.vsb-lnk.vsb-disabled{opacity:0.45;cursor:default;pointer-events:none;}
 .vsb-icon{font-size:13px;width:17px;text-align:center;flex-shrink:0;}
 .vsb-soon{opacity:0.4;pointer-events:none;}
 .vsb-badge{margin-left:auto;font-size:9px;background:rgba(230,126,34,0.15);color:#e67e22;padding:1px 5px;border-radius:3px;font-weight:600;}
 .vsb-bottom{margin-top:auto;padding:12px 10px;border-top:1px solid rgba(255,255,255,0.06);}
-.vsb-meta{font-size:9.5px;color:#3d4a5a;line-height:1.6;}
-
-/* ── MAIN ── */
-.vb-maincol{margin-left:210px;flex:1;min-width:0;}
-.topbar{background:var(--bg);border-bottom:1px solid var(--bdr);padding:0 2rem;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-.topbar-title{font-size:13px;font-weight:700;color:var(--text);}
-.topbar-sub{font-size:10px;color:var(--t3);}
-.topbar-badge{font-size:10px;font-weight:600;background:var(--green-bg);color:var(--green);padding:3px 10px;border-radius:20px;border:1px solid rgba(16,185,129,0.3);}
-
-.main-col{flex:1;padding:2.5rem 3rem;min-width:0;}
-.content{padding:0;}
-
-/* ── HERO METRICS ── */
-.hero-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:1.25rem;}
-.hm{background:var(--surface);border:1px solid var(--bdr);border-radius:10px;padding:16px 18px;position:relative;overflow:hidden;}
-.hm::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-.hm.green::before{background:var(--green);}
-.hm.orange::before{background:var(--or);}
-.hm.blue::before{background:var(--blue);}
-.hm.amber::before{background:var(--amber);}
-.hm.red::before{background:var(--red);}
-.hm-label{font-size:9px;font-weight:600;color:var(--t3);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;}
-.hm-value{font-size:1.6rem;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;margin-bottom:3px;}
-.hm-sub{font-size:10px;color:var(--t3);}
-.hm.green .hm-value{color:var(--green);}
-.hm.orange .hm-value{color:var(--or);}
-.hm.blue .hm-value{color:var(--blue);}
-.hm.amber .hm-value{color:var(--amber);}
-.hm.red .hm-value{color:var(--red);}
-
-/* ── SECTION ── */
-.sec{margin-bottom:1.5rem;}
-.sec-title{font-size:11px;font-weight:700;color:var(--text);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:1rem;display:flex;align-items:center;gap:8px;}
-.sec-title::after{content:'';flex:1;height:1px;background:var(--bdr);}
-
-/* ── STAT CARDS ── */
-.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem;}
-.sc{background:var(--surface);border:1px solid var(--bdr);border-radius:8px;padding:14px 16px;}
-.sc-label{font-size:10px;color:var(--t3);margin-bottom:5px;}
-.sc-value{font-size:1.1rem;font-weight:700;font-variant-numeric:tabular-nums;}
-.sc-sub{font-size:10px;color:var(--t3);margin-top:3px;}
-.green{color:var(--green);}
-.red{color:var(--red);}
-.or{color:var(--or);}
-.amber{color:var(--amber);}
-.blue{color:var(--blue);}
-
-/* ── TWO COL ── */
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.25rem;}
-.card{background:var(--surface);border:1px solid var(--bdr);border-radius:10px;padding:18px 20px;}
-.card-title{font-size:11px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:6px;}
-.card-title .dot{width:6px;height:6px;border-radius:50%;}
-
-/* ── CYCLE CARDS ── */
-.cycle-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem;}
-.cc{background:var(--surface);border:1px solid var(--bdr);border-radius:10px;padding:16px 18px;}
-.cc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.cc-name{font-size:13px;font-weight:700;color:var(--text);}
-.cc-status{font-size:9px;font-weight:600;padding:2px 8px;border-radius:10px;}
-.cc-status.closed{background:#1e3a2e;color:var(--green);}
-.cc-status.open{background:rgba(230,126,34,0.15);color:var(--or);}
-.cc-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--bdr);}
-.cc-row:last-child{border-bottom:none;}
-.cc-key{font-size:11px;color:var(--t3);}
-.cc-val{font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;}
-
-/* ── OPEN POSITIONS ── */
-.pos-table{width:100%;border-collapse:collapse;}
-.pos-table th{padding:8px 12px;text-align:left;font-size:9px;font-weight:600;color:var(--t3);letter-spacing:0.05em;text-transform:uppercase;border-bottom:1px solid var(--bdr);}
-.pos-table td{padding:10px 12px;font-size:12px;border-bottom:1px solid var(--bdr);font-variant-numeric:tabular-nums;}
-.pos-table tr:last-child td{border-bottom:none;}
-.pos-table tr:hover td{background:rgba(255,255,255,0.02);}
-
-/* ── TRADE LOG ── */
-.trade-table{width:100%;border-collapse:collapse;}
-.trade-table th{padding:8px 12px;text-align:left;font-size:9px;font-weight:600;color:var(--t3);letter-spacing:0.05em;text-transform:uppercase;border-bottom:1px solid var(--bdr);white-space:nowrap;}
-.trade-table td{padding:8px 12px;font-size:11px;border-bottom:1px solid rgba(46,58,80,0.5);font-variant-numeric:tabular-nums;white-space:nowrap;}
-.trade-table tr:hover td{background:rgba(255,255,255,0.02);}
-.win-row td:first-child{border-left:2px solid var(--green);}
-.loss-row td:first-child{border-left:2px solid var(--red);}
-.neutral-row td:first-child{border-left:2px solid var(--amber);}
-
-/* ── WIN RATE BAR ── */
-.wr-bar{height:8px;background:var(--bdr);border-radius:4px;overflow:hidden;margin-top:6px;}
-.wr-fill{height:100%;background:linear-gradient(90deg,var(--green),#34d399);border-radius:4px;}
-
-/* ── RULES ── */
-.rules-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-.rule-box{background:var(--surface);border:1px solid var(--bdr);border-radius:8px;padding:14px 16px;}
-.rule-box-title{font-size:10px;font-weight:700;color:var(--or);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.04em;}
-.rule-item{font-size:11px;color:var(--t2);padding:4px 0;border-bottom:1px solid rgba(46,58,80,0.5);line-height:1.5;}
-.rule-item:last-child{border-bottom:none;}
-.rule-item strong{color:var(--text);}
-
-/* ── PNLBAR ── */
-.pnl-bar-wrap{display:flex;align-items:center;gap:8px;}
-.pnl-bar{flex:1;height:5px;background:var(--bdr);border-radius:3px;overflow:hidden;}
-.pnl-fill-g{height:100%;background:var(--green);}
-.pnl-fill-r{height:100%;background:var(--red);}
-
-/* ── TIME STOP ── */
-.time-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;background:var(--amber-bg);color:var(--amber);border:1px solid rgba(245,158,11,0.3);}
-@media(max-width:900px){.vb-sidebar{display:none;}.main{margin-left:0;}.hero-grid{grid-template-columns:repeat(2,1fr);}.stat-grid{grid-template-columns:repeat(2,1fr);}.two-col,.cycle-grid,.rules-grid{grid-template-columns:1fr;}}
+.vsb-meta{font-size:9.5px;color:#3d4a5a;line-height:1.6;font-family:'Inter',sans-serif;}
+.vb-maincol{margin-left:210px;flex:1;min-width:0;background:#1c2333;}
+/* Topbar inside portal */
+.vb-topbar{
+  background:#1c2333;border-bottom:1px solid #2e3a50;
+  padding:0 2rem;height:50px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+}
+.vb-topbar-title{font-size:13px;font-weight:700;color:#f0f2f5;font-family:'Inter',sans-serif;}
+.vb-topbar-sub{font-size:10px;color:#5a6478;font-family:'Inter',sans-serif;}
+@media(max-width:900px){.vb-sidebar{display:none;}.vb-maincol{margin-left:0;}}
+/* ── END SIDEBAR ── */
 .pg-header{font-size:18px;font-weight:700;color:#e67e22;font-family:'Inter',sans-serif;padding:1.25rem 0 0.75rem;letter-spacing:-0.01em;}
-</style>
-</head>
-<body>
 
+.vsb-soon{opacity:0.4;pointer-events:none;}
+.note-box{background:#1a0a00;border:1px solid #92400e;border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;}
+.panel{background:var(--bg2);border:1px solid var(--b1);border-radius:10px;padding:14px 18px;margin-bottom:12px;}
+.panel-t{font-size:12px;font-weight:700;color:var(--or);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.kv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;}
+.kv{background:var(--bg3);border-radius:6px;padding:8px 10px;}.kv-k{font-size:9px;text-transform:uppercase;color:var(--t3);margin-bottom:2px;}.kv-v{font-size:14px;font-weight:700;}
+.lbl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:6px;}
+.chip{display:inline-block;font-size:11px;padding:3px 9px;border-radius:12px;margin:0 6px 6px 0;font-weight:600;}
+.chip.g{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd);}
+.chip.r{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd);}
+.badge.bad{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd);}
+.msg-box{background:var(--bg3);border-left:3px solid var(--amber);border-radius:4px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--t2);line-height:1.5;}
+.inp{width:100%;background:var(--bg3);border:1px solid var(--b1);color:var(--t1);padding:8px;border-radius:5px;margin:4px 0 12px;font-size:13px;}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="has-sidebar">
 <aside class="vb-sidebar">
-      <a class="vb-brand" href="/">
-    <div class="vb-mark">
-      <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <text x="22" y="31" font-family="Inter,Arial,sans-serif" font-size="24" font-weight="800" fill="#e67e22" text-anchor="middle" letter-spacing="-1">VB</text>
-      </svg>
-    </div>
+  <a class="vb-brand" href="/">
+    <div class="vb-mark"><svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg"><text x="22" y="31" font-family="Inter,Arial,sans-serif" font-size="24" font-weight="800" fill="#e67e22" text-anchor="middle" letter-spacing="-1">VB</text></svg></div>
     <div class="vb-brand-name">Vikram Bhatia Research</div>
   </a>
   <a class="vsb-lnk" href="/"><span class="vsb-icon">⌂</span>Home</a>
@@ -164,287 +167,307 @@ body{font-family:'Inter',sans-serif;font-size:13px;background:var(--bg);color:va
   <div class="vsb-sec">UAE</div>
   <a class="vsb-lnk" href="/uae-ipo"><span class="vsb-icon">📊</span>IPO Intelligence</a>
   <a class="vsb-lnk" href="/uae-mr"><span class="vsb-icon">🔁</span>MR Compass</a>
-  <span class="vsb-lnk vsb-disabled" aria-disabled="true"><span class="vsb-icon">🎯</span>IPO Watch - Coming Soon</span>
+  <span class="vsb-lnk vsb-soon"><span class="vsb-icon">🎯</span>IPO Watch - Coming Soon</span>
   <div class="vsb-sec">USA</div>
   <a class="vsb-lnk" href="/us-ipo"><span class="vsb-icon">📊</span>IPO Intelligence</a>
   <a class="vsb-lnk" href="/us-mr"><span class="vsb-icon">🔁</span>MR Compass</a>
   <a class="vsb-lnk" href="/us-markets"><span class="vsb-icon">🔭</span>Market Pulse</a>
-  </div>
 </aside>
+<div class="vb-maincol"><div class="page">
+  <div class="pg-header">India MR Compass</div>
 
-<div class="vb-maincol">
-<div class="main-col">
-<div class="pg-header">India MR Compass</div>
-<div class="content">
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-lbl">Universe</div><div class="stat-val" style="color:var(--or);">Nifty 100</div><div class="stat-sub">Large caps only</div></div>
+    <div class="stat-card"><div class="stat-lbl">Per Position</div><div class="stat-val" style="color:var(--blue);">₹5,00,000</div><div class="stat-sub">Max 3 positions</div></div>
+    <div class="stat-card"><div class="stat-lbl">Exit</div><div class="stat-val" style="color:var(--amber);">~90 days</div><div class="stat-sub">Time exit, no tight stop</div></div>
+    <div class="stat-card"><div class="stat-lbl">Tax on profit</div><div class="stat-val" style="color:var(--t2);">20.8%</div><div class="stat-sub">Per trade, at sale</div></div>
+    <div class="stat-card" id="openPositionsStat"><div class="stat-lbl">Open Positions</div><div class="stat-val">—</div><div class="stat-sub">Loading...</div></div>
+  </div>
 
-<!-- ── HERO METRICS ── -->
-<div class="hero-grid">
-  <div class="hm green">
-    <div class="hm-label">Win Rate</div>
-    <div class="hm-value">83.3%</div>
-    <div class="hm-sub">20 wins · 4 losses · 24 trades</div>
-    <div class="wr-bar" style="margin-top:8px;"><div class="wr-fill" style="width:83.3%;"></div></div>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('scanner',this)">Dip Scanner</div>
+    <div class="tab" onclick="switchTab('positions',this)">Open Positions</div>
+    <div class="tab" onclick="switchTab('rules',this)">Rules &amp; Evidence</div>
   </div>
-  <div class="hm orange">
-    <div class="hm-label">Total Net P&L</div>
-    <div class="hm-value">₹44,204</div>
-    <div class="hm-sub">Across 3 completed cycles</div>
-  </div>
-  <div class="hm blue">
-    <div class="hm-label">Profit Factor</div>
-    <div class="hm-value">4.12×</div>
-    <div class="hm-sub">Gross wins ÷ gross losses</div>
-  </div>
-  <div class="hm amber">
-    <div class="hm-label">Expectancy / Trade</div>
-    <div class="hm-value">₹1,842</div>
-    <div class="hm-sub">Probability-weighted avg return</div>
-  </div>
-  <div class="hm green">
-    <div class="hm-label">Avg Hold Period</div>
-    <div class="hm-value">22.5d</div>
-    <div class="hm-sub">Per completed trade</div>
-  </div>
-</div>
 
-<!-- ── OPEN POSITIONS ── -->
-<div class="sec">
-  <div class="sec-title">Open Positions — Cycle 4</div>
-  <div class="card" style="padding:0;overflow:hidden;">
-    <table class="pos-table">
-      <thead>
-        <tr>
-          <th>Stock</th><th>Code</th><th>Qty</th><th>Buy Price</th>
-          <th>Invested</th><th>Target (+8%)</th><th>Stop Loss (-5%)</th>
-          <th>Time Stop</th><th>Days In</th><th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>HDFC Bank</strong></td>
-          <td style="color:var(--t3);font-family:var(--mono);">HDFBÁN</td>
-          <td>184</td>
-          <td>₹707.70</td>
-          <td style="color:var(--or);">₹1,30,217</td>
-          <td style="color:var(--green);">₹764.32</td>
-          <td style="color:var(--red);">₹672.32</td>
-          <td><span class="time-badge">⏱ 2-3 Months</span></td>
-          <td id="daysIn">—</td>
-          <td><span style="font-size:10px;font-weight:600;background:var(--or-bg);color:var(--or);padding:2px 8px;border-radius:10px;">Active</span></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<!-- ── ADVANCED STATS ── -->
-<div class="sec">
-  <div class="sec-title">Performance Analytics</div>
-  <div class="stat-grid">
-    <div class="sc">
-      <div class="sc-label">Avg Winning Trade</div>
-      <div class="sc-value green">+₹2,918</div>
-      <div class="sc-sub">+2.72% avg return on winners</div>
-    </div>
-    <div class="sc">
-      <div class="sc-label">Avg Losing Trade</div>
-      <div class="sc-value red">−₹3,538</div>
-      <div class="sc-sub">−3.53% avg return on losers</div>
-    </div>
-    <div class="sc">
-      <div class="sc-label">Payoff Ratio</div>
-      <div class="sc-value amber">0.82×</div>
-      <div class="sc-sub">Avg win ÷ avg loss magnitude</div>
-    </div>
-    <div class="sc">
-      <div class="sc-label">Sharpe-like Ratio</div>
-      <div class="sc-value blue">0.52</div>
-      <div class="sc-sub">Return per unit of volatility</div>
-    </div>
-    <div class="sc">
-      <div class="sc-label">Best Single Trade</div>
-      <div class="sc-value green">+₹6,927</div>
-      <div class="sc-sub">ONGC · Cycle 2 · +6.54%</div>
-    </div>
-    <div class="sc">
-      <div class="sc-label">Worst Single Trade</div>
-      <div class="sc-value red">−₹6,960</div>
-      <div class="sc-sub">TCS · Cycle 1 · −6.91%</div>
-    </div>
-    <div class="sc">
-      <div class="sc-label">Total Trades</div>
-      <div class="sc-value or">24</div>
-      <div class="sc-sub">Completed · 3 cycles</div>
-    </div>
-    <div class="sc">
-      <div class="sc-label">Brokerage Drag</div>
-      <div class="sc-value amber">~0.86%</div>
-      <div class="sc-sub">ICICIDirect · avg per trade</div>
-    </div>
-  </div>
-</div>
-
-<!-- ── CYCLE SUMMARY ── -->
-<div class="sec">
-  <div class="sec-title">Cycle Breakdown</div>
-  <div class="cycle-grid">
-    <div class="cc">
-      <div class="cc-header">
-        <div class="cc-name">Cycle 1</div>
-        <span class="cc-status closed">Closed</span>
+  <div id="tab-scanner" class="tab-content active">
+    <div class="note-box">
+      <div style="font-size:18px;flex-shrink:0;">⚠</div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--amber);margin-bottom:3px;">A shortlist, not a forecast</div>
+        <div style="font-size:11px;color:#b45309;line-height:1.6;">Tested over 9 years, buying dipped Nifty 100 stocks returned about what buying any Nifty 100 stock returned, after charges and tax. This tool finds the dips, names the likely causes, avoids sectors those causes hit and checks fundamentals. It does not predict a rebound. Prices are live at scan time; log your actual fill in <strong style="color:var(--amber);">Open Positions</strong>.</div>
       </div>
-      <div class="cc-row"><span class="cc-key">Trades</span><span class="cc-val">11</span></div>
-      <div class="cc-row"><span class="cc-key">Win Rate</span><span class="cc-val green">81.8% (9/11)</span></div>
-      <div class="cc-row"><span class="cc-key">Net P&L</span><span class="cc-val green">+₹14,534</span></div>
-      <div class="cc-row"><span class="cc-key">Corpus deployed</span><span class="cc-val">₹11,06,520</span></div>
-      <div class="cc-row"><span class="cc-key">Net return</span><span class="cc-val green">+1.31%</span></div>
-      <div class="cc-row"><span class="cc-key">Period</span><span class="cc-val">Jan 2026</span></div>
     </div>
-    <div class="cc">
-      <div class="cc-header">
-        <div class="cc-name">Cycle 2</div>
-        <span class="cc-status closed">Closed</span>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;gap:10px;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:13px;color:var(--t2);">Runs when you ask. Acts only if the Nifty is ≥2% below its 20-day high.</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:3px;">Market dip → likely causes → sectors not hit → dipped stocks there (≥5% below own 20D high, no prior spike) → fundamentals check → up to 3 picks</div>
       </div>
-      <div class="cc-row"><span class="cc-key">Trades</span><span class="cc-val">10</span></div>
-      <div class="cc-row"><span class="cc-key">Win Rate</span><span class="cc-val green">90.0% (9/10)</span></div>
-      <div class="cc-row"><span class="cc-key">Net P&L</span><span class="cc-val green">+₹27,382</span></div>
-      <div class="cc-row"><span class="cc-key">Corpus deployed</span><span class="cc-val">₹16,56,504</span></div>
-      <div class="cc-row"><span class="cc-key">Net return</span><span class="cc-val green">+1.65%</span></div>
-      <div class="cc-row"><span class="cc-key">Period</span><span class="cc-val">Mar 2026</span></div>
-    </div>
-    <div class="cc">
-      <div class="cc-header">
-        <div class="cc-name">Cycle 3</div>
-        <span class="cc-status closed">Closed</span>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-or" id="loadResultsBtn" onclick="loadDipLast()">Load Last Scan</button>
+        <button class="btn btn-green" id="runScanBtn" onclick="runDipScan()">Run New Scan</button>
       </div>
-      <div class="cc-row"><span class="cc-key">Trades</span><span class="cc-val">3</span></div>
-      <div class="cc-row"><span class="cc-key">Win Rate</span><span class="cc-val green">66.7% (2/3)</span></div>
-      <div class="cc-row"><span class="cc-key">Net P&L</span><span class="cc-val green">+₹2,289</span></div>
-      <div class="cc-row"><span class="cc-key">Corpus deployed</span><span class="cc-val">₹7,10,230</span></div>
-      <div class="cc-row"><span class="cc-key">Net return</span><span class="cc-val green">+0.32%</span></div>
-      <div class="cc-row"><span class="cc-key">Period</span><span class="cc-val">Apr 2026</span></div>
+    </div>
+    <div id="scannerContent"><div class="empty">Click "Load Last Scan" for the previous result, or "Run New Scan" (about 30–60 seconds when the market is in a dip).</div></div>
+    <div style="font-size:10px;color:var(--t3);margin-top:8px;text-align:right;" id="scanUpdated"></div>
+  </div>
+
+  <div id="tab-positions" class="tab-content">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <div style="font-size:13px;color:var(--t2);">Log trades after you execute them. P&amp;L shown is net of estimated charges and 20.8% tax on a gain.</div>
+      <button class="btn btn-green" onclick="showLogTrade()">+ Log Trade</button>
+    </div>
+    <div id="positionsContent"><div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg">Loading positions...</div></div></div>
+  </div>
+
+  <div id="tab-rules" class="tab-content">
+    <div class="rules-grid">
+      <div class="rule-card">
+        <div class="rule-title">Entry — what the scan does</div>
+        <div class="rule-item"><strong>1. Market dip:</strong> Nifty ≥2% below its 20-day high. Otherwise no recommendation.</div>
+        <div class="rule-item"><strong>2. Causes:</strong> Claude searches recent news for the factors behind the fall (oil, rates, FII/rupee, trade, credit, domestic, pandemic).</div>
+        <div class="rule-item"><strong>3. Sectors not hit:</strong> sectors those causes do not touch. The cause-to-sector map is an approximation.</div>
+        <div class="rule-item"><strong>4. Stocks:</strong> Nifty 100 names in those sectors ≥5% below their own 20-day high.</div>
+        <div class="rule-item"><strong>5. Excluded:</strong> stocks that fell after an unusual run-up, weak fundamentals, or stock-specific bad news.</div>
+        <div class="rule-item"><strong>6. Picks:</strong> up to 3, one per sector, higher-quality names first.</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-title">Exit</div>
+        <div class="rule-item"><strong>Time exit:</strong> sell about 90 days after entry.</div>
+        <div class="rule-item"><strong>No stop, no target:</strong> tight stops and targets lost money in testing, even on random entries.</div>
+        <div class="rule-item"><strong>Your call:</strong> you can exit early on news that changes the company's outlook. Don't average down.</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-title">Sizing</div>
+        <div class="rule-item"><strong>Per position:</strong> ₹5,00,000</div>
+        <div class="rule-item"><strong>Max positions:</strong> 3, at most one per sector</div>
+        <div class="rule-item"><strong>Net P&amp;L:</strong> after brokerage and statutory charges, and 20.8% tax on profit at sale (no loss offset)</div>
+      </div>
+      <div class="rule-card" style="grid-column:1/-1;">
+        <div class="rule-title">What the research found</div>
+        <div id="evidenceList"></div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-title">What this tool is not</div>
+        <div class="rule-item">Not proven to beat buying any large cap for 90 days.</div>
+        <div class="rule-item">Not a ranking: nothing tested could rank stocks inside the shortlist.</div>
+        <div class="rule-item">Macro readings (Brent, VIX, USDINR, US 10Y) are shown for context only and never block a recommendation.</div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ── WIN/LOSS BREAKDOWN ── -->
-<div class="two-col">
-  <div class="card">
-    <div class="card-title"><div class="dot" style="background:var(--green);"></div>Win Distribution</div>
-    <div style="display:flex;flex-direction:column;gap:6px;">
-      <div class="pnl-bar-wrap"><span style="width:120px;font-size:10px;color:var(--t3);">Bajaj Finance C1</span><div class="pnl-bar"><div class="pnl-fill-g" style="width:100%;"></div></div><span style="font-size:11px;font-weight:600;color:var(--green);width:60px;text-align:right;">+₹6,791</span></div>
-      <div class="pnl-bar-wrap"><span style="width:120px;font-size:10px;color:var(--t3);">ONGC C2</span><div class="pnl-bar"><div class="pnl-fill-g" style="width:98%;"></div></div><span style="font-size:11px;font-weight:600;color:var(--green);width:60px;text-align:right;">+₹6,927</span></div>
-      <div class="pnl-bar-wrap"><span style="width:120px;font-size:10px;color:var(--t3);">Titan C2</span><div class="pnl-bar"><div class="pnl-fill-g" style="width:81%;"></div></div><span style="font-size:11px;font-weight:600;color:var(--green);width:60px;text-align:right;">+₹5,607</span></div>
-      <div class="pnl-bar-wrap"><span style="width:120px;font-size:10px;color:var(--t3);">ICICI Bank C1</span><div class="pnl-bar"><div class="pnl-fill-g" style="width:78%;"></div></div><span style="font-size:11px;font-weight:600;color:var(--green);width:60px;text-align:right;">+₹5,375</span></div>
-      <div class="pnl-bar-wrap"><span style="width:120px;font-size:10px;color:var(--t3);">Bajaj Finance C2</span><div class="pnl-bar"><div class="pnl-fill-g" style="width:73%;"></div></div><span style="font-size:11px;font-weight:600;color:var(--green);width:60px;text-align:right;">+₹4,954</span></div>
-      <div class="pnl-bar-wrap"><span style="width:120px;font-size:10px;color:var(--t3);">Titan C1</span><div class="pnl-bar"><div class="pnl-fill-g" style="width:73%;"></div></div><span style="font-size:11px;font-weight:600;color:var(--green);width:60px;text-align:right;">+₹4,993</span></div>
-      <div class="pnl-bar-wrap"><span style="width:120px;font-size:10px;color:var(--t3);">ICICI Bank C2</span><div class="pnl-bar"><div class="pnl-fill-g" style="width:65%;"></div></div><span style="font-size:11px;font-weight:600;color:var(--green);width:60px;text-align:right;">+₹4,453</span></div>
-      <div class="pnl-bar-wrap"><span style="width:120px;font-size:10px;color:var(--t3);">Reliance C1</span><div class="pnl-bar"><div class="pnl-fill-g" style="width:53%;"></div></div><span style="font-size:11px;font-weight:600;color:var(--green);width:60px;text-align:right;">+₹3,649</span></div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-title"><div class="dot" style="background:var(--red);"></div>Loss Distribution</div>
-    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;">
-      <div class="pnl-bar-wrap"><span style="width:120px;font-size:10px;color:var(--t3);">TCS C1</span><div class="pnl-bar"><div class="pnl-fill-r" style="width:100%;"></div></div><span style="font-size:11px;font-weight:600;color:var(--red);width:60px;text-align:right;">−₹6,960</span></div>
-      <div class="pnl-bar-wrap"><span style="width:120px;font-size:10px;color:var(--t3);">Wipro C1</span><div class="pnl-bar"><div class="pnl-fill-r" style="width:80%;"></div></div><span style="font-size:11px;font-weight:600;color:var(--red);width:60px;text-align:right;">−₹5,550</span></div>
-      <div class="pnl-bar-wrap"><span style="width:120px;font-size:10px;color:var(--t3);">Kotak Bank C2</span><div class="pnl-bar"><div class="pnl-fill-r" style="width:20%;"></div></div><span style="font-size:11px;font-weight:600;color:var(--red);width:60px;text-align:right;">−₹1,375</span></div>
-      <div class="pnl-bar-wrap"><span style="width:120px;font-size:10px;color:var(--t3);">GAIL C3</span><div class="pnl-bar"><div class="pnl-fill-r" style="width:4%;"></div></div><span style="font-size:11px;font-weight:600;color:var(--red);width:60px;text-align:right;">−₹266</span></div>
-    </div>
-    <div style="padding-top:12px;border-top:1px solid var(--bdr);">
-      <div style="font-size:10px;color:var(--t3);margin-bottom:6px;">Key Insight</div>
-      <div style="font-size:11px;color:var(--t2);line-height:1.6;">Both large losses (TCS −₹6,960 and Wipro −₹5,550) were IT sector stocks in Cycle 1. Strategy now applies an IT sector blackout during Nifty IT downtrends.</div>
+<div id="logTradeModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;">
+  <div style="background:var(--bg2);border:1px solid var(--b2);border-radius:12px;padding:24px;width:420px;max-width:95vw;">
+    <div style="font-size:16px;font-weight:700;color:var(--or);margin-bottom:4px;">Log New MR Trade</div>
+    <div style="font-size:11px;color:var(--t3);margin-bottom:16px;">Enter your actual confirmed fill price, not the scanner price</div>
+    <label style="font-size:11px;color:var(--t3);">Ticker (NSE)</label>
+    <input id="lt_ticker" placeholder="e.g. SUNPHARMA" class="inp"/>
+    <label style="font-size:11px;color:var(--t3);">Entry price (₹)</label>
+    <input id="lt_price" type="number" step="any" placeholder="e.g. 1850.50" class="inp"/>
+    <label style="font-size:11px;color:var(--t3);">Quantity</label>
+    <input id="lt_qty" type="number" placeholder="e.g. 270" class="inp"/>
+    <label style="font-size:11px;color:var(--t3);">Entry date (blank = today)</label>
+    <input id="lt_date" type="date" class="inp"/>
+    <label style="font-size:11px;color:var(--t3);">Actual buy charges ₹ (blank = estimate)</label>
+    <input id="lt_chg" type="number" step="any" class="inp"/>
+    <div style="display:flex;gap:10px;margin-top:8px;">
+      <button class="btn btn-green" style="flex:1;" onclick="submitLogTrade()">Log Trade</button>
+      <button class="btn" style="flex:1;background:var(--bg3);color:var(--t2);" onclick="document.getElementById('logTradeModal').style.display='none'">Cancel</button>
     </div>
   </div>
 </div>
-
-<!-- ── FULL TRADE LOG ── -->
-<div class="sec">
-  <div class="sec-title">Full Trade Log</div>
-  <div class="card" style="padding:0;overflow:hidden;overflow-x:auto;">
-    <table class="trade-table">
-      <thead>
-        <tr>
-          <th>Cycle</th><th>Stock</th><th>Buy Date</th><th>Sell Date</th>
-          <th>Buy ₹</th><th>Sell ₹</th><th>Qty</th><th>Days</th>
-          <th>Gross P&L</th><th>Net P&L</th><th>Net %</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- CYCLE 1 -->
-        <tr class="win-row"><td style="color:var(--t3);">Cycle 1</td><td><strong>Titan</strong></td><td>Jan 2026</td><td>Jan 2026</td><td>₹4,073.90</td><td>₹4,386.30</td><td>25</td><td>16</td><td class="green">+₹7,810</td><td class="green">+₹4,993</td><td class="green">+4.90%</td></tr>
-        <tr class="win-row"><td style="color:var(--t3);">Cycle 1</td><td><strong>ITC</strong></td><td>Jan 2026</td><td>Jan 2026</td><td>₹278.10</td><td>₹291.78</td><td>360</td><td>19</td><td class="green">+₹4,925</td><td class="green">+₹2,737</td><td class="green">+2.73%</td></tr>
-        <tr class="win-row"><td style="color:var(--t3);">Cycle 1</td><td><strong>ICICI Bank</strong></td><td>Jan 2026</td><td>Jan 2026</td><td>₹1,246.50</td><td>₹1,349.80</td><td>80</td><td>16</td><td class="green">+₹8,264</td><td class="green">+₹5,375</td><td class="green">+5.39%</td></tr>
-        <tr class="win-row"><td style="color:var(--t3);">Cycle 1</td><td><strong>Power Grid</strong></td><td>Jan 2026</td><td>Jan 2026</td><td>₹285.60</td><td>₹292.30</td><td>350</td><td>21</td><td class="green">+₹2,345</td><td class="green">+₹404</td><td class="green">+0.40%</td></tr>
-        <tr class="win-row"><td style="color:var(--t3);">Cycle 1</td><td><strong>Bajaj Finance</strong></td><td>Jan 2026</td><td>Jan 2026</td><td>₹876.50</td><td>₹964.10</td><td>115</td><td>16</td><td class="green">+₹10,074</td><td class="green">+₹6,791</td><td class="green">+6.74%</td></tr>
-        <tr class="win-row"><td style="color:var(--t3);">Cycle 1</td><td><strong>Nippon PSU Bank ETF</strong></td><td>Jan 2026</td><td>Jan 2026</td><td>₹91.50</td><td>₹95.41</td><td>1090</td><td>15</td><td class="green">+₹4,262</td><td class="green">+₹2,374</td><td class="green">+2.38%</td></tr>
-        <tr class="win-row"><td style="color:var(--t3);">Cycle 1</td><td><strong>ICICI FMCG ETF</strong></td><td>Jan 2026</td><td>Jan 2026</td><td>₹52.00</td><td>₹52.80</td><td>1925</td><td>21</td><td class="green">+₹1,540</td><td class="green">+₹225</td><td class="green">+0.23%</td></tr>
-        <tr class="loss-row"><td style="color:var(--t3);">Cycle 1</td><td><strong>TCS</strong></td><td>Jan 2026</td><td>Jan 2026</td><td>₹2,239.10</td><td>₹2,114.10</td><td>45</td><td>21</td><td class="red">−₹5,625</td><td class="red">−₹6,960</td><td class="red">−6.91%</td></tr>
-        <tr class="win-row"><td style="color:var(--t3);">Cycle 1</td><td><strong>Britannia</strong></td><td>Jan 2026</td><td>Jan 2026</td><td>₹5,101.50</td><td>₹5,207.00</td><td>20</td><td>18</td><td class="green">+₹2,110</td><td class="green">+₹494</td><td class="green">+0.48%</td></tr>
-        <tr class="win-row"><td style="color:var(--t3);">Cycle 1</td><td><strong>Reliance</strong></td><td>Jan 2026</td><td>Jan 2026</td><td>₹1,269.20</td><td>₹1,337.20</td><td>80</td><td>12</td><td class="green">+₹5,440</td><td class="green">+₹3,649</td><td class="green">+3.59%</td></tr>
-        <tr class="loss-row"><td style="color:var(--t3);">Cycle 1</td><td><strong>Wipro</strong></td><td>Jan 2026</td><td>Jan 2026</td><td>₹181.67</td><td>₹172.81</td><td>550</td><td>15</td><td class="red">−₹4,873</td><td class="red">−₹5,550</td><td class="red">−5.55%</td></tr>
-        <!-- CYCLE 2 -->
-        <tr class="loss-row"><td style="color:var(--t3);">Cycle 2</td><td><strong>Kotak Bank</strong></td><td>Mar 2026</td><td>Apr 2026</td><td>₹399.82</td><td>₹397.09</td><td>250</td><td>52</td><td class="red">−₹683</td><td class="red">−₹1,375</td><td class="red">−1.38%</td></tr>
-        <tr class="win-row"><td style="color:var(--t3);">Cycle 2</td><td><strong>ONGC</strong></td><td>Mar 2026</td><td>Mar 2026</td><td>₹235.23</td><td>₹256.60</td><td>450</td><td>18</td><td class="green">+₹9,617</td><td class="green">+₹6,927</td><td class="green">+6.54%</td></tr>
-        <tr class="win-row"><td style="color:var(--t3);">Cycle 2</td><td><strong>GAIL</strong></td><td>Mar 2026</td><td>Apr 2026</td><td>₹172.88</td><td>₹175.53</td><td>580</td><td>29</td><td class="green">+₹1,537</td><td class="green">+₹578</td><td class="green">+0.58%</td></tr>
-        <tr class="win-row"><td style="color:var(--t3);">Cycle 2</td><td><strong>PSUBNKBEES</strong></td><td>Mar 2026</td><td>Apr 2026</td><td>₹95.41</td><td>₹97.51</td><td>1050</td><td>42</td><td class="green">+₹2,205</td><td class="green">+₹1,264</td><td class="green">+1.26%</td></tr>
-        <tr class="win-row"><td style="color:var(--t3);">Cycle 2</td><td><strong>ICICI Bank</strong></td><td>Mar 2026</td><td>Mar 2026</td><td>₹1,385.60</td><td>₹1,439.90</td><td>125</td><td>18</td><td class="green">+₹6,788</td><td class="green">+₹4,453</td><td class="green">+2.57%</td></tr>
-        <tr class="win-row"><td style="color:var(--t3);">Cycle 2</td><td><strong>Reliance</strong></td><td>Mar 2026</td><td>Apr 2026</td><td>₹1,302.50</td><td>₹1,328.05</td><td>80</td><td>42</td><td class="green">+₹2,044</td><td class="green">+₹952</td><td class="green">+0.91%</td></tr>
-        <tr class="win-row"><td style="color:var(--t3);">Cycle 2</td><td><strong>Bajaj Finance</strong></td><td>Mar 2026</td><td>Mar 2026</td><td>₹981.95</td><td>₹1,051.40</td><td>102</td><td>18</td><td class="green">+₹7,084</td><td class="green">+₹4,954</td><td class="green">+4.95%</td></tr>
-        <tr class="win-row"><td style="color:var(--t3);">Cycle 2</td><td><strong>Titan</strong></td><td>Mar 2026</td><td>Mar 2026</td><td>₹4,275.20</td><td>₹4,593.84</td><td>25</td><td>16</td><td class="green">+₹7,966</td><td class="green">+₹5,607</td><td class="green">+5.25%</td></tr>
-        <tr class="win-row"><td style="color:var(--t3);">Cycle 2</td><td><strong>Bharti Airtel</strong></td><td>Mar 2026</td><td>Mar 2026</td><td>₹1,840.10</td><td>₹1,907.60</td><td>80</td><td>18</td><td class="green">+₹5,400</td><td class="green">+₹3,457</td><td class="green">+2.35%</td></tr>
-        <tr class="win-row"><td style="color:var(--t3);">Cycle 2</td><td><strong>Havells</strong></td><td>Mar 2026</td><td>Mar 2026</td><td>₹1,162.88</td><td>₹1,180.17</td><td>90</td><td>18</td><td class="green">+₹1,556</td><td class="green">+₹564</td><td class="green">+0.54%</td></tr>
-        <!-- CYCLE 3 -->
-        <tr class="win-row"><td style="color:var(--t3);">Cycle 3</td><td><strong>Kotak Bank</strong></td><td>Apr 2026</td><td>May 2026</td><td>₹384.00</td><td>₹397.09</td><td>260</td><td>30</td><td class="green">+₹3,403</td><td class="green">+₹2,051</td><td class="green">+2.05%</td></tr>
-        <tr class="win-row"><td style="color:var(--t3);">Cycle 3</td><td><strong>Axis Bank</strong></td><td>Apr 2026</td><td>Jun 2026</td><td>₹1,254.30</td><td>₹1,272.36</td><td>80</td><td>42</td><td class="green">+₹1,445</td><td class="green">+₹504</td><td class="green">+0.50%</td></tr>
-        <tr class="loss-row"><td style="color:var(--t3);">Cycle 3</td><td><strong>GAIL</strong></td><td>Apr 2026</td><td>Apr 2026</td><td>₹174.72</td><td>₹175.53</td><td>570</td><td>7</td><td class="green">+₹462</td><td class="red">−₹266</td><td class="red">−0.27%</td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<!-- ── STRATEGY RULES ── -->
-<div class="sec">
-  <div class="sec-title">Strategy Rules</div>
-  <div class="rules-grid">
-    <div class="rule-box">
-      <div class="rule-box-title">Entry Rules</div>
-      <div class="rule-item"><strong>Pullback:</strong> Stock down 8–15% from recent high</div>
-      <div class="rule-item"><strong>Quality:</strong> NSE large-cap stocks only</div>
-      <div class="rule-item"><strong>Sector:</strong> IT blackout during Nifty IT downtrend</div>
-      <div class="rule-item"><strong>Banking:</strong> Max 2 private bank positions per cycle</div>
-      <div class="rule-item"><strong>Macro:</strong> Macro check before each cycle entry</div>
-      <div class="rule-item"><strong>Re-entry:</strong> New price ≥3% below prior exit</div>
-    </div>
-    <div class="rule-box">
-      <div class="rule-box-title">Exit Rules</div>
-      <div class="rule-item"><strong>Target:</strong> +8% gross → sell all</div>
-      <div class="rule-item"><strong>Stop loss:</strong> −5% gross → sell all</div>
-      <div class="rule-item"><strong>Time stop:</strong> 14 days (equity) / 2–3 months (special)</div>
-      <div class="rule-item"><strong>Hard rule:</strong> Time stop is non-negotiable</div>
-      <div class="rule-item"><strong>No averaging:</strong> Never add to a losing position</div>
-      <div class="rule-item"><strong>Partial exit:</strong> Not permitted — all-or-nothing</div>
-    </div>
-    <div class="rule-box">
-      <div class="rule-box-title">Execution</div>
-      <div class="rule-item"><strong>Broker:</strong> ICICIDirect</div>
-      <div class="rule-item"><strong>Corpus:</strong> ~₹5L per cycle</div>
-      <div class="rule-item"><strong>Per position:</strong> ₹1L (max)</div>
-      <div class="rule-item"><strong>Brokerage:</strong> ~0.35% per leg + STT + TDS</div>
-      <div class="rule-item"><strong>Data:</strong> ICICIDirect trade reports (ground truth)</div>
-      <div class="rule-item"><strong>Signal:</strong> MR Engine quantitative scan</div>
-    </div>
-  </div>
-</div>
-
-</div><!-- /content -->
 
 <script>
-// Calculate days in for open position
-const buyDate = new Date(2026, 5, 6); // Jun 6 2026 (Excel serial 46268)
-const today = new Date();
-const daysIn = Math.floor((today - buyDate) / (1000*60*60*24));
-document.getElementById('daysIn').textContent = daysIn + 'd';
+const AS_URL='https://ipo-proxy.vikrammbhatia.workers.dev';
+const T='VB2026IPO';
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function inr(n){return (n==null||isNaN(n))?'—':'₹'+Number(n).toLocaleString('en-IN',{maximumFractionDigits:2});}
+function inr0(n){return (n==null||isNaN(n))?'—':'₹'+Math.round(Number(n)).toLocaleString('en-IN');}
+function sgn(n,d){if(n==null||isNaN(n))return '—';const v=Number(n);return (v>=0?'+':'')+v.toFixed(d==null?1:d);}
+const EVIDENCE=[
+  "Tested over 9 years of Nifty 100 data, net of charges and 20.8% tax. A market-dip basket (Nifty ≥2% below its 20-day high, stock ≥5% below its own, no prior spike) held about 90 days returned roughly what buying any stock for 90 days returned.",
+  "What held up: skip stocks whose drop followed an unnatural run-up (they recovered far worse), and spread across a few stocks. What did not: any ranking of stocks inside the list, and whether a stock is insulated from the cause (it won in about half of past episodes).",
+  "Most of a rebound is the market itself. After 8 Oct 2026 the Nifty gained 13.8%; the average Nifty 100 stock gained 9.7%, but only 34 of 98 beat the Nifty. Typical 60-day outcomes after deep drawdowns ranged from -15% to +23%.",
+  "Tight stops and targets hurt in testing, so the plan is a time exit at about 90 days with no stop. Past results use today's Nifty 100, which flatters stocks."
+];
+document.getElementById('evidenceList').innerHTML=EVIDENCE.map(e=>'<div class="rule-item">'+esc(e)+'</div>').join('');
+
+function switchTab(tab,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  if(el) el.classList.add('active');
+  if(tab==='positions') loadPositions();
+}
+
+async function getJson(url){
+  const res=await fetch(url,{redirect:'follow'});
+  const text=await res.text();
+  try{return JSON.parse(text);}catch(e){throw new Error('Backend did not return JSON. Check the India script is deployed with the india_mr_dip routes.');}
+}
+
+// ── SCANNER ──
+async function loadDipLast(){
+  const btn=document.getElementById('loadResultsBtn');
+  btn.disabled=true;btn.textContent='Loading...';
+  try{
+    const d=await getJson(AS_URL+'?action=india_mr_dip_last&v='+Date.now());
+    if(d.none){document.getElementById('scannerContent').innerHTML='<div class="empty">No saved scan yet. Click "Run New Scan".</div>';}
+    else renderDip(d,true);
+  }catch(e){document.getElementById('scannerContent').innerHTML='<div class="empty">Error loading: '+esc(e.message)+'</div>';}
+  btn.disabled=false;btn.textContent='Load Last Scan';
+}
+async function runDipScan(){
+  const btn=document.getElementById('runScanBtn');
+  btn.disabled=true;btn.textContent='Scanning...';
+  document.getElementById('scannerContent').innerHTML='<div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg" id="scanMsg">Fetching prices for the Nifty 100...</div></div>';
+  const msgs=['Measuring the Nifty drawdown...','Searching news for causes (only if the market is in a dip)...','Sorting sectors by exposure...','Checking fundamentals of the shortlist...'];
+  let mi=0;const iv=setInterval(()=>{const el=document.getElementById('scanMsg');if(el)el.textContent=msgs[mi++%msgs.length];},9000);
+  try{
+    const d=await getJson(AS_URL+'?t='+T+'&action=india_mr_dip&v='+Date.now());
+    clearInterval(iv);renderDip(d,false);
+  }catch(e){clearInterval(iv);document.getElementById('scannerContent').innerHTML='<div class="empty">Scan error: '+esc(e.message)+'</div>';}
+  btn.disabled=false;btn.textContent='Run New Scan';
+  loadPositionsStat();
+}
+
+function chips(list,cls){return (list&&list.length)?list.map(s=>'<span class="chip '+cls+'">'+esc(s)+'</span>').join(''):'<span style="color:var(--t3);font-size:11px;">none</span>';}
+function fundBadge(f){if(!f)return '<span class="badge warn">not checked</span>';const c=f==='STRONG'?'open':f==='OK'?'open':'bad';return '<span class="badge '+c+'">Fundamentals '+esc(f)+'</span>';}
+
+function renderDip(d,isSaved){
+  const el=document.getElementById('scannerContent');
+  if(d.error){el.innerHTML='<div class="empty">'+esc(d.error)+'</div>';return;}
+  const m=d.market||{};
+  let h='';
+  if(m.forced) h+='<div class="note-box" style="background:#1a0000;border-color:var(--red-bd);"><div>🧪</div><div style="font-size:12px;color:var(--red);font-weight:700;">Forced test run: the market was not actually in a dip. Do not trade on this.</div></div>';
+  const active=!!m.triggerActive;
+  h+='<div class="panel"><div class="panel-t">1 · Market status <span class="badge '+(active?'warn':'open')+'">'+(active?'DIP — trigger active':'No market dip')+'</span></div>'
+    +'<div class="kv-grid">'
+    +kv('Nifty 50',m.nifty!=null?Number(m.nifty).toLocaleString('en-IN'):'—')
+    +kv('Below 20D high',m.pctBelow20D!=null?'-'+m.pctBelow20D+'%':'—',active?'var(--amber)':'')
+    +kv('Below 52W high',m.pctBelow252D!=null?'-'+m.pctBelow252D+'%':'—')
+    +kv('India VIX',m.vix!=null?Number(m.vix).toFixed(1):'—')
+    +kv('Trigger','≥'+(m.trigger||2)+'% below 20D high')
+    +'</div>'+macroLine(d.macro)+'</div>';
+  if(d.message) h+='<div class="msg-box">'+esc(d.message)+'</div>';
+  const c=d.causes;
+  if(c){
+    h+='<div class="panel"><div class="panel-t">2 · Factors that may be behind the drop'+(c.stale?' <span class="badge warn">older answer reused</span>':'')+'</div>';
+    if(c.available){
+      if(c.summary) h+='<div style="font-size:12px;color:var(--t2);margin-bottom:8px;line-height:1.5;">'+esc(c.summary)+'</div>';
+      h+=(c.items||[]).map(i=>'<div class="rule-item"><strong>'+esc(i.label)+'</strong> <span style="color:var(--t3);">('+esc(i.code)+')</span> — '+esc(i.evidence)+'</div>').join('');
+      if((c.headlines||[]).length) h+='<div style="font-size:10px;color:var(--t3);margin-top:8px;">'+c.headlines.map(x=>esc(x.title)+' ('+esc(x.source)+(x.date?', '+esc(x.date):'')+')').join(' · ')+'</div>';
+    } else h+='<div style="color:var(--amber);font-size:12px;">News check unavailable, so the sector filter was not applied.</div>';
+    h+='</div>';
+    if(c.available){
+      h+='<div class="panel"><div class="panel-t">3 · Sectors</div>'
+        +'<div class="lbl">Not affected by these factors</div><div>'+chips(c.insulatedSectors,'g')+'</div>'
+        +'<div class="lbl" style="margin-top:10px;">Affected</div><div>'+chips(c.exposedSectors,'r')+'</div>'
+        +'<div style="font-size:10px;color:var(--t3);margin-top:8px;line-height:1.5;">'+esc(c.sectorMapNote||'')+'</div></div>';
+    }
+    h+='<div class="panel"><div class="panel-t">4 · Recommendation'+(d.plan?' <span style="font-size:10px;color:var(--t3);font-weight:400;">'+d.plan.openPositions+' of '+d.plan.maxPositions+' slots in use</span>':'')+'</div>';
+    if((d.picks||[]).length) h+='<div class="signal-grid">'+d.picks.map(pickCard).join('')+'</div>';
+    else h+='<div style="color:var(--t3);font-size:12px;">No stock passed every check.</div>';
+    h+='</div>';
+    h+=listPanel('Other dipped stocks in unaffected sectors (not picked)',d.insulated);
+    h+=listPanel('Dipped stocks in affected sectors',d.exposed);
+    h+=listPanel('Skipped: dipped after an unusual run-up (the stock\'s own, or the whole Nifty\'s'+(m.niftySpikeZ!=null&&m.niftySpikeZ>=2?' — the Nifty ran up before this dip, so every dipped stock is skipped':'')+')',d.spiked,true);
+  } else if((d.watch||[]).length){
+    h+=listPanel('Stocks that dipped on their own (watch only, no market dip)',d.watch);
+  }
+  h+='<div class="note-box" style="margin-top:14px;"><div>ℹ</div><div style="font-size:11px;color:var(--t2);line-height:1.6;">'+(d.evidence||EVIDENCE).map(esc).join('<br>')+'</div></div>';
+  el.innerHTML=h;
+  document.getElementById('scanUpdated').textContent=(isSaved?'Saved scan: ':'Scan completed: ')+(d.scanDate||'')+' IST · '+(d.fetched!=null?d.fetched+'/'+d.universe+' stocks':'')+(d.missing&&d.missing.length?' · missing: '+d.missing.join(', '):'');
+}
+function kv(k,v,c){return '<div class="kv"><div class="kv-k">'+esc(k)+'</div><div class="kv-v"'+(c?' style="color:'+c+'"':'')+'>'+esc(v)+'</div></div>';}
+function macroLine(mc){
+  if(!mc)return '';
+  const items=[['Brent','brent','$'],['USDINR','usdinr',''],['US 10Y','us10y',''],['VIX','vix','']];
+  const parts=items.map(([n,k,p])=>mc[k]?n+' '+p+Number(mc[k].price).toFixed(2)+' ('+sgn(mc[k].chg5dPct,1)+'% 5d)':null).filter(Boolean);
+  return parts.length?'<div style="font-size:10px;color:var(--t3);margin-top:8px;">Macro context only, never a block: '+esc(parts.join(' · '))+'</div>':'';
+}
+function holdUntil(days){const d=new Date();d.setDate(d.getDate()+(days||90));return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}
+function pickCard(s){
+  return '<div class="signal-card buy">'
+   +'<div class="sc-header"><div><div class="sc-ticker">'+esc(s.ticker)+'</div><div class="sc-name">'+esc(s.name)+' · '+esc(s.sector)+(s.quality?' · <span style="color:var(--green);">Quality list</span>':'')+'</div></div>'
+   +'<div style="text-align:right;"><div class="sc-mv" style="font-size:15px;">'+inr(s.price)+'</div></div></div>'
+   +'<div class="sc-metrics">'
+   +'<div class="sc-m"><div class="sc-ml">Below 20D high</div><div class="sc-mv" style="color:var(--amber);">-'+s.pctBelow20D+'%</div></div>'
+   +'<div class="sc-m"><div class="sc-ml">vs Nifty drop</div><div class="sc-mv">'+sgn(s.relToMarket,1)+' pts</div></div>'
+   +'<div class="sc-m"><div class="sc-ml">Below 52W high</div><div class="sc-mv">-'+s.dd252+'%</div></div>'
+   +'<div class="sc-m"><div class="sc-ml">RSI</div><div class="sc-mv">'+(s.rsi!=null?Math.round(s.rsi):'—')+'</div></div>'
+   +'<div class="sc-m"><div class="sc-ml">Above 200D</div><div class="sc-mv" style="color:'+(s.above200?'var(--green)':'var(--red)')+';">'+(s.above200?'Yes':'No')+'</div></div>'
+   +'<div class="sc-m"><div class="sc-ml">Quantity</div><div class="sc-mv">'+s.qty+'</div></div></div>'
+   +'<div style="margin-bottom:8px;">'+fundBadge(s.fund)+'</div>'
+   +(s.fundNote?'<div class="sc-positives">'+esc(s.fundNote)+'</div>':'')
+   +(s.dropReason?'<div class="sc-positives" style="margin-top:4px;"><span style="color:var(--t3);">Why it fell:</span> '+esc(s.dropReason)+'</div>':'')
+   +'<div class="sc-levels" style="margin-top:10px;"><div class="sc-level sc-entry">Amount '+inr0(s.amount)+'</div><div class="sc-level sc-target" style="color:var(--amber);border-color:#854d0e;background:#1a1200;">Sell ~'+holdUntil(90)+'</div></div>'
+   +'<div style="font-size:10px;color:var(--t3);text-align:center;">Est. buy charges '+inr0(s.estBuyCharges)+' · no stop, time exit</div>'
+   +'<button class="btn btn-green" style="width:100%;margin-top:8px;font-size:11px;" onclick="prefillLogTrade(\''+esc(s.ticker)+'\',\''+s.price+'\',\''+s.qty+'\')">+ Log trade at actual fill →</button></div>';
+}
+function listPanel(title,arr,muted){
+  if(!arr||!arr.length)return '';
+  const rows=arr.map(s=>'<tr><td><strong>'+esc(s.ticker)+'</strong></td><td>'+esc(s.sector)+'</td><td>'+inr(s.price)+'</td><td style="color:var(--amber);">-'+s.pctBelow20D+'%</td><td>'+(s.rsi!=null?Math.round(s.rsi):'—')+'</td>'+(s.spikeZ!=null?'<td>'+s.spikeZ+'</td>':'<td>—</td>')+'</tr>').join('');
+  return '<div class="panel"><div class="panel-t" style="'+(muted?'color:var(--t3);':'')+'">'+esc(title)+' ('+arr.length+')</div><div style="overflow-x:auto;"><table class="pos-table"><thead><tr><th>Stock</th><th>Sector</th><th>Price</th><th>Below 20D high</th><th>RSI</th><th>Run-up z</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';
+}
+
+// ── POSITIONS ──
+function statusBadge(st){
+  const bad=/STOP|EXIT|TIME STOP —/.test(st), warn=/SOON|WATCH/.test(st);
+  return '<span class="badge '+(bad?'bad':warn?'warn':'open')+'">'+esc(st)+'</span>';
+}
+async function loadPositions(){
+  const el=document.getElementById('positionsContent');
+  el.innerHTML='<div class="loader"><div class="loader-track"><div class="loader-fill"></div></div><div class="loader-msg">Loading positions...</div></div>';
+  try{
+    const positions=await getJson(AS_URL+'?action=india_mr_positions&v='+Date.now());
+    loadPositionsStat(positions);
+    if(!positions.length){el.innerHTML='<div class="empty">No open positions. Run the scanner, then log trades here after executing on your broker.</div>';return;}
+    const rows=positions.map(p=>{
+      const pc=p.pnl==null?'var(--t3)':p.pnl>=0?'var(--green)':'var(--red)';
+      const nc=p.netIfExit==null?'var(--t3)':p.netIfExit>=0?'var(--green)':'var(--red)';
+      return '<tr><td><strong>'+esc(p.ticker)+'</strong><br><span style="font-size:10px;color:var(--t3);">'+esc(p.tradeId)+'</span></td>'
+       +'<td>'+esc(p.sector)+'</td><td>'+esc(p.entryDate)+'</td><td>'+inr(p.entryPrice)+'</td>'
+       +'<td>'+p.qty+'<br><span style="font-size:10px;color:var(--t3);">'+inr0(p.invested)+'</span></td>'
+       +'<td>'+(p.livePrice!=null?'<strong style="color:'+pc+';">'+inr(p.livePrice)+'</strong>':'—')+'</td>'
+       +'<td style="color:'+pc+';">'+(p.pnl!=null?sgn(p.pnl,0)+'<br><span style="font-size:10px;">'+sgn(p.pnlPct,1)+'%</span>':'—')+'</td>'
+       +'<td style="color:'+nc+';">'+(p.netIfExit!=null?inr0(p.netIfExit)+'<br><span style="font-size:10px;color:var(--t3);">after tax '+inr0(p.estTaxIfExit)+'</span>':'—')+'</td>'
+       +'<td>'+statusBadge(p.status)+'</td>'
+       +'<td>'+p.daysHeld+'d'+(p.daysLeft!=null?'<br><span style="font-size:10px;color:var(--t3);">'+p.daysLeft+'d to time exit</span>':'')+'</td>'
+       +'<td><button class="btn btn-red" style="font-size:11px;padding:5px 10px;" onclick="closeTradePrompt(\''+esc(p.tradeId)+'\')">Close</button></td></tr>';
+    }).join('');
+    el.innerHTML='<div style="overflow-x:auto;"><table class="pos-table" style="min-width:980px;"><thead><tr><th>Stock</th><th>Sector</th><th>Entry</th><th>Entry ₹</th><th>Qty / size</th><th>Live</th><th>Gross P&amp;L ₹</th><th>Net if sold now ₹</th><th>Status</th><th>Held</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  }catch(e){el.innerHTML='<div class="empty">Error: '+esc(e.message)+'</div>';}
+}
+async function loadPositionsStat(positions){
+  if(!positions){try{positions=await getJson(AS_URL+'?action=india_mr_positions&v='+Date.now());}catch(e){return;}}
+  const n=positions.length,dep=positions.reduce((s,p)=>s+(p.invested||0),0);
+  document.getElementById('openPositionsStat').innerHTML='<div class="stat-lbl">Open Positions</div><div class="stat-val" style="color:'+(n>=3?'var(--amber)':'var(--green)')+';">'+n+'/3</div><div class="stat-sub">'+inr0(dep)+' deployed</div>';
+}
+function showLogTrade(){document.getElementById('logTradeModal').style.display='flex';}
+function prefillLogTrade(t,p,q){document.getElementById('lt_ticker').value=t;document.getElementById('lt_price').value=p;document.getElementById('lt_qty').value=q||'';showLogTrade();}
+async function submitLogTrade(){
+  const ticker=document.getElementById('lt_ticker').value.trim().toUpperCase();
+  const price=parseFloat(document.getElementById('lt_price').value),qty=parseFloat(document.getElementById('lt_qty').value);
+  const date=document.getElementById('lt_date').value,chg=document.getElementById('lt_chg').value;
+  if(!ticker||!price||!qty){alert('Ticker, price and quantity are required.');return;}
+  try{
+    const d=await getJson(AS_URL+'?t='+T+'&action=india_mr_log&ticker='+encodeURIComponent(ticker)+'&price='+price+'&qty='+qty+(date?'&date='+date:'')+(chg?'&buy_charges='+encodeURIComponent(chg):''));
+    if(d.status==='logged'){document.getElementById('logTradeModal').style.display='none';alert('Trade logged.\nTrade ID: '+d.tradeId+'\nInvested: ₹'+Math.round(d.invested).toLocaleString('en-IN')+'\nTime exit: '+d.timeStop);loadPositions();}
+    else alert('Error: '+(d.message||JSON.stringify(d)));
+  }catch(e){alert('Error: '+e.message);}
+}
+async function closeTradePrompt(tradeId){
+  const price=prompt('Exit price for '+tradeId+' (₹):');if(!price)return;
+  const reason=prompt('Exit reason (Time Exit / Manual Exit / Stop):','Time Exit');if(!reason)return;
+  try{
+    const d=await getJson(AS_URL+'?t='+T+'&action=india_mr_close&trade_id='+encodeURIComponent(tradeId)+'&exit_price='+parseFloat(price)+'&reason='+encodeURIComponent(reason));
+    if(d.status==='closed'){alert('Trade closed.\nGross P&L: ₹'+d.grossPnl+' ('+d.grossPct+'%)\nCharges: ₹'+d.charges+'\nTax: ₹'+d.tax+'\nNet P&L: ₹'+d.netPnl+' ('+d.netPct+'%)\nDays held: '+d.daysHeld);loadPositions();}
+    else alert('Error: '+(d.message||JSON.stringify(d)));
+  }catch(e){alert('Error: '+e.message);}
+}
+window.addEventListener('load',()=>{loadPositionsStat();loadDipLast();});
 </script>
-</div><!-- /main-col -->
 </body>
 </html>
