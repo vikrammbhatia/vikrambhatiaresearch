@@ -370,11 +370,13 @@ function renderDip(d,isSaved){
     if((d.picks||[]).length) h+='<div class="signal-grid">'+d.picks.map(pickCard).join('')+'</div>';
     else h+='<div style="color:var(--t3);font-size:12px;">No stock passed every check.</div>';
     h+='</div>';
+    h+=lowsPanel(d.lows);
     h+=listPanel('NOT RECOMMENDED · dipped stocks in unaffected sectors that were not picked',d.insulated);
     h+=listPanel('NOT RECOMMENDED · dipped stocks in affected sectors',d.exposed);
     h+=listPanel('NOT RECOMMENDED · skipped after an unusual run-up (the stock\'s own, or the whole Nifty\'s'+(m.niftySpikeZ!=null&&m.niftySpikeZ>=2?' — the Nifty ran up before this dip, so every dipped stock is skipped':'')+')',d.spiked,true);
-  } else if((d.watch||[]).length){
-    h+=listPanel('NOT RECOMMENDED · stocks that dipped on their own (watch only, no market dip)',d.watch);
+  } else if((d.watch||[]).length||(d.lows||[]).length){
+    h+=lowsPanel(d.lows);
+    if((d.watch||[]).length) h+=listPanel('NOT RECOMMENDED · stocks that dipped on their own (watch only, no market dip)',d.watch);
   }
   h+='<div class="note-box" style="margin-top:14px;"><div>ℹ</div><div style="font-size:11px;color:var(--t2);line-height:1.6;">'+(d.evidence||EVIDENCE).map(esc).join('<br>')+'</div></div>';
   el.innerHTML=h;
@@ -399,17 +401,23 @@ function pickCard(s){
    +'<div class="sc-m"><div class="sc-ml">RSI</div><div class="sc-mv">'+(s.rsi!=null?Math.round(s.rsi):'—')+'</div></div>'
    +'<div class="sc-m"><div class="sc-ml">Above 200D</div><div class="sc-mv" style="color:'+(s.above200?'var(--green)':'var(--red)')+';">'+(s.above200?'Yes':'No')+'</div></div>'
    +'<div class="sc-m"><div class="sc-ml">Quantity</div><div class="sc-mv">'+s.qty+'</div></div></div>'
-   +'<div style="margin-bottom:8px;">'+fundBadge(s.fund)+'</div>'
+   +'<div style="margin-bottom:8px;">'+fundBadge(s.fund)+(s.atLow52?' <span class="badge bad">AT 52-WEEK LOW</span>':'')+'</div>'
    +(s.fundNote?'<div class="sc-positives">'+esc(s.fundNote)+'</div>':'')
    +(s.dropReason?'<div class="sc-positives" style="margin-top:4px;"><span style="color:var(--t3);">Why it fell:</span> '+esc(s.dropReason)+'</div>':'')
    +'<div class="sc-levels" style="margin-top:10px;"><div class="sc-level sc-entry">Amount '+inr0(s.amount)+'</div><div class="sc-level sc-target" style="color:var(--amber);border-color:#854d0e;background:#1a1200;">Sell ~'+holdUntil(90)+'</div></div>'
    +'<div style="font-size:10px;color:var(--t3);text-align:center;">Est. buy charges '+inr0(s.estBuyCharges)+' · no stop, time exit</div>'
    +'<button class="btn btn-green" style="width:100%;margin-top:8px;font-size:11px;" onclick="prefillLogTrade(\''+esc(s.ticker)+'\',\''+s.price+'\',\''+s.qty+'\')">+ Log trade at actual fill →</button></div>';
 }
+function lowCell(s){return s.atLow52?'<span class="badge bad">AT LOW</span>':(s.pctAboveLow52!=null?'+'+s.pctAboveLow52+'% above':'—');}
+function lowsPanel(lows){
+  if(!lows||!lows.length)return '';
+  const rows=lows.map(s=>'<tr><td><strong>'+esc(s.ticker)+'</strong></td><td>'+esc(s.sector)+(s.sectorExposed===true?' <span class="chip r">affected sector</span>':s.sectorExposed===false?' <span class="chip g">unaffected sector</span>':'')+'</td><td>'+inr(s.price)+'</td><td>'+inr(s.low52)+'</td><td style="color:var(--amber);">'+(s.pctBelow20D!=null?'-'+s.pctBelow20D+'%':'—')+'</td><td>'+(s.rsi!=null?Math.round(s.rsi):'—')+'</td></tr>').join('');
+  return '<div class="panel"><div class="panel-t" style="color:var(--red);">⚑ AT A 52-WEEK LOW ('+lows.length+') <span style="font-size:10px;color:var(--t3);font-weight:400;">within '+1+'% of the lowest close in the last year, from the whole Nifty 100 whether or not it passed the other checks</span></div><div style="overflow-x:auto;"><table class="pos-table"><thead><tr><th>Stock</th><th>Sector</th><th>Price</th><th>52W low (close)</th><th>Below 20D high</th><th>RSI</th></tr></thead><tbody>'+rows+'</tbody></table></div><div style="font-size:10px;color:var(--t3);margin-top:8px;line-height:1.5;">A stock at a 52-week low is falling on its own weakness as much as the market\'s. This is an information flag only: the scan does not exclude these stocks, and the research did not test whether buying at a 52-week low does better or worse.</div></div>';
+}
 function listPanel(title,arr,muted){
   if(!arr||!arr.length)return '';
-  const rows=arr.map(s=>'<tr><td><strong>'+esc(s.ticker)+'</strong></td><td>'+esc(s.sector)+'</td><td>'+inr(s.price)+'</td><td style="color:var(--amber);">-'+s.pctBelow20D+'%</td><td>'+(s.rsi!=null?Math.round(s.rsi):'—')+'</td>'+(s.spikeZ!=null?'<td>'+s.spikeZ+'</td>':'<td>—</td>')+'</tr>').join('');
-  return '<div class="panel"><div class="panel-t" style="'+(muted?'color:var(--t3);':'')+'">'+esc(title)+' ('+arr.length+')</div><div style="overflow-x:auto;"><table class="pos-table"><thead><tr><th>Stock</th><th>Sector</th><th>Price</th><th>Below 20D high</th><th>RSI</th><th>Run-up z</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';
+  const rows=arr.map(s=>'<tr><td><strong>'+esc(s.ticker)+'</strong></td><td>'+esc(s.sector)+'</td><td>'+inr(s.price)+'</td><td style="color:var(--amber);">-'+s.pctBelow20D+'%</td><td>'+(s.rsi!=null?Math.round(s.rsi):'—')+'</td><td>'+lowCell(s)+'</td>'+(s.spikeZ!=null?'<td>'+s.spikeZ+'</td>':'<td>—</td>')+'</tr>').join('');
+  return '<div class="panel"><div class="panel-t" style="'+(muted?'color:var(--t3);':'')+'">'+esc(title)+' ('+arr.length+')</div><div style="overflow-x:auto;"><table class="pos-table"><thead><tr><th>Stock</th><th>Sector</th><th>Price</th><th>Below 20D high</th><th>RSI</th><th>52W low</th><th>Run-up z</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';
 }
 
 // ── POSITIONS ──
