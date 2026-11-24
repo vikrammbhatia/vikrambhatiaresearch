@@ -385,6 +385,7 @@ async function loadAnalystViews(results){
     const d=await res.json();
     const win=d.windowDays||2;
     results.forEach(r=>{
+      if(ETF_RE.test(r.name||'')) return;
       const el=document.getElementById('an-'+r.ticker); if(!el) return;
       const a=d.results&&d.results[r.ticker];
       if(!a){ el.innerHTML=list.includes(r.ticker)?(d.error?'Analyst view unavailable: '+esc(String(d.error)):'No analyst data found.'):'Analyst view shown for the top 12 only.'; return; }
@@ -401,7 +402,7 @@ async function loadAnalystViews(results){
         `<div class="an-note">Informational only — not part of the score. From web sources${a.source?' ('+esc(a.source)+')':''}; verify before relying on it.</div>`;
     });
   }catch(e){
-    results.forEach(r=>{const el=document.getElementById('an-'+r.ticker); if(el) el.textContent='Analyst view unavailable: '+e.message;});
+    results.forEach(r=>{if(ETF_RE.test(r.name||'')) return; const el=document.getElementById('an-'+r.ticker); if(el) el.textContent='Analyst view unavailable: '+e.message;});
   }
 }
 
