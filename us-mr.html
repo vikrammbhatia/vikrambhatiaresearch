@@ -374,8 +374,11 @@ function renderScanResults(d){
 }
 
 // Analyst consensus + recent rating actions — informational only, never part of the score
+const ETF_RE=/\b(ETF|Fund|Trust|Select Sect|State Street|SPDR|iShares|Vanguard|ProShares|Invesco|Direxion|WisdomTree)\b/i;
 async function loadAnalystViews(results){
-  const list=[...results].sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,12).map(r=>r.ticker);
+  const etfs=results.filter(r=>ETF_RE.test(r.name||''));
+  etfs.forEach(r=>{const el=document.getElementById('an-'+r.ticker); if(el) el.innerHTML='<b>Analysts:</b> <span style="color:var(--t3);">ETF — analysts do not rate ETFs. Ratings on its largest holdings are more relevant.</span>';});
+  const list=[...results].filter(r=>!ETF_RE.test(r.name||'')).sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,12).map(r=>r.ticker);
   if(!list.length) return;
   try{
     const res=await fetch(AS_URL+'?t='+T+'&action=us_mr_analyst&tickers='+encodeURIComponent(list.join(','))+'&v='+Date.now(),{redirect:'follow'});
