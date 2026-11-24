@@ -402,6 +402,16 @@ async function loadAnalystViews(results){
   }
 }
 
+// The sheet stores earnings dates as midnight in the sheet's timezone (UTC+4), which reaches
+// the browser as e.g. 2027-01-21T20:00:00.000Z. Shift +4h to recover the intended calendar date.
+function fmtEarn(v){
+  const t=String(v||'');
+  let d;
+  if(/^\d{4}-\d{2}-\d{2}$/.test(t)) d=new Date(t+'T00:00:00Z');
+  else { const x=new Date(t); if(isNaN(x)) return esc(t); d=new Date(x.getTime()+4*3600*1000); }
+  return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
+}
+
 function signalCard(r){
   const cls=r.signal==='STRONG BUY'?'strong-buy':r.signal==='BUY'?'buy':'watch';
   // NEW: append the options-implied expected move (magnitude only, no
@@ -452,7 +462,7 @@ function signalCard(r){
     ${pos.length?`<div class="sc-positives">${pos.map(p=>'✓ '+esc(p)).join('<br>')}</div>`:''}
     ${earningsWarn}
     <div class="analyst-box" id="an-${esc(r.ticker)}">Loading analyst view…</div>
-    ${r.earningsDate?`<div style="font-size:10px;color:var(--t3);margin-top:4px;">Next earnings: ${r.earningsDate}</div>`:''}
+    ${r.earningsDate?`<div style="font-size:10px;color:var(--t3);margin-top:4px;">Next earnings: ${fmtEarn(r.earningsDate)}</div>`:''}
     <div style="font-size:10px;color:var(--t3);margin-top:8px;text-align:center;">Price shown is live market price at scan time</div>
     <button class="btn btn-green" style="width:100%;margin-top:6px;font-size:11px;" onclick="prefillLogTrade('${r.ticker}','${r.price}')">+ Log Trade at actual fill price →</button>
   </div>`;
